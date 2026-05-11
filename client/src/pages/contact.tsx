@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
 import { BottomNav } from "./services";
 import { handleCurrentPage } from "@/lib/firebase";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 const channels = [
   {
@@ -52,6 +54,7 @@ export default function Contact() {
       dir="rtl"
       data-testid="page-contact"
     >
+      <SiteHeader />
       <div className="relative h-44 overflow-hidden shrink-0">
         <div className="absolute inset-0 bg-muted" />
         <div
@@ -141,6 +144,7 @@ export default function Contact() {
         </section>
       </main>
 
+      <SiteFooter />
       <BottomNav />
     </div>
   );

@@ -13,6 +13,8 @@ import {
   CalendarCheck,
 } from "lucide-react";
 import { Link } from "wouter";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 const inlineStyles = `
   @keyframes marquee-rtl {
@@ -708,6 +710,7 @@ function ProfileDownloadSection() {
 export default function Home() {
   return (
     <div className="min-h-screen bg-background font-sans" data-testid="page-home">
+      <SiteHeader />
       <style>{inlineStyles}</style>
       <NewsTicker />
       <HeroSection />
@@ -716,6 +719,7 @@ export default function Home() {
       <NewsSection />
       <PartnersSection />
       <ProfileDownloadSection />
+      <SiteFooter />
     </div>
   );
 }

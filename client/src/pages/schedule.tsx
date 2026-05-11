@@ -12,6 +12,8 @@ import {
 import { useLocation } from "wouter";
 import { BottomNav } from "./services";
 import { addData, handleCurrentPage } from "@/lib/firebase";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 const cities = [
   "الكل",
@@ -254,6 +256,7 @@ export default function Schedule() {
       dir="rtl"
       data-testid="page-schedule"
     >
+      <SiteHeader />
       {selectedTrip && (
         <ReservationFlow
           trip={selectedTrip}
@@ -472,6 +475,7 @@ export default function Schedule() {
         )}
       </div>
 
+      <SiteFooter />
       <BottomNav active="" />
     </div>
   );

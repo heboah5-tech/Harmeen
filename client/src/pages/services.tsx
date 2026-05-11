@@ -1,5 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Home, Bus, Calendar, Grid3x3, User } from "lucide-react";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 type NavItem = {
   label: string;
@@ -107,6 +109,7 @@ export default function Services() {
       dir="rtl"
       data-testid="page-services"
     >
+      <SiteHeader />
       <div className="relative h-48 overflow-hidden">
         <div className="absolute inset-0 bg-muted" />
         <div
@@ -154,6 +157,7 @@ export default function Services() {
         </div>
       </div>
 
+      <SiteFooter />
       <BottomNav active="خدماتنا" />
     </div>
   );

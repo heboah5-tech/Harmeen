@@ -4,6 +4,8 @@ import { Truck, Globe2, ShieldCheck, Users, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { BottomNav } from "./services";
 import { handleCurrentPage } from "@/lib/firebase";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 const features = [
   {
@@ -45,6 +47,7 @@ export default function SATrans() {
       dir="rtl"
       data-testid="page-satrans"
     >
+      <SiteHeader />
       <div className="relative h-52 overflow-hidden shrink-0">
         <div className="absolute inset-0 bg-muted" />
         <div
@@ -134,6 +137,7 @@ export default function SATrans() {
         </section>
       </main>
 
+      <SiteFooter />
       <BottomNav />
     </div>
   );

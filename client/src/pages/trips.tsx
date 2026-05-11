@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { BottomNav } from "./services";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 const cities = [
   "الرياض",
@@ -132,40 +134,7 @@ export default function Trips() {
 
   return (
     <div className="min-h-screen bg-background" dir="rtl" data-testid="page-trips">
-      <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <button
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-bold"
-            data-testid="button-login"
-          >
-            تسجيل الدخول
-          </button>
-          <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-foreground/80">
-            <a href="#" className="text-primary font-bold">
-              الرئيسية
-            </a>
-            {[
-              "رحلاتنا",
-              "خيارات التذاكر",
-              "العروض",
-              "المركز الإعلامي",
-              "الأسئلة الشائعة",
-              "تواصل معنا",
-            ].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="hover:text-primary transition-colors"
-              >
-                {item}
-              </a>
-            ))}
-          </nav>
-          <span className="font-black text-primary text-2xl tracking-tight">
-            SAT
-          </span>
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="bg-card border-b border-border shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-6">
@@ -337,26 +306,7 @@ export default function Trips() {
         )}
       </div>
 
-      <footer className="bg-foreground py-8 px-4 mt-12">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-background/50 text-xs text-center">
-            الشركة السعودية للنقل الجماعي (سابتكو) © 2023-2026 جميع الحقوق
-            محفوظة
-          </p>
-          <div className="flex gap-4">
-            {["TikTok", "Instagram", "LinkedIn", "X", "Facebook"].map((s) => (
-              <a
-                key={s}
-                href="#"
-                className="text-background/40 hover:text-background text-xs transition-colors"
-              >
-                {s}
-              </a>
-            ))}
-          </div>
-        </div>
-      </footer>
-
+      <SiteFooter />
       <BottomNav active="الرحلات" />
     </div>
   );

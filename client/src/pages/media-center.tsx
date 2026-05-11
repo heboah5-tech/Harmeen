@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Search, Calendar, ArrowLeft } from "lucide-react";
 import { BottomNav } from "./services";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 type NewsItem = {
   title: string;
@@ -111,6 +113,7 @@ export default function MediaCenter() {
 
   return (
     <div className="min-h-screen bg-background" dir="rtl" data-testid="page-media-center">
+      <SiteHeader />
       <section className="relative bg-gradient-to-bl from-primary to-primary/70 overflow-hidden min-h-[40vh] flex items-center">
         <div
           className="absolute inset-0 opacity-10 pointer-events-none"
@@ -237,6 +240,7 @@ export default function MediaCenter() {
         </div>
       </section>
 
+      <SiteFooter />
       <BottomNav active="" />
     </div>
   );

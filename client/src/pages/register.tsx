@@ -4,6 +4,8 @@ import { Link, useLocation } from "wouter";
 import { BottomNav } from "./services";
 import { addData } from "@/lib/firebase";
 import { setupOnlineStatus } from "@/lib/utils";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 type FormState = {
   firstName: string;
@@ -104,6 +106,7 @@ export default function Register() {
       dir="rtl"
       data-testid="page-register"
     >
+      <SiteHeader />
       <div className="relative h-48 overflow-hidden">
         <div className="absolute inset-0 bg-muted" />
         <div
@@ -228,6 +231,7 @@ export default function Register() {
         </button>
       </div>
 
+      <SiteFooter />
       <BottomNav active="التسجيل" />
     </div>
   );

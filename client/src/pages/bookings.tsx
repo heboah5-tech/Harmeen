@@ -1,4 +1,6 @@
 import { useState } from "react";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 import {
   Calendar,
   Globe,
@@ -307,6 +309,7 @@ export default function Bookings() {
       dir="rtl"
       data-testid="page-bookings"
     >
+      <SiteHeader />
       <div className="relative h-48 overflow-hidden">
         <div className="absolute inset-0 bg-muted" />
         <div
@@ -435,6 +438,7 @@ export default function Bookings() {
         />
       )}
 
+      <SiteFooter />
       <BottomNav active="حجوزاتي" />
     </div>
   );

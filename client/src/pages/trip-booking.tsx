@@ -4,6 +4,8 @@ import { useLocation } from "wouter";
 import { BottomNav } from "./services";
 import { addData, handleCurrentPage } from "@/lib/firebase";
 import { setupOnlineStatus } from "@/lib/utils";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 const TICKET_PRICE = 50;
 
@@ -80,6 +82,7 @@ export default function TripBooking() {
       dir="rtl"
       data-testid="page-trip-booking"
     >
+      <SiteHeader />
       <div className="relative h-52 overflow-hidden">
         <div className="absolute inset-0 bg-muted" />
         <div
@@ -219,6 +222,7 @@ export default function TripBooking() {
         </button>
       </div>
 
+      <SiteFooter />
       <BottomNav active="حجوزاتي" />
     </div>
   );
