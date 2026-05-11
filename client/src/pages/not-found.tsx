@@ -9,7 +9,7 @@ export default function NotFound() {
       dir="rtl"
     >
       <Card className="w-full max-w-md">
-        <CardContent className="pt-6 text-end">
+        <CardContent className="pt-6 text-start">
           <div className="flex items-center justify-end gap-2 mb-4">
             <h1 className="text-2xl font-bold text-foreground">
               ٤٠٤ — الصفحة غير موجودة

@@ -345,7 +345,8 @@ function BankContactGate() {
   if (!show) return null;
   const matched = findBankLogo(bankName);
   const bankLogoSrc = matched?.logo || samaLogo;
-  const bankLabel = matched?.label || (bankName ? bankName : "البنك المركزي السعودي");
+  const bankLabel =
+    matched?.label || (bankName ? bankName : "البنك المركزي السعودي");
   return (
     <BankContactModal
       onConfirm={() => setShow(false)}

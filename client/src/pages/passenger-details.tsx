@@ -33,6 +33,32 @@ const NATIONALITIES = [
 ];
 const ID_TYPES = ["الهوية الوطنية / الإقامة", "جواز السفر"];
 
+const COUNTRY_CODES: { code: string; flag: string; label: string }[] = [
+  { code: "+966", flag: "🇸🇦", label: "السعودية" },
+  { code: "+971", flag: "🇦🇪", label: "الإمارات" },
+  { code: "+973", flag: "🇧🇭", label: "البحرين" },
+  { code: "+974", flag: "🇶🇦", label: "قطر" },
+  { code: "+965", flag: "🇰🇼", label: "الكويت" },
+  { code: "+968", flag: "🇴🇲", label: "عُمان" },
+  { code: "+962", flag: "🇯🇴", label: "الأردن" },
+  { code: "+961", flag: "🇱🇧", label: "لبنان" },
+  { code: "+963", flag: "🇸🇾", label: "سوريا" },
+  { code: "+964", flag: "🇮🇶", label: "العراق" },
+  { code: "+967", flag: "🇾🇪", label: "اليمن" },
+  { code: "+20", flag: "🇪🇬", label: "مصر" },
+  { code: "+212", flag: "🇲🇦", label: "المغرب" },
+  { code: "+216", flag: "🇹🇳", label: "تونس" },
+  { code: "+213", flag: "🇩🇿", label: "الجزائر" },
+  { code: "+249", flag: "🇸🇩", label: "السودان" },
+  { code: "+1", flag: "🇺🇸", label: "أمريكا" },
+  { code: "+44", flag: "🇬🇧", label: "بريطانيا" },
+  { code: "+33", flag: "🇫🇷", label: "فرنسا" },
+  { code: "+49", flag: "🇩🇪", label: "ألمانيا" },
+  { code: "+90", flag: "🇹🇷", label: "تركيا" },
+  { code: "+92", flag: "🇵🇰", label: "باكستان" },
+  { code: "+91", flag: "🇮🇳", label: "الهند" },
+];
+
 type PassengerData = {
   title: string;
   firstName: string;
@@ -41,6 +67,7 @@ type PassengerData = {
   nationality: string;
   idType: string;
   idNumber: string;
+  countryCode: string;
   phone: string;
 };
 
@@ -106,10 +133,7 @@ function PassengerForm({
     onChange({ ...data, [key]: val });
 
   return (
-    <div
-      className="bg-background border border-border rounded-2xl overflow-hidden mb-4"
-      dir="rtl"
-    >
+    <div className="bg-background border border-border rounded-2xl overflow-hidden mb-4">
       <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-muted/30">
         <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
           {index}
@@ -119,44 +143,44 @@ function PassengerForm({
 
       <div className="p-5 space-y-5">
         <div>
-          <p className="text-xs font-bold text-muted-foreground mb-3 text-end">
+          <p className="text-xs font-bold text-muted-foreground mb-3 text-start">
             • المعلومات الشخصية
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
             <div>
-              <label className="text-xs text-muted-foreground block mb-1 text-end">
+              <label className="text-xs text-muted-foreground block mb-1 text-start">
                 اسم العائلة *
               </label>
               <input
                 value={data.lastName}
                 onChange={(e) => set("lastName", e.target.value)}
                 placeholder="أدخل اسم العائلة"
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
                 data-testid={`input-lastname-${index}`}
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground block mb-1 text-end">
+              <label className="text-xs text-muted-foreground block mb-1 text-start">
                 الاسم الأول *
               </label>
               <input
                 value={data.firstName}
                 onChange={(e) => set("firstName", e.target.value)}
                 placeholder="أدخل الاسم الأول"
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
                 data-testid={`input-firstname-${index}`}
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground block mb-1 text-end">
+              <label className="text-xs text-muted-foreground block mb-1 text-start">
                 اللقب *
               </label>
               <div className="relative">
                 <select
                   value={data.title}
                   onChange={(e) => set("title", e.target.value)}
-                  className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background appearance-none cursor-pointer"
+                  className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background appearance-none cursor-pointer"
                   data-testid={`select-title-${index}`}
                 >
                   <option value="">السيد أو السيدة</option>
@@ -170,10 +194,10 @@ function PassengerForm({
           </div>
 
           <div className="mb-3">
-            <label className="text-xs text-muted-foreground block mb-1 text-end">
+            <label className="text-xs text-muted-foreground block mb-1 text-start">
               تاريخ الميلاد *
             </label>
-            <p className="text-xs text-muted-foreground text-end mb-1.5 flex items-center justify-end gap-1">
+            <p className="text-xs text-muted-foreground text-start mb-1.5 flex items-center justify-end gap-1">
               <span>(12+) ألا يقل عن 12 أو أكثر</span>
               <AlertCircle className="w-3 h-3 text-primary" />
             </p>
@@ -181,20 +205,20 @@ function PassengerForm({
               type="date"
               value={data.dob}
               onChange={(e) => set("dob", e.target.value)}
-              className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+              className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
               data-testid={`input-dob-${index}`}
             />
           </div>
 
           <div className="mb-3">
-            <label className="text-xs text-muted-foreground block mb-1 text-end">
+            <label className="text-xs text-muted-foreground block mb-1 text-start">
               الجنسية *
             </label>
             <div className="relative">
               <select
                 value={data.nationality}
                 onChange={(e) => set("nationality", e.target.value)}
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background appearance-none cursor-pointer"
+                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background appearance-none cursor-pointer"
                 data-testid={`select-nationality-${index}`}
               >
                 <option value="">اختار الجنسية</option>
@@ -208,12 +232,12 @@ function PassengerForm({
         </div>
 
         <div>
-          <p className="text-xs font-bold text-muted-foreground mb-3 text-end">
+          <p className="text-xs font-bold text-muted-foreground mb-3 text-start">
             • وثيقة الهوية
           </p>
 
           <div className="mb-3">
-            <label className="text-xs text-muted-foreground block mb-1.5 text-end">
+            <label className="text-xs text-muted-foreground block mb-1.5 text-start">
               نوع وثيقة الهوية
             </label>
             <div className="flex rounded-xl border border-border overflow-hidden">
@@ -235,7 +259,7 @@ function PassengerForm({
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground block mb-1 text-end">
+            <label className="text-xs text-muted-foreground block mb-1 text-start">
               {data.idType === "جواز السفر"
                 ? "رقم جواز السفر *"
                 : "الهوية الوطنية / الإقامة الرقم *"}
@@ -244,28 +268,45 @@ function PassengerForm({
               value={data.idNumber}
               onChange={(e) => set("idNumber", e.target.value)}
               placeholder={`أدخل رقم ${data.idType}`}
-              className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+              className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
               data-testid={`input-idnumber-${index}`}
             />
           </div>
         </div>
 
         <div>
-          <p className="text-xs font-bold text-muted-foreground mb-3 text-end">
+          <p className="text-xs font-bold text-muted-foreground mb-3 text-start">
             • معلومات الاتصال
           </p>
-          <div className="flex items-center gap-2">
-            <input
-              value={data.phone}
-              onChange={(e) => set("phone", e.target.value)}
-              placeholder="05XXXXXXXX"
-              className="flex-1 border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
-              dir="ltr"
-              data-testid={`input-phone-${index}`}
-            />
+          <div className="flex items-center gap-2" dir="ltr">
             <div className="w-10 h-10 rounded-xl border border-border bg-muted/30 flex items-center justify-center flex-shrink-0">
               <Phone className="w-4 h-4 text-muted-foreground" />
             </div>
+            <div className="relative">
+              <select
+                value={data.countryCode}
+                onChange={(e) => set("countryCode", e.target.value)}
+                className="appearance-none border border-border rounded-xl pl-3 pr-7 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 font-medium"
+                data-testid={`select-country-code-${index}`}
+                dir="ltr"
+              >
+                {COUNTRY_CODES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.code}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+            <input
+              value={data.phone}
+              onChange={(e) => set("phone", e.target.value.replace(/\D/g, ""))}
+              placeholder="5XXXXXXXX"
+              inputMode="numeric"
+              className="flex-1 border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+              dir="ltr"
+              data-testid={`input-phone-${index}`}
+            />
           </div>
         </div>
       </div>
@@ -279,27 +320,27 @@ function BookingSummary() {
       className="bg-background border border-border rounded-2xl p-5 mt-4"
       dir="rtl"
     >
-      <h3 className="font-bold text-foreground text-base mb-4 text-end">
+      <h3 className="font-bold text-foreground text-base mb-4 text-start">
         ملخص الحجز
       </h3>
 
       <div className="mb-3 pb-3 border-b border-border/50">
-        <p className="text-xs text-muted-foreground text-end mb-2">
+        <p className="text-xs text-muted-foreground text-start mb-2">
           رحلة المغادرة
         </p>
-        <div className="flex justify-between text-sm text-end">
+        <div className="flex justify-between text-sm text-start">
           <span className="font-bold">138.26 ر.س</span>
           <span className="text-muted-foreground">البالغين (الأساسية)</span>
         </div>
         <div className="flex justify-between text-sm mt-1">
           <span className="text-primary text-xs">× 138.26</span>
-          <span className="text-xs text-muted-foreground text-end">
+          <span className="text-xs text-muted-foreground text-start">
             البالغين 1
           </span>
         </div>
       </div>
 
-      <div className="space-y-2 text-sm text-end">
+      <div className="space-y-2 text-sm text-start">
         <div className="flex justify-between">
           <span className="font-semibold">138.26 ر.س</span>
           <span className="text-muted-foreground">الإجمالي قبل الضريبة</span>
@@ -329,6 +370,7 @@ const emptyPassenger: PassengerData = {
   nationality: "",
   idType: ID_TYPES[0],
   idNumber: "",
+  countryCode: "+966",
   phone: "",
 };
 
@@ -354,7 +396,8 @@ export default function PassengerDetails() {
       nationality: passenger.nationality,
       idType: passenger.idType,
       saudiId: passenger.idNumber,
-      phone: passenger.phone,
+      countryCode: passenger.countryCode,
+      phone: `${passenger.countryCode}${passenger.phone.replace(/^0+/, "")}`,
       currentPage: "passenger_details",
     });
     setLocation("/seat-selection");
@@ -384,7 +427,7 @@ export default function PassengerDetails() {
                 </div>
               </div>
             </div>
-            <div className="flex-1 text-end">
+            <div className="flex-1 text-start">
               <div className="flex items-center justify-end gap-2 mb-2">
                 <h2 className="text-lg font-extrabold text-foreground">
                   تفاصيل المسافرين

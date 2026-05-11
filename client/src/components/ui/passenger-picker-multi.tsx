@@ -75,7 +75,7 @@ export default function PassengerPickerMulti({ value, onChange }: Props) {
       </button>
 
       {open && (
-        <div className="absolute z-[300] mt-1 left-0 right-0 sm:left-auto sm:right-0 sm:w-72 bg-white border border-border rounded-2xl shadow-xl p-4 text-end max-h-[60vh] overflow-y-auto">
+        <div className="absolute z-[300] mt-1 left-0 right-0 sm:left-auto sm:right-0 sm:w-72 bg-white border border-border rounded-2xl shadow-xl p-4 text-start max-h-[60vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-2">
             <button
               type="button"
@@ -120,7 +120,7 @@ export default function PassengerPickerMulti({ value, onChange }: Props) {
                   <Minus className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <div className="text-end">
+              <div className="text-start">
                 <div className="text-sm font-medium text-foreground">{cat.label}</div>
                 {cat.hint && (
                   <div className="text-[10px] text-muted-foreground">{cat.hint}</div>

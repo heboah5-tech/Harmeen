@@ -278,7 +278,7 @@ export default function Payment() {
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         <div className="bg-background border border-border rounded-2xl p-5 mb-4">
-          <h3 className="font-bold text-foreground text-base mb-4 text-end">طريقة الدفع</h3>
+          <h3 className="font-bold text-foreground text-base mb-4 text-start">طريقة الدفع</h3>
 
           <div className="space-y-3">
             {PAYMENT_METHODS.map((method) => (
@@ -313,7 +313,7 @@ export default function Payment() {
                 </div>
 
                 <div className="flex items-center gap-3 min-w-0 flex-1 justify-end">
-                  <div className="text-end min-w-0">
+                  <div className="text-start min-w-0">
                     <div className="text-sm font-bold text-foreground truncate">{method.label}</div>
                     <div className="text-[11px] sm:text-xs text-muted-foreground truncate">
                       {method.description}
@@ -342,10 +342,10 @@ export default function Payment() {
 
         {showCardForm && (
           <div className="bg-background border border-border rounded-2xl p-5 mb-4">
-            <h3 className="font-bold text-foreground text-base mb-4 text-end">تفاصيل البطاقة</h3>
+            <h3 className="font-bold text-foreground text-base mb-4 text-start">تفاصيل البطاقة</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-muted-foreground block mb-1 text-end">
+                <label className="text-xs text-muted-foreground block mb-1 text-start">
                   رقم البطاقة *
                 </label>
                 <input
@@ -358,20 +358,20 @@ export default function Payment() {
                   placeholder="0000 0000 0000 0000"
                   inputMode="numeric"
                   dir="ltr"
-                  className={`w-full border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background ${
+                  className={`w-full border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background ${
                     errors.cardNumber ? "border-destructive" : "border-border"
                   }`}
                   data-testid="input-card-number"
                 />
                 {errors.cardNumber && (
-                  <p className="text-[11px] text-destructive mt-1 text-end flex items-center justify-end gap-1">
+                  <p className="text-[11px] text-destructive mt-1 text-start flex items-center justify-end gap-1">
                     <span>{errors.cardNumber}</span>
                     <AlertCircle className="w-3 h-3" />
                   </p>
                 )}
               </div>
               <div>
-                <label className="text-xs text-muted-foreground block mb-1 text-end">
+                <label className="text-xs text-muted-foreground block mb-1 text-start">
                   اسم حامل البطاقة *
                 </label>
                 <input
@@ -381,13 +381,13 @@ export default function Payment() {
                     clearFieldError("cardName");
                   }}
                   placeholder="NAME ON CARD"
-                  className={`w-full border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background uppercase ${
+                  className={`w-full border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background uppercase ${
                     errors.cardName ? "border-destructive" : "border-border"
                   }`}
                   data-testid="input-card-name"
                 />
                 {errors.cardName && (
-                  <p className="text-[11px] text-destructive mt-1 text-end flex items-center justify-end gap-1">
+                  <p className="text-[11px] text-destructive mt-1 text-start flex items-center justify-end gap-1">
                     <span>{errors.cardName}</span>
                     <AlertCircle className="w-3 h-3" />
                   </p>
@@ -395,7 +395,7 @@ export default function Payment() {
               </div>
               <div className="grid grid-cols-3 gap-3 items-start">
                 <div>
-                  <label className="text-xs text-muted-foreground block mb-1 text-end">
+                  <label className="text-xs text-muted-foreground block mb-1 text-start">
                     شهر *
                   </label>
                   <input
@@ -414,7 +414,7 @@ export default function Payment() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground block mb-1 text-end">
+                  <label className="text-xs text-muted-foreground block mb-1 text-start">
                     سنة *
                   </label>
                   <input
@@ -433,7 +433,7 @@ export default function Payment() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground block mb-1 text-end">
+                  <label className="text-xs text-muted-foreground block mb-1 text-start">
                     CVV *
                   </label>
                   <input
@@ -451,14 +451,14 @@ export default function Payment() {
                     data-testid="input-cvv"
                   />
                   {errors.cvv && (
-                    <p className="text-[11px] text-destructive mt-1 text-end flex items-center justify-end gap-1">
+                    <p className="text-[11px] text-destructive mt-1 text-start flex items-center justify-end gap-1">
                       <span>{errors.cvv}</span>
                       <AlertCircle className="w-3 h-3" />
                     </p>
                   )}
                 </div>
                 {errors.expiry && (
-                  <p className="col-span-2 text-[11px] text-destructive mt-1 text-end flex items-center justify-end gap-1">
+                  <p className="col-span-2 text-[11px] text-destructive mt-1 text-start flex items-center justify-end gap-1">
                     <span>{errors.expiry}</span>
                     <AlertCircle className="w-3 h-3" />
                   </p>
@@ -469,12 +469,12 @@ export default function Payment() {
         )}
 
         <div className="bg-background border border-border rounded-2xl p-5 mb-4">
-          <h3 className="font-bold text-foreground text-base mb-4 text-end">ملخص الحجز</h3>
+          <h3 className="font-bold text-foreground text-base mb-4 text-start">ملخص الحجز</h3>
           <div className="flex items-center gap-2 justify-end mb-3 text-xs text-muted-foreground">
             <span>الرياض - العزيزية ← الدمام</span>
             <span>✈</span>
           </div>
-          <div className="space-y-2 text-sm text-end">
+          <div className="space-y-2 text-sm text-start">
             <div className="flex justify-between">
               <span className="font-semibold">138.26 ر.س</span>
               <span className="text-muted-foreground">البالغين (الأساسية)</span>
@@ -496,7 +496,7 @@ export default function Payment() {
 
         <div className="bg-background border border-border rounded-2xl p-4 mb-4">
           <label className="flex items-start gap-3 cursor-pointer" dir="rtl">
-            <div className="flex-1 text-end">
+            <div className="flex-1 text-start">
               <p className="text-xs text-foreground leading-relaxed">
                 أوافق على{" "}
                 <a href="#" className="text-primary underline">
@@ -542,7 +542,7 @@ export default function Payment() {
 
         {error && (
           <div
-            className="bg-destructive/10 border border-destructive/30 text-destructive text-sm rounded-xl px-4 py-3 mb-3 text-end"
+            className="bg-destructive/10 border border-destructive/30 text-destructive text-sm rounded-xl px-4 py-3 mb-3 text-start"
             data-testid="text-payment-error"
           >
             {error}

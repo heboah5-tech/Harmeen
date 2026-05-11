@@ -171,9 +171,9 @@ function TripCard({ trip }: { trip: Trip }) {
             <div className="text-[11px] sm:text-xs text-muted-foreground mt-1">للفرد</div>
           </div>
 
-          <div className="flex-1 min-w-0 text-end">
+          <div className="flex-1 min-w-0 text-start">
             <div className="flex items-center justify-end gap-2 sm:gap-3 mb-2">
-              <div className="text-end min-w-0">
+              <div className="text-start min-w-0">
                 <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">الوصول</div>
                 <div className="font-bold text-foreground text-xs sm:text-sm truncate">
                   {trip.to}
@@ -189,7 +189,7 @@ function TripCard({ trip }: { trip: Trip }) {
                 <div className="w-px h-6 sm:h-8 bg-border" />
                 <div className="w-2 h-2 rounded-full bg-emerald-600" />
               </div>
-              <div className="text-end min-w-0">
+              <div className="text-start min-w-0">
                 <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">المغادرة</div>
                 <div className="font-bold text-foreground text-xs sm:text-sm truncate">
                   {trip.from}
@@ -248,7 +248,7 @@ function TripCard({ trip }: { trip: Trip }) {
           </div>
 
           {trip.classes[selectedClass]?.summary?.length > 0 && (
-            <div className="bg-background border border-border rounded-xl p-4 mb-4 text-end">
+            <div className="bg-background border border-border rounded-xl p-4 mb-4 text-start">
               <h4 className="font-bold text-foreground mb-3 text-sm">ملخص الحجز</h4>
               <div className="space-y-2">
                 {trip.classes[selectedClass].summary.map((row, i) => (
@@ -259,7 +259,7 @@ function TripCard({ trip }: { trip: Trip }) {
                     } ${row.fee ? "text-muted-foreground text-xs" : "text-foreground"}`}
                   >
                     <span className="font-bold">{row.sub} ر.س</span>
-                    <span className="text-end">
+                    <span className="text-start">
                       {row.qty && (
                         <span className="text-muted-foreground me-1">
                           {row.qty} {row.price} ر.س

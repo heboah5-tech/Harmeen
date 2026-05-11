@@ -85,7 +85,7 @@ export default function CityCombobox({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="ابحث عن مدينة..."
-                className="w-full bg-white rounded-lg pe-3 ps-8 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none border border-border focus:border-primary/40 text-end"
+                className="w-full bg-white rounded-lg pe-3 ps-8 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none border border-border focus:border-primary/40 text-start"
                 data-testid={testId ? `${testId}-search` : undefined}
               />
             </div>

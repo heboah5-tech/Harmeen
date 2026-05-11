@@ -133,7 +133,7 @@ export default function SeatSelection() {
               <div className="text-xs text-muted-foreground">الرياض - العزيزية</div>
             </div>
           </div>
-          <div className="mt-2 text-xs text-muted-foreground text-end">11 مايو 2026 — الأحد</div>
+          <div className="mt-2 text-xs text-muted-foreground text-start">11 مايو 2026 — الأحد</div>
         </div>
 
         <div className="bg-background border border-border rounded-2xl p-5 mb-4">
@@ -194,7 +194,7 @@ export default function SeatSelection() {
         </div>
 
         <div className="bg-background border border-border rounded-2xl p-4 mb-4">
-          <h3 className="font-bold text-foreground text-sm mb-3 text-end">رمز الخصم</h3>
+          <h3 className="font-bold text-foreground text-sm mb-3 text-start">رمز الخصم</h3>
           <div className="flex gap-2">
             <button className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors flex-shrink-0">
               تطبيق
@@ -202,19 +202,19 @@ export default function SeatSelection() {
             <input
               type="text"
               placeholder="أدخل رمز الخصم إن وجد"
-              className="flex-1 border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+              className="flex-1 border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
               data-testid="input-discount"
             />
           </div>
         </div>
 
         <div className="bg-background border border-border rounded-2xl p-5 mb-4">
-          <h3 className="font-bold text-foreground text-base mb-4 text-end">ملخص الحجز</h3>
+          <h3 className="font-bold text-foreground text-base mb-4 text-start">ملخص الحجز</h3>
           <div className="flex items-center gap-2 justify-end mb-3 text-xs text-muted-foreground">
             <span>الرياض - العزيزية ← الدمام</span>
             <span>✈</span>
           </div>
-          <div className="space-y-2 text-sm text-end">
+          <div className="space-y-2 text-sm text-start">
             <div className="flex justify-between">
               <span className="font-semibold">138.26 ر.س</span>
               <span className="text-muted-foreground">البالغين (الأساسية)</span>
