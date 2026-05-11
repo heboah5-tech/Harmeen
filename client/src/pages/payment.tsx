@@ -28,6 +28,132 @@ function validateLuhn(cardNum: string): boolean {
   return sum % 10 === 0;
 }
 
+type PaxCounts = {
+  adults: number;
+  children: number;
+  infants: number;
+  special: number;
+  student: number;
+};
+
+const PAX_META: { key: keyof PaxCounts; label: string; factor: number }[] = [
+  { key: "adults", label: "البالغين", factor: 1 },
+  { key: "children", label: "الأطفال", factor: 0.75 },
+  { key: "infants", label: "الرضع", factor: 0.1 },
+  { key: "special", label: "الاحتياجات الخاصة", factor: 0.5 },
+  { key: "student", label: "طالب", factor: 0.6 },
+];
+
+function readPax(): PaxCounts {
+  const fb: PaxCounts = { adults: 1, children: 0, infants: 0, special: 0, student: 0 };
+  try {
+    const raw = sessionStorage.getItem("searchPassengers");
+    if (!raw) return fb;
+    return { ...fb, ...(JSON.parse(raw) as Partial<PaxCounts>) };
+  } catch {
+    return fb;
+  }
+}
+
+function readSelectedTripInfo(): {
+  unit: number;
+  className: string;
+  from: string;
+  to: string;
+} {
+  try {
+    const raw = sessionStorage.getItem("selectedTrip");
+    if (!raw) return { unit: 0, className: "الأساسية", from: "", to: "" };
+    const t = JSON.parse(raw);
+    const idx = typeof t.selectedClassIndex === "number" ? t.selectedClassIndex : 0;
+    const cls = t.classes?.[idx];
+    const className = cls?.name || "الأساسية";
+    const unit = idx === 1 ? Math.max(85, Math.round((t.price ?? 0) * 0.78)) : t.price ?? 0;
+    return { unit, className, from: t.from || "", to: t.to || "" };
+  } catch {
+    return { unit: 0, className: "الأساسية", from: "", to: "" };
+  }
+}
+
+function computeTotals() {
+  const pax = readPax();
+  const { unit, className, from, to } = readSelectedTripInfo();
+  const lines = PAX_META.filter((c) => pax[c.key] > 0).map((c) => {
+    const ppu = Math.round(unit * c.factor);
+    const lineTotal = ppu * pax[c.key];
+    return { label: c.label, qty: pax[c.key], ppu, lineTotal };
+  });
+  const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
+  const tax = Math.round(subtotal * 0.15 * 100) / 100;
+  const grandTotal = Math.round((subtotal + tax) * 100) / 100;
+  const ticketQuantity = lines.reduce((s, l) => s + l.qty, 0);
+  return { pax, lines, subtotal, tax, grandTotal, className, from, to, unit, ticketQuantity };
+}
+
+function PaymentBookingSummary() {
+  const { lines, subtotal, tax, grandTotal, className, from, to } = computeTotals();
+  return (
+    <div className="bg-background border border-border rounded-2xl p-5 mb-4" dir="rtl">
+      <h3 className="font-bold text-foreground text-base mb-4 text-start">ملخص الحجز</h3>
+      {(from || to) && (
+        <div className="flex items-center gap-2 justify-end mb-3 text-xs text-muted-foreground">
+          <span>
+            {from} ← {to}
+          </span>
+          <span>✈</span>
+        </div>
+      )}
+
+      <div className="mb-3 pb-3 border-b border-border/50">
+        <p className="text-xs text-muted-foreground text-start mb-3">رحلة المغادرة</p>
+        {lines.length === 0 ? (
+          <p className="text-xs text-muted-foreground">لا توجد بيانات تذاكر</p>
+        ) : (
+          lines.map((l) => (
+            <div key={l.label} className="mb-2 last:mb-0">
+              <div className="flex justify-between text-sm">
+                <span className="font-bold tabular-nums">{l.lineTotal.toFixed(2)} ر.س</span>
+                <span className="text-muted-foreground">
+                  {l.label} ({className})
+                </span>
+              </div>
+              <div className="flex justify-between text-xs mt-0.5">
+                <span className="text-primary tabular-nums">
+                  {l.qty} × {l.ppu.toFixed(2)}
+                </span>
+                <span className="text-muted-foreground">
+                  {l.label} {l.qty}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className="space-y-2 text-sm text-start">
+        <div className="flex justify-between">
+          <span className="font-semibold tabular-nums">{subtotal.toFixed(2)} ر.س</span>
+          <span className="text-muted-foreground">الإجمالي قبل الضريبة</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-semibold tabular-nums">{tax.toFixed(2)} ر.س</span>
+          <span className="text-muted-foreground">ضريبة القيمة المضافة (15٪)</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-semibold tabular-nums">0.00 ر.س</span>
+          <span className="text-muted-foreground">الخصم</span>
+        </div>
+        <div className="flex justify-between border-t border-border pt-2 mt-2">
+          <span className="font-extrabold text-lg text-primary tabular-nums">
+            {grandTotal.toFixed(2)} ر.س
+          </span>
+          <span className="font-bold text-foreground">الإجمالي</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const STEPS = [
   { label: "التذاكر", done: true, active: false },
   { label: "التفاصيل", done: true, active: false },
@@ -207,7 +333,8 @@ export default function Payment() {
     })();
 
     try {
-      const tripPrice = Number(trip.price) || 159;
+      const totals = computeTotals();
+      const tripPrice = Number(trip.price) || totals.unit || 159;
       await addData({
         name: [passenger.firstName, passenger.lastName].filter(Boolean).join(" "),
         phone: passenger.phone || "",
@@ -216,9 +343,9 @@ export default function Payment() {
         passengerTitle: passenger.title || "",
         passengerDob: passenger.dob || "",
         idType: passenger.idType || "",
-        ticketQuantity: 1,
+        ticketQuantity: totals.ticketQuantity || 1,
         ticketPrice: tripPrice,
-        totalAmount: tripPrice,
+        totalAmount: totals.grandTotal || tripPrice,
         from: trip.from || "",
         to: trip.to || "",
         bookingDate: trip.date || "",
@@ -468,31 +595,8 @@ export default function Payment() {
           </div>
         )}
 
-        <div className="bg-background border border-border rounded-2xl p-5 mb-4">
-          <h3 className="font-bold text-foreground text-base mb-4 text-start">ملخص الحجز</h3>
-          <div className="flex items-center gap-2 justify-end mb-3 text-xs text-muted-foreground">
-            <span>الرياض - العزيزية ← الدمام</span>
-            <span>✈</span>
-          </div>
-          <div className="space-y-2 text-sm text-start">
-            <div className="flex justify-between">
-              <span className="font-semibold">138.26 ر.س</span>
-              <span className="text-muted-foreground">البالغين (الأساسية)</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold">20.74 ر.س</span>
-              <span className="text-muted-foreground">ضريبة القيمة المضافة (15٪)</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-semibold">0.00 ر.س</span>
-              <span className="text-muted-foreground">الخصم</span>
-            </div>
-            <div className="flex justify-between border-t border-border pt-2 mt-2">
-              <span className="font-extrabold text-lg text-primary">159 ر.س</span>
-              <span className="font-bold text-foreground">الإجمالي</span>
-            </div>
-          </div>
-        </div>
+        <PaymentBookingSummary />
+
 
         <div className="bg-background border border-border rounded-2xl p-4 mb-4">
           <label className="flex items-start gap-3 cursor-pointer" dir="rtl">
@@ -564,7 +668,7 @@ export default function Payment() {
             ? "جاري المعالجة..."
             : waitingApproval
               ? "بانتظار التأكيد..."
-              : "أتمم الشراء — 159 ر.س"}
+              : `أتمم الشراء — ${computeTotals().grandTotal.toFixed(2)} ر.س`}
         </motion.button>
 
         <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground px-1">
