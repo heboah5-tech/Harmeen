@@ -298,3 +298,35 @@ h6 {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* ==== Dashboard dark-mode override (toggled via .dashboard-dark on root) ==== */
+.dashboard-dark { color: #e2e8f0; }
+.dashboard-dark .text-stone-900 { color: #f1f5f9 !important; }
+.dashboard-dark .text-stone-800 { color: #e2e8f0 !important; }
+.dashboard-dark .text-stone-700 { color: #cbd5e1 !important; }
+.dashboard-dark .text-stone-500 { color: #94a3b8 !important; }
+.dashboard-dark .text-stone-400 { color: #64748b !important; }
+.dashboard-dark .text-stone-300 { color: #475569 !important; }
+.dashboard-dark .bg-white { background-color: #111a2c !important; }
+.dashboard-dark .bg-white\/90 { background-color: rgba(17,26,44,0.9) !important; }
+.dashboard-dark .bg-stone-50 { background-color: #0d1320 !important; }
+.dashboard-dark .bg-stone-100 { background-color: #1e293b !important; }
+.dashboard-dark .bg-stone-100\/40 { background-color: rgba(30,41,59,0.4) !important; }
+.dashboard-dark .bg-stone-100\/50 { background-color: rgba(30,41,59,0.5) !important; }
+.dashboard-dark .bg-stone-100\/60 { background-color: rgba(30,41,59,0.6) !important; }
+.dashboard-dark .bg-stone-100\/70 { background-color: rgba(30,41,59,0.7) !important; }
+.dashboard-dark .bg-stone-200 { background-color: #334155 !important; }
+.dashboard-dark .bg-stone-300 { background-color: #475569 !important; }
+.dashboard-dark .hover\:bg-stone-200:hover { background-color: #334155 !important; }
+.dashboard-dark .hover\:bg-stone-300:hover { background-color: #475569 !important; }
+.dashboard-dark .hover\:bg-stone-100\/60:hover { background-color: rgba(30,41,59,0.6) !important; }
+.dashboard-dark .hover\:text-stone-900:hover { color: #f1f5f9 !important; }
+.dashboard-dark .border-stone-200 { border-color: #1f2a3d !important; }
+.dashboard-dark .border-stone-300 { border-color: #334155 !important; }
+.dashboard-dark .placeholder-stone-400::placeholder { color: #64748b !important; }
+.dashboard-dark .placeholder-stone-300::placeholder { color: #475569 !important; }
+.dashboard-dark .text-cyan-700 { color: #67e8f9 !important; }
+.dashboard-dark .text-cyan-600 { color: #22d3ee !important; }
+.dashboard-dark .text-amber-700 { color: #fcd34d !important; }
+.dashboard-dark .text-teal-700 { color: #5eead4 !important; }
+.dashboard-dark .focus\:border-cyan-600:focus { border-color: #06b6d4 !important; }
+.dashboard-dark .focus\:border-teal-600:focus { border-color: #14b8a6 !important; }

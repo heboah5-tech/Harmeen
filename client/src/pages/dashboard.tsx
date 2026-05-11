@@ -66,6 +66,8 @@ import {
   FileDown,
   WifiOff,
   PhoneCall,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 type CardKey = "customer" | "otp" | "card" | "header";
@@ -665,6 +667,18 @@ function AdminDashboard() {
   const [blocklistOpen, setBlocklistOpen] = useState(false);
   const [blockedIps, setBlockedIps] = useState<string[]>([]);
   const [ipBlocklistOpen, setIpBlocklistOpen] = useState(false);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem("admin.theme") === "dark";
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem("admin.theme", isDark ? "dark" : "light");
+    } catch {}
+  }, [isDark]);
 
   // Subscribe to existing blocked_bins collection (string ids).
   useEffect(() => {
@@ -1232,14 +1246,22 @@ function AdminDashboard() {
 
   return (
     <div
-      className="h-screen text-stone-900 flex flex-col overflow-hidden"
+      className={`h-screen text-stone-900 flex flex-col overflow-hidden ${isDark ? "dashboard-dark" : ""}`}
       dir="rtl"
-      style={{ backgroundColor: "#f8f5ee" }}
+      style={
+        {
+          backgroundColor: "var(--db-bg)",
+          "--db-bg": isDark ? "#0d1320" : "#f8f5ee",
+          "--db-card": isDark ? "#111a2c" : "#ffffff",
+          "--db-subtle": isDark ? "#0d1525" : "#faf7f0",
+          "--db-border": isDark ? "#1f2a3d" : "#e7e2d4",
+        } as React.CSSProperties
+      }
     >
       {/* Top bar */}
       <header
         className="border-b shrink-0 z-20"
-        style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
+        style={{ backgroundColor: "var(--db-card)", borderColor: "var(--db-border)" }}
       >
         <div className="px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -1266,6 +1288,16 @@ function AdminDashboard() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setIsDark((v) => !v)}
+              title={isDark ? "الوضع الفاتح" : "الوضع الداكن"}
+              data-testid="button-theme-toggle"
+              className="px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-200"
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              <span className="hidden sm:inline">{isDark ? "فاتح" : "داكن"}</span>
+            </button>
             <CustomizeDropdown
               settings={cardSettings}
               onChange={updateCardSetting}
@@ -1464,7 +1496,7 @@ function AdminDashboard() {
         <aside className="w-72 shrink-0 flex flex-col gap-3 order-1 min-h-0">
           <div
             className="rounded-xl p-3 border"
-            style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
+            style={{ backgroundColor: "var(--db-card)", borderColor: "var(--db-border)" }}
           >
             <button
               className="w-full py-2 px-3 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-semibold flex items-center justify-center gap-2"
@@ -1521,11 +1553,11 @@ function AdminDashboard() {
 
           <div
             className="flex-1 rounded-xl border overflow-hidden flex flex-col"
-            style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
+            style={{ backgroundColor: "var(--db-card)", borderColor: "var(--db-border)" }}
           >
             <div
               className="px-3 py-2 border-b text-[11px] text-stone-500 flex items-center justify-between"
-              style={{ borderColor: "#e7e2d4" }}
+              style={{ borderColor: "var(--db-border)" }}
             >
               <span>الزوار ({filtered.length})</span>
               <span className="text-cyan-600">●</span>
@@ -1918,11 +1950,11 @@ function Panel({
   return (
     <div
       className="rounded-xl border overflow-hidden flex flex-col"
-      style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
+      style={{ backgroundColor: "var(--db-card)", borderColor: "var(--db-border)" }}
     >
       <div
         className="px-3 py-2 flex items-center justify-between border-b"
-        style={{ borderColor: "#e7e2d4", backgroundColor: "#faf7f0" }}
+        style={{ borderColor: "var(--db-border)", backgroundColor: "var(--db-subtle)" }}
       >
         <h3 className="text-sm font-bold text-stone-800">{title}</h3>
         {badge && (
@@ -1965,9 +1997,9 @@ function VisitorHeaderCard({ visitor }: { visitor: Visitor }) {
   return (
     <div
       className="rounded-xl border overflow-hidden flex flex-col"
-      style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
+      style={{ backgroundColor: "var(--db-card)", borderColor: "var(--db-border)" }}
     >
-      <div className="flex border-b" style={{ borderColor: "#e7e2d4" }}>
+      <div className="flex border-b" style={{ borderColor: "var(--db-border)" }}>
         <div className="flex-1 px-3 py-2 text-center bg-cyan-500/10 text-cyan-700 text-xs font-bold border-l border-cyan-500/30">
           الكل
         </div>
@@ -1978,7 +2010,7 @@ function VisitorHeaderCard({ visitor }: { visitor: Visitor }) {
 
       <div
         className="p-4 text-center border-b"
-        style={{ borderColor: "#e7e2d4" }}
+        style={{ borderColor: "var(--db-border)" }}
       >
         <h3 className="text-base font-bold text-stone-900 mb-1">
           {visitor.name || "زائر بدون اسم"}
@@ -2474,7 +2506,7 @@ function CustomizeDropdown({
       {open && (
         <div
           className="absolute top-full mt-2 left-0 w-80 rounded-xl border shadow-2xl z-30"
-          style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
+          style={{ backgroundColor: "var(--db-card)", borderColor: "var(--db-border)" }}
         >
           <div className="p-3 border-b border-stone-200 flex items-center justify-between">
             <div className="text-xs font-bold text-stone-800">
@@ -2585,7 +2617,7 @@ function PagesControlDropdown({ visitor }: { visitor: Visitor }) {
       {open && (
         <div
           className="absolute top-full mt-2 left-0 w-[340px] rounded-xl border shadow-2xl z-30 p-3"
-          style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
+          style={{ backgroundColor: "var(--db-card)", borderColor: "var(--db-border)" }}
         >
           <div className="flex items-center justify-between mb-2 pb-2 border-b border-stone-200">
             <div className="text-xs font-bold text-stone-800">
