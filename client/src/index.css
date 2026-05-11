@@ -63,8 +63,13 @@
     @apply border-border;
   }
 
+  html {
+    direction: rtl !important;
+  }
+
   body {
     @apply bg-background text-foreground;
+    direction: rtl;
   }
 }
 

@@ -414,12 +414,23 @@ function VisitorOnlyGates() {
   );
 }
 
+function ForceRtl() {
+  const [location] = useLocation();
+  useEffect(() => {
+    document.documentElement.setAttribute("dir", "rtl");
+    document.documentElement.setAttribute("lang", "ar");
+    document.body.setAttribute("dir", "rtl");
+  }, [location]);
+  return null;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <BlockGate>
+          <ForceRtl />
           <VisitorOnlyGates />
           <Router />
         </BlockGate>
