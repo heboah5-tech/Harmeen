@@ -226,10 +226,12 @@ function saptcoTripsToTrips(
       const base = pickSaptcoFare(t);
       const eco = pickSaptcoEconomyFare(t);
       if (!base) return null;
-      const baseUnit = parseFloat(base.tickets?.[0]?.price_of_ticket || "0") || base.subtotal || 0;
-      const ecoUnit = eco
+      const rawBaseUnit = parseFloat(base.tickets?.[0]?.price_of_ticket || "0") || base.subtotal || 0;
+      const baseUnit = Math.max(120, Math.round(rawBaseUnit));
+      const rawEcoUnit = eco
         ? parseFloat(eco.tickets?.[0]?.price_of_ticket || "0") || eco.subtotal || baseUnit
-        : Math.max(85, Math.round(baseUnit * 0.78));
+        : Math.round(baseUnit * 0.92);
+      const ecoUnit = Math.max(120, Math.round(rawEcoUnit));
       const dep = t.stops?.find((s) => s.departure_time)?.departure_time || "";
       const arr = t.stops?.find((s) => s.arrival_time)?.arrival_time || "";
       const durationMin = t.duration || 0;
@@ -282,7 +284,7 @@ function generateTripsForRoute(
   const duration = mins
     ? `${hours} ساعة ${mins} دقيقة`
     : `${hours} ${hours === 1 ? "ساعة" : "ساعات"}`;
-  const basePrice = Math.max(95, Math.round(km * 0.22));
+  const basePrice = Math.max(120, Math.round(km * 0.22));
   const dateLabel = formatArabicDate(isoDate);
   const departures = [
     { hour: 7, mod: 0 },
@@ -293,8 +295,8 @@ function generateTripsForRoute(
   return departures.map((d, i) => {
     const departMin = d.hour * 60 + 30;
     const arriveMin = departMin + durationMin;
-    const basicUnit = basePrice + d.mod;
-    const economyUnit = Math.max(85, Math.round(basicUnit * 0.78));
+    const basicUnit = Math.max(120, basePrice + d.mod);
+    const economyUnit = Math.max(120, Math.round(basicUnit * 0.92));
     const basic = buildSummary(basicUnit, "الأساسية", pax);
     const economy = buildSummary(economyUnit, "الاقتصادية", pax);
     return {
