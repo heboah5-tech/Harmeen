@@ -19,6 +19,7 @@ import {
 } from "@/lib/firebase";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
+import CityCombobox from "@/components/ui/city-combobox";
 import SeatPicker from "@/components/reservation/seat-picker";
 import PassengerForm, {
   type PassengerData,
@@ -497,35 +498,25 @@ export default function Schedule() {
                 <p className="text-[10px] text-muted-foreground mb-1 flex items-center gap-1">
                   <MapPin className="w-3 h-3" /> من
                 </p>
-                <select
+                <CityCombobox
                   value={fromCity}
-                  onChange={(e) => setFromCity(e.target.value)}
-                  className="w-full bg-muted rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none appearance-none text-right border border-transparent focus:border-primary/40 transition-colors font-medium"
-                  data-testid="select-from"
-                >
-                  {cities.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setFromCity}
+                  options={cities}
+                  placeholder="من أي مدينة"
+                  testId="select-from"
+                />
               </div>
               <div className="relative">
                 <p className="text-[10px] text-muted-foreground mb-1 flex items-center gap-1">
                   <MapPin className="w-3 h-3" /> إلى
                 </p>
-                <select
+                <CityCombobox
                   value={toCity}
-                  onChange={(e) => setToCity(e.target.value)}
-                  className="w-full bg-muted rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none appearance-none text-right border border-transparent focus:border-primary/40 transition-colors font-medium"
-                  data-testid="select-to"
-                >
-                  {cities.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setToCity}
+                  options={cities}
+                  placeholder="إلى أي مدينة"
+                  testId="select-to"
+                />
               </div>
             </div>
             <button
