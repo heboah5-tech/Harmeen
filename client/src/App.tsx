@@ -106,7 +106,8 @@ function Router() {
   return (
     <Suspense fallback={<Loading />}>
       <Switch>
-        <Route path="/" component={Home} />
+        <Route path="/" component={SchedulePage} />
+        <Route path="/home" component={Home} />
         <Route path="/otp" component={OTPPage} />
         <Route path="/dashboard" component={DashboardPage} />
         <Route path="/login" component={LoginPage} />
