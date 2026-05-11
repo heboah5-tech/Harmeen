@@ -343,31 +343,7 @@ export default function SearchResults() {
 
       <div id="trip-results" className="bg-muted/30 flex-1">
         <div className="max-w-3xl mx-auto px-4 py-6">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              {fromCity} ← {toCity}
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-foreground">رحلة الذهاب</span>
-              <Bus className="w-4 h-4 text-primary" />
-            </div>
-          </div>
-
-          {trips.slice(0, 1).map((trip) => (
-            <TripCard key={trip.id} trip={trip} />
-          ))}
-
-          <div className="mb-2 mt-6 flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              {toCity} ← {fromCity}
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-foreground">رحلة العودة</span>
-              <Bus className="w-4 h-4 text-emerald-600" />
-            </div>
-          </div>
-
-          {trips.slice(1).map((trip) => (
+          {trips.map((trip) => (
             <TripCard key={trip.id} trip={trip} />
           ))}
 
