@@ -140,10 +140,10 @@ function PassengerForm({
                   className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background appearance-none cursor-pointer"
                   data-testid={`select-title-${index}`}
                 >
-                  <option>اختار</option>
-                  <option>أ.</option>
-                  <option>د.</option>
-                  <option>م.</option>
+                  <option value="">السيد أو السيدة</option>
+                  <option value="السيد">السيد</option>
+                  <option value="السيدة">السيدة</option>
+                  <option value="الآنسة">الآنسة</option>
                 </select>
                 <ChevronDown className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               </div>
