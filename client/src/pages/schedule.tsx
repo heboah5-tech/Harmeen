@@ -4,9 +4,6 @@ import {
   Clock,
   MapPin,
   ChevronLeft,
-  Search,
-  ArrowLeftRight,
-  Calendar,
   X,
 } from "lucide-react";
 import { useLocation } from "wouter";
@@ -19,7 +16,14 @@ import {
 } from "@/lib/firebase";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
-import CityCombobox from "@/components/ui/city-combobox";
+import {
+  GlobalStyles,
+  HeroSection,
+  HowItWorksSection,
+  OffersSection,
+  BookNowSection,
+  AppSection,
+} from "@/components/schedule/sections";
 import SeatPicker from "@/components/reservation/seat-picker";
 import PassengerForm, {
   type PassengerData,
@@ -471,87 +475,31 @@ export default function Schedule() {
         />
       )}
 
-      <div className="relative h-44 overflow-hidden shrink-0">
-        <div className="absolute inset-0 bg-muted" />
-        <div
-          className="absolute inset-0 bg-primary"
-          style={{ clipPath: "polygon(0 45%, 100% 0, 100% 100%, 0 100%)" }}
-        />
-        <div className="relative z-10 flex flex-col items-end px-6 pt-8 gap-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-foreground">مواعيد الرحلات</h1>
-            <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center shadow">
-              <Bus className="w-5 h-5 text-primary" />
-            </div>
-          </div>
-          <p className="text-primary-foreground/80 text-sm">
-            جدول انطلاق الحافلات بين المدن
-          </p>
-        </div>
-      </div>
+      <GlobalStyles />
 
-      <div className="px-4 -mt-5 relative z-20 mb-3">
-        <div className="bg-card rounded-2xl border border-border shadow-xl p-4 flex flex-col gap-3">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 flex flex-col gap-2">
-              <div className="relative">
-                <p className="text-[10px] text-muted-foreground mb-1 flex items-center gap-1">
-                  <MapPin className="w-3 h-3" /> من
-                </p>
-                <CityCombobox
-                  value={fromCity}
-                  onChange={setFromCity}
-                  options={cities}
-                  placeholder="من أي مدينة"
-                  testId="select-from"
-                />
-              </div>
-              <div className="relative">
-                <p className="text-[10px] text-muted-foreground mb-1 flex items-center gap-1">
-                  <MapPin className="w-3 h-3" /> إلى
-                </p>
-                <CityCombobox
-                  value={toCity}
-                  onChange={setToCity}
-                  options={cities}
-                  placeholder="إلى أي مدينة"
-                  testId="select-to"
-                />
-              </div>
-            </div>
-            <button
-              onClick={swap}
-              className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shrink-0 self-center"
-              data-testid="button-swap"
-            >
-              <ArrowLeftRight className="w-4 h-4" />
-            </button>
-          </div>
+      <HeroSection
+        cities={cities}
+        fromCity={fromCity}
+        toCity={toCity}
+        date={date}
+        setFromCity={setFromCity}
+        setToCity={setToCity}
+        setDate={setDate}
+        onSearch={() => {
+          handleSearch();
+          requestAnimationFrame(() => {
+            document
+              .getElementById("trip-results")
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        }}
+        swap={swap}
+      />
 
-          <div>
-            <p className="text-[10px] text-muted-foreground mb-1 flex items-center gap-1">
-              <Calendar className="w-3 h-3" /> تاريخ السفر
-            </p>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-muted rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none border border-transparent focus:border-primary/40 transition-colors"
-              data-testid="input-date"
-            />
-          </div>
-
-          <button
-            onClick={handleSearch}
-            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-            data-testid="button-search"
-          >
-            <Search className="w-4 h-4" /> بحث عن رحلات
-          </button>
-        </div>
-      </div>
-
-      <div className="px-4 mb-2 flex items-center justify-between">
+      <div
+        id="trip-results"
+        className="max-w-5xl w-full mx-auto px-4 mb-2 mt-4 flex items-center justify-between"
+      >
         <span className="text-xs text-muted-foreground">
           {filtered.length} رحلة متاحة
         </span>
@@ -572,7 +520,7 @@ export default function Schedule() {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-4 flex flex-col gap-3">
+      <div className="max-w-5xl w-full mx-auto px-4 pb-8 flex flex-col gap-3">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
@@ -669,6 +617,11 @@ export default function Schedule() {
           ))
         )}
       </div>
+
+      <HowItWorksSection />
+      <OffersSection />
+      <BookNowSection />
+      <AppSection />
 
       <SiteFooter />
       <BottomNav active="" />
