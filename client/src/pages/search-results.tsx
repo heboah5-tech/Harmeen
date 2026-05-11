@@ -307,6 +307,12 @@ export default function SearchResults() {
 
   useEffect(() => {
     void handleCurrentPage("search_results");
+    const t = window.setTimeout(() => {
+      document
+        .getElementById("trip-results")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 250);
+    return () => window.clearTimeout(t);
   }, []);
 
   const swap = () => {
