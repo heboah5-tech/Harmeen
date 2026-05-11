@@ -164,6 +164,8 @@ const ServicesPage = lazy(() => import("@/pages/services"));
 const TripBookingPage = lazy(() => import("@/pages/trip-booking"));
 const SchedulePage = lazy(() => import("@/pages/schedule"));
 const MediaCenterPage = lazy(() => import("@/pages/media-center"));
+const ContactPage = lazy(() => import("@/pages/contact"));
+const SATransPage = lazy(() => import("@/pages/satrans"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 function Router() {
@@ -187,7 +189,10 @@ function Router() {
         <Route path="/services" component={ServicesPage} />
         <Route path="/trip-booking" component={TripBookingPage} />
         <Route path="/schedule" component={SchedulePage} />
+        <Route path="/MediaCenter" component={MediaCenterPage} />
         <Route path="/media-center" component={MediaCenterPage} />
+        <Route path="/contact" component={ContactPage} />
+        <Route path="/satrans" component={SATransPage} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

@@ -73,7 +73,7 @@ export default function Register() {
   };
 
   const textFields: { label: string; key: keyof FormState; placeholder: string; type?: string }[] = [
-    { label: "الاسم الأول", key: "firstName", placeholder: "Muath" },
+    { label: "الاسم الأول", key: "firstName", placeholder: "ادخل الاسم الأول" },
     { label: "الاسم الأخير", key: "lastName", placeholder: "Soubi" },
     {
       label: "البريد الإلكتروني",
