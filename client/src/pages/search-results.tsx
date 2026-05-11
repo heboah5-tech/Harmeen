@@ -6,6 +6,7 @@ import {
   Bus,
   Check,
   Calendar,
+  Clock,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -395,6 +396,10 @@ function TripCard({ trip }: { trip: Trip }) {
               </div>
             </div>
             <div className="flex items-center justify-end gap-3 text-[11px] sm:text-xs text-muted-foreground flex-wrap">
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {trip.duration}
+              </span>
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
                 {trip.date}
