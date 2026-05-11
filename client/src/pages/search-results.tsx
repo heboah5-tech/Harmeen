@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ChevronDown,
@@ -10,9 +10,127 @@ import {
   ArrowLeftRight,
   Calendar,
   Search,
+  Plus,
+  Minus,
+  Info,
+  X,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { handleCurrentPage } from "@/lib/firebase";
+
+const PASSENGER_TYPES = [
+  { key: "adults", label: "البالغين", min: 1 },
+  { key: "children", label: "الأطفال", min: 0 },
+  { key: "infants", label: "الرضع", min: 0 },
+  { key: "special", label: "الاحتياجات الخاصة", min: 0 },
+  { key: "student", label: "طالب", min: 0 },
+] as const;
+
+type PassengerCounts = Record<(typeof PASSENGER_TYPES)[number]["key"], number>;
+
+function PassengerPickerMulti({
+  value,
+  onChange,
+}: {
+  value: PassengerCounts;
+  onChange: (v: PassengerCounts) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [open]);
+
+  const total = Object.values(value).reduce((a, b) => a + b, 0);
+
+  const set = (key: keyof PassengerCounts, delta: number) => {
+    const cfg = PASSENGER_TYPES.find((t) => t.key === key)!;
+    const next = Math.max(cfg.min, Math.min(9, value[key] + delta));
+    onChange({ ...value, [key]: next });
+  };
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between bg-muted rounded-xl px-3 py-2 text-xs text-muted-foreground hover:bg-muted/70 transition-colors"
+        data-testid="button-open-passenger-picker"
+      >
+        <span>{total} مسافر</span>
+        <span className="flex items-center gap-1">
+          <Users className="w-3 h-3" /> المسافرون ونوع التذكرة
+        </span>
+      </button>
+
+      {open && (
+        <div
+          className="absolute z-[300] mt-2 left-0 right-0 mx-auto w-full max-w-sm bg-white border border-border rounded-2xl shadow-2xl p-4"
+          data-testid="popover-passenger-picker"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="w-7 h-7 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground"
+              data-testid="button-close-passenger-picker"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <span className="text-sm font-bold text-foreground">المسافرون</span>
+          </div>
+
+          <div className="space-y-3">
+            {PASSENGER_TYPES.map((t) => (
+              <div
+                key={t.key}
+                className="flex items-center justify-between"
+                data-testid={`row-passenger-${t.key}`}
+              >
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => set(t.key, -1)}
+                    disabled={value[t.key] <= t.min}
+                    className="w-7 h-7 rounded-full border border-primary text-primary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    data-testid={`button-decrement-${t.key}`}
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+                  <span
+                    className="w-6 text-center text-sm font-bold text-foreground"
+                    data-testid={`text-count-${t.key}`}
+                  >
+                    {value[t.key]}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => set(t.key, +1)}
+                    className="w-7 h-7 rounded-full border border-primary bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center transition-colors"
+                    data-testid={`button-increment-${t.key}`}
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2 text-end">
+                  <span className="text-sm font-semibold text-foreground">{t.label}</span>
+                  <Info className="w-3.5 h-3.5 text-primary cursor-help" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 type SummaryRow = {
   label: string;
@@ -223,6 +341,13 @@ export default function SearchResults() {
   const [tripType, setTripType] = useState<"one-way" | "round">("round");
   const [from, setFrom] = useState("الدمام");
   const [to, setTo] = useState("شيراز");
+  const [passengers, setPassengers] = useState<PassengerCounts>({
+    adults: 1,
+    children: 0,
+    infants: 0,
+    special: 0,
+    student: 0,
+  });
 
   useEffect(() => {
     void handleCurrentPage("search_results");
@@ -291,11 +416,8 @@ export default function SearchResults() {
             />
           </div>
 
-          <div className="flex items-center justify-between mb-3 text-xs text-muted-foreground bg-muted rounded-xl px-3 py-2">
-            <span>2 راكب بالاقتصادية</span>
-            <span className="flex items-center gap-1">
-              <Users className="w-3 h-3" /> المسافرون ونوع التذكرة
-            </span>
+          <div className="mb-3">
+            <PassengerPickerMulti value={passengers} onChange={setPassengers} />
           </div>
 
           <button
