@@ -184,7 +184,12 @@ export default function SeatSelection() {
   const [, setLocation] = useLocation();
   const [seats, setSeats] = useState<Seat[][]>(generateSeats);
   const [selected, setSelected] = useState<number[]>([]);
-  const adultsCount = readPax().adults || 1;
+  const _pax = readPax();
+  const adultsCount =
+    (_pax.adults || 0) +
+      (_pax.children || 0) +
+      (_pax.special || 0) +
+      (_pax.student || 0) || 1;
 
   useEffect(() => {
     void handleCurrentPage("seat_selection");
@@ -309,7 +314,8 @@ export default function SeatSelection() {
           </div>
 
           <p className="text-center text-xs text-muted-foreground mt-4">
-            يجب اختيار {adultsCount} {adultsCount === 1 ? "مقعد" : "مقاعد"} حسب عدد البالغين
+            يجب اختيار {adultsCount} {adultsCount === 1 ? "مقعد" : "مقاعد"} حسب عدد الركاب
+            {(_pax.infants || 0) > 0 ? " (الرضع لا يحتاجون مقاعد)" : ""}
           </p>
         </div>
 
