@@ -121,7 +121,78 @@ function formatHM(totalMin: number): string {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-function generateTripsForRoute(from: string, to: string, isoDate: string): Trip[] {
+type PassengerCounts = {
+  adults: number;
+  children: number;
+  infants: number;
+  special: number;
+  student: number;
+};
+
+const PAX_CATS: {
+  key: keyof PassengerCounts;
+  label: string;
+  factor: number;
+}[] = [
+  { key: "adults", label: "البالغين", factor: 1 },
+  { key: "children", label: "الأطفال", factor: 0.75 },
+  { key: "infants", label: "الرضع", factor: 0.1 },
+  { key: "special", label: "الاحتياجات الخاصة", factor: 0.5 },
+  { key: "student", label: "طالب", factor: 0.6 },
+];
+
+function readPassengerCounts(): PassengerCounts {
+  const fallback: PassengerCounts = {
+    adults: 1,
+    children: 0,
+    infants: 0,
+    special: 0,
+    student: 0,
+  };
+  if (typeof window === "undefined") return fallback;
+  try {
+    const raw = sessionStorage.getItem("searchPassengers");
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw) as Partial<PassengerCounts>;
+    return { ...fallback, ...parsed };
+  } catch {
+    return fallback;
+  }
+}
+
+function buildSummary(
+  unitPrice: number,
+  className: string,
+  pax: PassengerCounts,
+): { rows: SummaryRow[]; total: number } {
+  const rows: SummaryRow[] = [];
+  let subtotal = 0;
+  for (const cat of PAX_CATS) {
+    const qty = pax[cat.key];
+    if (qty <= 0) continue;
+    const ppu = Math.round(unitPrice * cat.factor);
+    const lineTotal = ppu * qty;
+    subtotal += lineTotal;
+    rows.push({
+      label: `تذاكر ${className} (${cat.label})`,
+      qty: `${qty} ×`,
+      price: ppu.toFixed(2),
+      sub: lineTotal.toFixed(2),
+    });
+  }
+  const fee = 0.3;
+  const total = subtotal + fee;
+  rows.push({ label: "إجمالي المبلغ", sub: total.toFixed(2), total: true });
+  rows.push({ label: "رسوم", sub: fee.toFixed(2), fee: true });
+  return { rows, total };
+}
+
+function generateTripsForRoute(
+  from: string,
+  to: string,
+  isoDate: string,
+  pax: PassengerCounts,
+): Trip[] {
   if (!from || !to || from === to || from === "الكل" || to === "الكل") return [];
   const km = distanceKm(from, to);
   const durationMin = Math.round((km / 80) * 60);
@@ -141,8 +212,10 @@ function generateTripsForRoute(from: string, to: string, isoDate: string): Trip[
   return departures.map((d, i) => {
     const departMin = d.hour * 60 + 30;
     const arriveMin = departMin + durationMin;
-    const price = basePrice + d.mod;
-    const economyPrice = Math.max(85, Math.round(price * 0.78));
+    const basicUnit = basePrice + d.mod;
+    const economyUnit = Math.max(85, Math.round(basicUnit * 0.78));
+    const basic = buildSummary(basicUnit, "الأساسية", pax);
+    const economy = buildSummary(economyUnit, "الاقتصادية", pax);
     return {
       id: i + 1,
       from,
@@ -151,37 +224,19 @@ function generateTripsForRoute(from: string, to: string, isoDate: string): Trip[
       time_depart: formatHM(departMin),
       time_arrive: formatHM(arriveMin),
       duration,
-      price,
+      price: basicUnit,
       classes: [
         {
           name: "الأساسية",
           tag: i === 0 ? "الأوفر" : null,
           selected: true,
-          summary: [
-            {
-              label: "تذاكر الأساسية (البالغين)",
-              qty: "1 ×",
-              price: price.toFixed(2),
-              sub: price.toFixed(2),
-            },
-            { label: "إجمالي المبلغ", sub: String(price), total: true },
-            { label: "رسوم", sub: "0.30", fee: true },
-          ],
+          summary: basic.rows,
         },
         {
           name: "الاقتصادية",
           tag: "اقتصادية",
           selected: false,
-          summary: [
-            {
-              label: "تذاكر الاقتصادية (البالغين)",
-              qty: "1 ×",
-              price: economyPrice.toFixed(2),
-              sub: economyPrice.toFixed(2),
-            },
-            { label: "إجمالي المبلغ", sub: String(economyPrice), total: true },
-            { label: "رسوم", sub: "0.30", fee: true },
-          ],
+          summary: economy.rows,
         },
       ],
     };
@@ -195,6 +250,11 @@ function TripCard({ trip }: { trip: Trip }) {
 
   const onBook = () => {
     const tripClass = trip.classes[selectedClass];
+    const totalRow = tripClass?.summary?.find((r) => r.total);
+    const total = totalRow ? parseFloat(String(totalRow.sub)) : trip.price;
+    const pax = readPassengerCounts();
+    const ticketQuantity =
+      pax.adults + pax.children + pax.infants + pax.special + pax.student;
     sessionStorage.setItem(
       "selectedTrip",
       JSON.stringify({ ...trip, selectedClassIndex: selectedClass }),
@@ -207,8 +267,9 @@ function TripCard({ trip }: { trip: Trip }) {
       tripDuration: trip.duration,
       ticketClass: tripClass?.name || "",
       ticketPrice: trip.price,
-      totalAmount: trip.price,
-      ticketQuantity: 1,
+      totalAmount: total,
+      ticketQuantity,
+      passengers: pax,
       currentPage: "search_results",
     });
     setLocation("/passenger-details");
@@ -381,9 +442,11 @@ export default function SearchResults() {
     setToCity(fromCity);
   };
 
+  const [passengers] = useState<PassengerCounts>(() => readPassengerCounts());
+
   const trips = useMemo(
-    () => generateTripsForRoute(fromCity, toCity, date),
-    [fromCity, toCity, date],
+    () => generateTripsForRoute(fromCity, toCity, date, passengers),
+    [fromCity, toCity, date, passengers],
   );
 
   return (

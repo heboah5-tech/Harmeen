@@ -312,7 +312,15 @@ export function HeroSection({
 
               <button
                 type="button"
-                onClick={onSearch}
+                onClick={() => {
+                  try {
+                    sessionStorage.setItem(
+                      "searchPassengers",
+                      JSON.stringify(passengers),
+                    );
+                  } catch {}
+                  onSearch();
+                }}
                 className="relative overflow-hidden w-full bg-primary text-primary-foreground py-4 rounded-xl font-bold text-lg shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300"
                 data-testid="hero-search"
               >

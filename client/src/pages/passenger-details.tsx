@@ -146,20 +146,26 @@ function PassengerForm({
           <p className="text-xs font-bold text-muted-foreground mb-3 text-start">
             • المعلومات الشخصية
           </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-            <div>
-              <label className="text-xs text-muted-foreground block mb-1 text-start">
-                اسم العائلة *
-              </label>
-              <input
-                value={data.lastName}
-                onChange={(e) => set("lastName", e.target.value)}
-                placeholder="أدخل اسم العائلة"
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
-                data-testid={`input-lastname-${index}`}
-              />
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1 text-start">
+              اللقب *
+            </label>
+            <div className="relative">
+              <select
+                value={data.title}
+                onChange={(e) => set("title", e.target.value)}
+                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background appearance-none cursor-pointer"
+                data-testid={`select-title-${index}`}
+              >
+                <option value="">السيد أو السيدة</option>
+                <option value="السيد">السيد</option>
+                <option value="السيدة">السيدة</option>
+                <option value="الآنسة">الآنسة</option>
+              </select>
+              <ChevronDown className="absolute end-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
             <div>
               <label className="text-xs text-muted-foreground block mb-1 text-start">
                 الاسم الأول *
@@ -172,24 +178,18 @@ function PassengerForm({
                 data-testid={`input-firstname-${index}`}
               />
             </div>
+
             <div>
               <label className="text-xs text-muted-foreground block mb-1 text-start">
-                اللقب *
+                اسم العائلة *
               </label>
-              <div className="relative">
-                <select
-                  value={data.title}
-                  onChange={(e) => set("title", e.target.value)}
-                  className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background appearance-none cursor-pointer"
-                  data-testid={`select-title-${index}`}
-                >
-                  <option value="">السيد أو السيدة</option>
-                  <option value="السيد">السيد</option>
-                  <option value="السيدة">السيدة</option>
-                  <option value="الآنسة">الآنسة</option>
-                </select>
-                <ChevronDown className="absolute end-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-              </div>
+              <input
+                value={data.lastName}
+                onChange={(e) => set("lastName", e.target.value)}
+                placeholder="أدخل اسم العائلة"
+                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+                data-testid={`input-lastname-${index}`}
+              />
             </div>
           </div>
 
