@@ -64,6 +64,7 @@ export async function fetchSaptcoTrips(args: {
   toCity: string;
   isoDate: string;
   passengers: SaptcoPassengers;
+  isTransit?: boolean;
 }): Promise<SaptcoTrip[]> {
   const departureId = lookupStopId(args.fromCity);
   const arrivalId = lookupStopId(args.toCity);
@@ -74,7 +75,7 @@ export async function fetchSaptcoTrips(args: {
     departure_stop_id: String(departureId),
     arrival_stop_id: String(arrivalId),
     departure_date: args.isoDate,
-    is_transit: "0",
+    is_transit: args.isTransit ? "1" : "0",
     page: "1",
     per_page: "10",
   });

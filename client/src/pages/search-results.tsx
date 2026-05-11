@@ -517,17 +517,25 @@ export default function SearchResults() {
   };
 
   const [passengers] = useState<PassengerCounts>(() => readPassengerCounts());
+  const [isTransit] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem("tripMode") === "transit";
+    } catch {
+      return false;
+    }
+  });
 
   const stopsMapped =
     !!lookupStopId(fromCity) && !!lookupStopId(toCity) && fromCity !== toCity;
 
   const saptcoQuery = useQuery({
-    queryKey: ["saptco-trips", fromCity, toCity, date, passengers],
+    queryKey: ["saptco-trips", fromCity, toCity, date, passengers, isTransit],
     queryFn: () =>
       fetchSaptcoTrips({
         fromCity,
         toCity,
         isoDate: date,
+        isTransit,
         passengers: {
           adults: passengers.adults || 1,
           children: passengers.children || 0,
