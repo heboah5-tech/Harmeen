@@ -219,7 +219,7 @@ function TripCard({ trip }: { trip: Trip }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white border border-border rounded-2xl overflow-hidden shadow-sm mb-4"
+      className="bg-white border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:border-primary/30 transition-all duration-300 mb-4"
       dir="rtl"
       data-testid={`trip-card-${trip.id}`}
     >

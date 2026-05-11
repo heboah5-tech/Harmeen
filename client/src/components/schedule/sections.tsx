@@ -175,7 +175,7 @@ export function HeroSection({
                 أين تفضل الذهاب <span className="text-primary">اليوم؟</span>
               </h1>
 
-              <div className="flex bg-muted p-1.5 rounded-2xl mb-8 relative">
+              <div className="flex bg-muted/60 p-1.5 rounded-2xl mb-8 relative border border-border/40">
                 <button
                   onClick={() => setTripType("one-way")}
                   className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 relative z-10 ${
@@ -196,7 +196,7 @@ export function HeroSection({
                   <span
                     className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                       tripType === "round"
-                        ? "bg-background/20 text-primary-foreground"
+                        ? "bg-background/25 text-primary-foreground"
                         : "bg-primary text-primary-foreground"
                     }`}
                   >
@@ -204,7 +204,7 @@ export function HeroSection({
                   </span>
                 </button>
                 <div
-                  className="absolute inset-y-1.5 w-[calc(50%-0.375rem)] bg-primary rounded-xl transition-all duration-300 ease-in-out shadow-md"
+                  className="absolute inset-y-1.5 w-[calc(50%-0.375rem)] bg-primary rounded-xl transition-all duration-300 ease-in-out shadow-lg shadow-primary/30"
                   style={{ right: tripType === "one-way" ? "0.375rem" : "calc(50% + 0.375rem)" }}
                 />
               </div>
@@ -240,8 +240,9 @@ export function HeroSection({
                   <button
                     type="button"
                     onClick={swap}
-                    className="absolute top-1/2 left-3 -translate-y-1/2 w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 hover:rotate-180 transition-all duration-300 z-20 border-2 border-background"
+                    className="absolute top-1/2 left-3 -translate-y-1/2 w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl shadow-primary/40 hover:scale-110 hover:rotate-180 active:scale-95 transition-all duration-300 z-20 ring-4 ring-background"
                     data-testid="hero-swap"
+                    aria-label="تبديل المدن"
                   >
                     <ArrowUpDown className="w-5 h-5 text-primary-foreground" />
                   </button>
@@ -253,12 +254,12 @@ export function HeroSection({
                   <label className="text-xs font-bold text-muted-foreground mb-1.5 block px-1">
                     موعد المغادرة <span className="text-destructive">*</span>
                   </label>
-                  <div className="relative flex items-center bg-background border border-border rounded-xl hover:border-primary focus-within:border-primary transition-all">
+                  <div className="relative flex items-center bg-background border-2 border-border rounded-xl hover:border-primary/40 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 transition-all shadow-sm hover:shadow-md">
                     <input
                       type="date"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full bg-transparent py-2.5 px-3 text-sm text-foreground focus:outline-none"
+                      className="w-full bg-transparent py-3 px-3 text-sm font-semibold text-foreground focus:outline-none"
                       data-testid="hero-date-departure"
                     />
                   </div>
@@ -267,13 +268,19 @@ export function HeroSection({
                   <label className="text-xs font-bold text-muted-foreground mb-1.5 block px-1">
                     موعد العودة <span className="text-destructive">*</span>
                   </label>
-                  <div className="relative flex items-center bg-background border border-border rounded-xl hover:border-primary focus-within:border-primary transition-all">
+                  <div
+                    className={`relative flex items-center bg-background border-2 border-border rounded-xl transition-all shadow-sm ${
+                      tripType !== "one-way"
+                        ? "hover:border-primary/40 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 hover:shadow-md"
+                        : "opacity-60"
+                    }`}
+                  >
                     <input
                       type="date"
                       value={returnDate}
                       onChange={(e) => setReturnDate(e.target.value)}
                       disabled={tripType === "one-way"}
-                      className="w-full bg-transparent py-2.5 px-3 text-sm text-foreground focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-transparent py-3 px-3 text-sm font-semibold text-foreground focus:outline-none disabled:cursor-not-allowed"
                       data-testid="hero-date-return"
                     />
                   </div>
@@ -288,11 +295,11 @@ export function HeroSection({
                   <label className="text-xs font-bold text-muted-foreground mb-1.5 block px-1">
                     نوع التذكرة
                   </label>
-                  <div className="relative flex items-center bg-background border border-border rounded-xl hover:border-primary focus-within:border-primary transition-all">
+                  <div className="relative flex items-center bg-background border-2 border-border rounded-xl hover:border-primary/40 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 transition-all shadow-sm hover:shadow-md">
                     <select
                       value={ticketClass}
                       onChange={(e) => setTicketClass(e.target.value)}
-                      className="w-full bg-transparent py-2.5 px-3 text-sm text-foreground focus:outline-none appearance-none cursor-pointer text-right"
+                      className="w-full bg-transparent py-3 px-3 text-sm font-semibold text-foreground focus:outline-none appearance-none cursor-pointer text-right"
                       data-testid="hero-ticket-class"
                     >
                       <option>نوع التذكرة</option>
