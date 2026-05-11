@@ -503,9 +503,7 @@ export default function Schedule() {
         id="trip-results"
         className="max-w-5xl w-full mx-auto px-4 mb-2 mt-4 flex items-center justify-between"
       >
-        <span className="text-xs text-muted-foreground">
-          {filtered.length} رحلة متاحة
-        </span>
+        <span className="text-xs text-muted-foreground" />
         {(searchFrom !== "الكل" || searchTo !== "الكل") && (
           <button
             onClick={() => {
