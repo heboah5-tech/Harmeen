@@ -24,6 +24,10 @@ type Props = {
   setDate: (v: string) => void;
   onSearch: () => void;
   swap: () => void;
+  isTransit?: boolean;
+  setIsTransit?: (v: boolean) => void;
+  passengers?: PassengerCounts;
+  setPassengers?: (v: PassengerCounts) => void;
 };
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -44,11 +48,19 @@ export default function SaptcoSearchPanel({
   setDate,
   onSearch,
   swap,
+  isTransit,
+  setIsTransit,
+  passengers: passengersProp,
+  setPassengers: setPassengersProp,
 }: Props) {
   const [tripType, setTripType] = useState<"one" | "round">("one");
-  const [transit, setTransit] = useState(false);
-  const [passengers, setPassengers] =
+  const [internalTransit, setInternalTransit] = useState(false);
+  const [internalPassengers, setInternalPassengers] =
     useState<PassengerCounts>(DEFAULT_PASSENGERS);
+  const transit = isTransit ?? internalTransit;
+  const setTransit = setIsTransit ?? setInternalTransit;
+  const passengers = passengersProp ?? internalPassengers;
+  const setPassengers = setPassengersProp ?? setInternalPassengers;
 
   const fullCityList = Array.from(
     new Set([

@@ -518,8 +518,10 @@ export default function SearchResults() {
     setToCity(fromCity);
   };
 
-  const [passengers] = useState<PassengerCounts>(() => readPassengerCounts());
-  const [isTransit] = useState<boolean>(() => {
+  const [passengers, setPassengers] = useState<PassengerCounts>(() =>
+    readPassengerCounts(),
+  );
+  const [isTransit, setIsTransit] = useState<boolean>(() => {
     try {
       return sessionStorage.getItem("tripMode") === "transit";
     } catch {
@@ -576,7 +578,12 @@ export default function SearchResults() {
         setFromCity={setFromCity}
         setToCity={setToCity}
         setDate={setDate}
+        isTransit={isTransit}
+        setIsTransit={setIsTransit}
+        passengers={passengers}
+        setPassengers={setPassengers}
         onSearch={() => {
+          void saptcoQuery.refetch();
           document
             .getElementById("trip-results")
             ?.scrollIntoView({ behavior: "smooth", block: "start" });
