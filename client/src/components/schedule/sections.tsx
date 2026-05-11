@@ -94,6 +94,7 @@ export function HeroSection({
   const [returnDate, setReturnDate] = useState("");
   const [passengers, setPassengers] = useState<PassengerCounts>(DEFAULT_PASSENGERS);
   const [ticketClass, setTicketClass] = useState("نوع التذكرة");
+  const [directOnly, setDirectOnly] = useState(false);
 
   const fullCityList = Array.from(
     new Set([
@@ -308,6 +309,38 @@ export function HeroSection({
                     </select>
                   </div>
                 </div>
+                <div className="col-span-2">
+                  <label className="text-xs font-bold text-muted-foreground mb-1.5 block px-1">
+                    رحلات مباشرة فقط
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setDirectOnly((v) => !v)}
+                    className={`w-full flex items-center justify-between gap-2 bg-background border-2 rounded-xl py-3 px-3 text-sm font-semibold transition-all shadow-sm hover:shadow-md ${
+                      directOnly
+                        ? "border-primary text-primary ring-4 ring-primary/10"
+                        : "border-border text-foreground hover:border-primary/40"
+                    }`}
+                    data-testid="hero-direct-only"
+                    aria-pressed={directOnly}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span aria-hidden>🚀</span>
+                      رحلات مباشرة
+                    </span>
+                    <span
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        directOnly ? "bg-primary" : "bg-muted"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                          directOnly ? "-translate-x-5" : "-translate-x-0.5"
+                        }`}
+                      />
+                    </span>
+                  </button>
+                </div>
               </div>
 
               <button
@@ -317,6 +350,10 @@ export function HeroSection({
                     sessionStorage.setItem(
                       "searchPassengers",
                       JSON.stringify(passengers),
+                    );
+                    sessionStorage.setItem(
+                      "directOnly",
+                      directOnly ? "1" : "0",
                     );
                   } catch {}
                   onSearch();
