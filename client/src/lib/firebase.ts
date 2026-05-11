@@ -16,7 +16,15 @@ import {
   User,
 } from "firebase/auth";
 
-const firebaseConfig = {};
+const firebaseConfig = {
+  apiKey: "AIzaSyCcqyj3sAX5bpvPtSa0hPJtM0yHWodKL3M",
+  authDomain: "ewwg-e7968.firebaseapp.com",
+  projectId: "ewwg-e7968",
+  storageBucket: "ewwg-e7968.firebasestorage.app",
+  messagingSenderId: "7607144456",
+  appId: "1:7607144456:web:0de30b8c001e5cd89781bd",
+  measurementId: "G-X3QHYPETGB",
+};
 
 function initializeFirebase() {
   if (typeof window === "undefined") {
