@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpDown, ChevronLeft, ChevronRight, Search, Minus, Plus, Users } from "lucide-react";
+import { ArrowUpDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import CityCombobox from "@/components/ui/city-combobox";
+import PassengerPickerMulti, {
+  DEFAULT_PASSENGERS,
+  type PassengerCounts,
+} from "@/components/ui/passenger-picker-multi";
+import { SAUDI_CITIES } from "@/lib/saudi-cities";
 
 export const GlobalStyles = () => (
   <style>{`
@@ -61,72 +66,6 @@ export const AnimatedElement = ({
   );
 };
 
-function PassengerPicker({
-  value,
-  onChange,
-}: {
-  value: number;
-  onChange: (n: number) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onClick = (e: MouseEvent) => {
-      if (!ref.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, [open]);
-
-  return (
-    <div className="relative" ref={ref} dir="rtl">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center bg-background border border-border rounded-xl hover:border-primary focus-within:border-primary transition-all"
-        data-testid="passenger-picker-button"
-      >
-        <div className="w-10 h-10 flex items-center justify-center border-l border-border bg-muted/30 rounded-r-xl">
-          <Users className="w-4 h-4 text-muted-foreground" />
-        </div>
-        <span className="flex-1 text-right py-2.5 px-3 text-sm text-foreground">
-          {value} {value === 1 ? "مسافر" : "مسافرين"}
-        </span>
-      </button>
-      {open && (
-        <div className="absolute z-[300] mt-1 w-full bg-white border border-border rounded-xl shadow-xl p-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-bold text-foreground">عدد المسافرين</span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => onChange(Math.max(1, value - 1))}
-                className="w-8 h-8 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
-                data-testid="passenger-decrement"
-              >
-                <Minus className="w-4 h-4" />
-              </button>
-              <span className="w-8 text-center text-sm font-bold" data-testid="passenger-count">
-                {value}
-              </span>
-              <button
-                type="button"
-                onClick={() => onChange(Math.min(9, value + 1))}
-                className="w-8 h-8 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
-                data-testid="passenger-increment"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 type HeroProps = {
   cities: string[];
   fromCity: string;
@@ -153,8 +92,15 @@ export function HeroSection({
   const [tripType, setTripType] = useState<"one-way" | "round">("one-way");
   const [activeTab, setActiveTab] = useState<"manage" | "international" | "domestic">("domestic");
   const [returnDate, setReturnDate] = useState("");
-  const [passengers, setPassengers] = useState(1);
+  const [passengers, setPassengers] = useState<PassengerCounts>(DEFAULT_PASSENGERS);
   const [ticketClass, setTicketClass] = useState("نوع التذكرة");
+
+  const fullCityList = Array.from(
+    new Set([
+      ...SAUDI_CITIES,
+      ...cities.filter((c) => c && c !== "الكل"),
+    ]),
+  );
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
@@ -272,7 +218,7 @@ export function HeroSection({
                     <CityCombobox
                       value={fromCity === "الكل" ? "" : fromCity}
                       onChange={(v) => setFromCity(v || "الكل")}
-                      options={cities.filter((c) => c !== "الكل")}
+                      options={fullCityList}
                       placeholder="محطة المغادرة"
                       testId="hero-from"
                     />
@@ -285,7 +231,7 @@ export function HeroSection({
                     <CityCombobox
                       value={toCity === "الكل" ? "" : toCity}
                       onChange={(v) => setToCity(v || "الكل")}
-                      options={cities.filter((c) => c !== "الكل")}
+                      options={fullCityList}
                       placeholder="محطة الوصول"
                       testId="hero-to"
                     />
@@ -336,7 +282,7 @@ export function HeroSection({
                   <label className="text-xs font-bold text-muted-foreground mb-1.5 block px-1">
                     المسافرين <span className="text-destructive">*</span>
                   </label>
-                  <PassengerPicker value={passengers} onChange={setPassengers} />
+                  <PassengerPickerMulti value={passengers} onChange={setPassengers} />
                 </div>
                 <div className="col-span-2">
                   <label className="text-xs font-bold text-muted-foreground mb-1.5 block px-1">
