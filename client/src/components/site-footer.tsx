@@ -38,19 +38,21 @@ const SOCIALS = [
 ];
 
 const SUPPORT_LINKS = [
-  { label: "شروط الاستخدام", href: "#" },
+  { label: "الأسئلة الشائعة", href: "#" },
+  { label: "إلغاء التذاكر", href: "#" },
+  { label: "التغييرات والاسترجاع", href: "#" },
+  { label: "إدارة التذاكر", href: "#" },
+  { label: "رحلات بطاقة سوا", href: "#" },
   { label: "سياسة الخصوصية", href: "#" },
-  { label: "التعريفة والأحكام", href: "#" },
-  { label: "دليل سابتكو العام", href: "#" },
-  { label: "الإبلاغ عن مخالفات", href: "#" },
 ];
 
 const SERVICE_LINKS = [
-  { label: "حمل التطبيق", href: "#" },
-  { label: "دفع التذكرة", href: "#" },
-  { label: "الجدول الزمني", href: "/schedule" },
-  { label: "خدماتنا", href: "/services" },
-  { label: "الرحلات", href: "/trips" },
+  { label: "حجز التذاكر", href: "/" },
+  { label: "رحلاتنا", href: "#" },
+  { label: "العروض", href: "#" },
+  { label: "شحن البضائع", href: "#" },
+  { label: "تتبع الباصات", href: "#" },
+  { label: "حجز رحلة كاملة", href: "#" },
 ];
 
 export default function SiteFooter() {
@@ -90,9 +92,15 @@ export default function SiteFooter() {
             </p>
 
             <div className="flex flex-col gap-2 mt-2 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-primary" />
-                الرياض، المملكة العربية السعودية
+              <span className="inline-flex items-start gap-2">
+                <MapPin className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                <span className="leading-relaxed">
+                  مركز جرير، الرياض، المملكة العربية السعودية
+                  <br />
+                  الرمز البريدي: ١٢٣٨٣
+                  <br />
+                  الرقم الإضافي: ٤٢٦٢
+                </span>
               </span>
               <a
                 href="tel:920000877"

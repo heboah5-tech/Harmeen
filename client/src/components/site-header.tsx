@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { Menu, Home } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 const LOGO =
   "https://satrans.com.sa/_next/static/media/sat-logo.0_9_-ihlb~um..svg";
 
-const NAV_ITEMS = [
-  "عن سابتكو",
-  "خدماتنا",
-  "شركاتنا",
-  "مشاريعنا",
-  "الإستدامة",
-  "المستثمرون",
+const NAV_ITEMS: { label: string; href: string }[] = [
+  { label: "الرئيسية", href: "/" },
+  { label: "رحلاتنا", href: "#" },
+  { label: "من نحن", href: "#" },
+  { label: "خيارات التذاكر", href: "#" },
+  { label: "العروض", href: "#" },
+  { label: "المركز الإعلامي", href: "/MediaCenter" },
+  { label: "الأسئلة الشائعة", href: "#" },
+  { label: "تواصل معنا", href: "#" },
 ];
-
-const NAV_TAIL = ["التوظيف", "الموردون"];
 
 export default function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
@@ -44,53 +44,58 @@ export default function SiteHeader() {
           >
             <img
               src={LOGO}
-              alt="SAPTCO"
+              alt="SAPTCO ALSA"
               className="h-12 w-auto object-contain"
             />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-2 flex-1 justify-center">
-            <Link
-              href="/"
-              className="text-foreground hover:text-primary transition-colors p-2 rounded-full hover:bg-secondary"
-              data-testid="link-home"
-            >
-              <Home className="w-5 h-5" />
-            </Link>
-            {NAV_ITEMS.map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="text-[15px] font-medium text-foreground hover:text-primary transition-colors px-3 py-2 rounded-lg hover:bg-secondary/50 whitespace-nowrap"
-              >
-                {item}
-              </a>
-            ))}
-            <Link
-              href="/MediaCenter"
-              className="text-[15px] font-medium text-foreground hover:text-primary transition-colors px-3 py-2 rounded-lg hover:bg-secondary/50 whitespace-nowrap"
-              data-testid="link-media-center"
-            >
-              المركز الإعلامي
-            </Link>
-            {NAV_TAIL.map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="text-[15px] font-medium text-foreground hover:text-primary transition-colors px-3 py-2 rounded-lg hover:bg-secondary/50 whitespace-nowrap"
-              >
-                {item}
-              </a>
-            ))}
+          <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+            {NAV_ITEMS.map((item) =>
+              item.href.startsWith("/") ? (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="text-[15px] font-medium text-foreground hover:text-primary transition-colors px-3 py-2 rounded-lg hover:bg-secondary/50 whitespace-nowrap"
+                  data-testid={`link-nav-${item.label}`}
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="text-[15px] font-medium text-foreground hover:text-primary transition-colors px-3 py-2 rounded-lg hover:bg-secondary/50 whitespace-nowrap"
+                  data-testid={`link-nav-${item.label}`}
+                >
+                  {item.label}
+                </a>
+              ),
+            )}
           </nav>
 
           <div className="flex items-center gap-3 shrink-0">
             <a
               href="#"
-              className="hidden sm:inline-flex items-center justify-center w-8 h-8 text-sm font-bold bg-primary text-primary-foreground rounded-full hover:scale-105 hover:shadow-md transition-all duration-300"
+              className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-muted/40 border border-border hover:bg-muted/70 transition-colors"
               data-testid="link-language"
             >
-              En
+              <span className="text-sm font-semibold text-foreground">
+                العربية
+              </span>
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Flag_of_Saudi_Arabia.svg/40px-Flag_of_Saudi_Arabia.svg.png"
+                alt="KSA"
+                className="w-5 h-3.5 object-cover rounded-sm"
+              />
+            </a>
+
+            <a
+              href="#"
+              className="hidden sm:inline-flex items-center justify-center px-5 py-2.5 text-sm font-bold text-white rounded-full hover:opacity-90 transition-all duration-300 shadow-md"
+              style={{ backgroundColor: "#3CB4D8" }}
+              data-testid="link-login"
+            >
+              الدخول/التسجيل
             </a>
 
             <Sheet>
@@ -113,48 +118,51 @@ export default function SiteHeader() {
                   <Link href="/">
                     <img
                       src={LOGO}
-                      alt="SAPTCO"
+                      alt="SAPTCO ALSA"
                       className="h-10 w-auto object-contain"
                     />
                   </Link>
                 </div>
                 <nav className="flex flex-col gap-1">
-                  <Link
-                    href="/"
-                    className="text-foreground hover:text-primary hover:bg-secondary rounded-lg px-4 py-3 text-base font-medium transition-colors flex items-center gap-3"
-                  >
-                    <Home className="w-5 h-5" /> الرئيسية
-                  </Link>
-                  {NAV_ITEMS.map((item) => (
+                  {NAV_ITEMS.map((item) =>
+                    item.href.startsWith("/") ? (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className="text-foreground hover:text-primary hover:bg-secondary rounded-lg px-4 py-3 text-base font-medium transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        className="text-foreground hover:text-primary hover:bg-secondary rounded-lg px-4 py-3 text-base font-medium transition-colors"
+                      >
+                        {item.label}
+                      </a>
+                    ),
+                  )}
+                  <div className="mt-6 pt-6 border-t border-border flex flex-col gap-3">
                     <a
-                      key={item}
                       href="#"
-                      className="text-foreground hover:text-primary hover:bg-secondary rounded-lg px-4 py-3 text-base font-medium transition-colors"
+                      className="inline-flex items-center justify-center px-5 py-3 text-sm font-bold text-white rounded-full"
+                      style={{ backgroundColor: "#3CB4D8" }}
                     >
-                      {item}
+                      الدخول/التسجيل
                     </a>
-                  ))}
-                  <Link
-                    href="/MediaCenter"
-                    className="text-foreground hover:text-primary hover:bg-secondary rounded-lg px-4 py-3 text-base font-medium transition-colors"
-                  >
-                    المركز الإعلامي
-                  </Link>
-                  {NAV_TAIL.map((item) => (
-                    <a
-                      key={item}
-                      href="#"
-                      className="text-foreground hover:text-primary hover:bg-secondary rounded-lg px-4 py-3 text-base font-medium transition-colors"
-                    >
-                      {item}
-                    </a>
-                  ))}
-                  <div className="mt-6 pt-6 border-t border-border flex justify-center">
                     <a
                       href="#"
-                      className="inline-flex items-center justify-center w-10 h-10 text-sm font-bold bg-primary text-primary-foreground rounded-full hover:scale-105 transition-all"
+                      className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-full bg-muted/40 border border-border"
                     >
-                      En
+                      <span className="text-sm font-semibold text-foreground">
+                        العربية
+                      </span>
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Flag_of_Saudi_Arabia.svg/40px-Flag_of_Saudi_Arabia.svg.png"
+                        alt="KSA"
+                        className="w-5 h-3.5 object-cover rounded-sm"
+                      />
                     </a>
                   </div>
                 </nav>
