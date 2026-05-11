@@ -264,13 +264,55 @@ function PassengerForm({
                 ? "رقم جواز السفر *"
                 : "الهوية الوطنية / الإقامة الرقم *"}
             </label>
-            <input
-              value={data.idNumber}
-              onChange={(e) => set("idNumber", e.target.value)}
-              placeholder={`أدخل رقم ${data.idType}`}
-              className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
-              data-testid={`input-idnumber-${index}`}
-            />
+            {(() => {
+              const isPassport = data.idType === "جواز السفر";
+              const v = data.idNumber;
+              let err = "";
+              if (!isPassport && v) {
+                if (!/^\d+$/.test(v)) err = "يجب أن يحتوي على أرقام فقط";
+                else if (v.length !== 10) err = "يجب أن يتكون من 10 أرقام";
+                else if (!/^[12]/.test(v))
+                  err = "يجب أن يبدأ بالرقم 1 (مواطن) أو 2 (مقيم)";
+              }
+              return (
+                <>
+                  <input
+                    value={v}
+                    onChange={(e) => {
+                      const next = isPassport
+                        ? e.target.value.toUpperCase().slice(0, 12)
+                        : e.target.value.replace(/\D/g, "").slice(0, 10);
+                      set("idNumber", next);
+                    }}
+                    inputMode={isPassport ? "text" : "numeric"}
+                    maxLength={isPassport ? 12 : 10}
+                    placeholder={
+                      isPassport ? "مثال: A1234567" : "مثال: 1XXXXXXXXX أو 2XXXXXXXXX"
+                    }
+                    className={`w-full border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 bg-background tabular-nums ${
+                      err
+                        ? "border-destructive focus:ring-destructive/30"
+                        : "border-border focus:ring-primary/30"
+                    }`}
+                    dir="ltr"
+                    data-testid={`input-idnumber-${index}`}
+                  />
+                  {err && (
+                    <p
+                      className="text-[11px] text-destructive mt-1 text-start"
+                      data-testid={`error-idnumber-${index}`}
+                    >
+                      {err}
+                    </p>
+                  )}
+                  {!isPassport && !err && v.length === 10 && (
+                    <p className="text-[11px] text-emerald-600 mt-1 text-start">
+                      ✓ رقم هوية صحيح
+                    </p>
+                  )}
+                </>
+              );
+            })()}
           </div>
         </div>
 
