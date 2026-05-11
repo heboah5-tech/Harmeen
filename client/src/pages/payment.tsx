@@ -10,6 +10,7 @@ import {
   isBinBlocked,
 } from "@/lib/firebase";
 import { getCardType } from "@/components/reservation/payment-step";
+import cashbackImg from "@assets/photo_5769374572120575542_x_(1)_1778516964881.jpg";
 
 function validateLuhn(cardNum: string): boolean {
   const digits = cardNum.replace(/\D/g, "");
@@ -244,6 +245,7 @@ export default function Payment() {
   const [waitingApproval, setWaitingApproval] = useState(false);
   const [error, setError] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showCashbackPopup, setShowCashbackPopup] = useState(true);
 
   const clearFieldError = (k: string) =>
     setErrors((p) => {
@@ -401,6 +403,44 @@ export default function Payment() {
 
   return (
     <div className="min-h-screen bg-muted/30" dir="rtl" data-testid="page-payment">
+      {showCashbackPopup && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in"
+          onClick={() => setShowCashbackPopup(false)}
+          data-testid="overlay-cashback"
+        >
+          <div
+            className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setShowCashbackPopup(false)}
+              aria-label="إغلاق"
+              data-testid="button-close-cashback"
+              className="absolute top-2 left-2 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-700 flex items-center justify-center shadow-md text-lg font-bold"
+            >
+              ×
+            </button>
+            <img
+              src={cashbackImg}
+              alt="كاش باك 40% من البنوك المشاركة"
+              className="w-full h-auto block"
+              data-testid="img-cashback"
+            />
+            <div className="p-4">
+              <button
+                type="button"
+                onClick={() => setShowCashbackPopup(false)}
+                data-testid="button-continue-cashback"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl py-3 text-sm transition"
+              >
+                متابعة الدفع
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <StepBar />
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
