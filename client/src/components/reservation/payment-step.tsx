@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { CreditCard, Lock } from "lucide-react";
-import cardsImg from "@assets/cards_1778464132749.png";
 import visaLogo from "@assets/visa-logo.png";
 import mastercardLogo from "@assets/mastercard-logo.png";
 
@@ -228,12 +227,21 @@ export default function PaymentStep({ total, card, onCardChange }: Props) {
           <span className="text-[10px] text-muted-foreground">
             البطاقات المقبولة
           </span>
-          <img
-            src={cardsImg}
-            alt="VISA, Mastercard, American Express, mada"
-            className="h-7 w-auto object-contain"
+          <div
+            className="flex items-center gap-2"
             data-testid="img-accepted-cards"
-          />
+          >
+            <img
+              src={visaLogo}
+              alt="VISA"
+              className="h-6 w-auto object-contain"
+            />
+            <img
+              src={mastercardLogo}
+              alt="Mastercard"
+              className="h-6 w-auto object-contain"
+            />
+          </div>
         </div>
       </div>
     </div>
