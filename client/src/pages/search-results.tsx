@@ -379,9 +379,6 @@ function TripCard({ trip }: { trip: Trip }) {
                 <div className="font-bold text-foreground text-xs sm:text-sm truncate">
                   {trip.to}
                 </div>
-                <div className="text-base sm:text-lg font-extrabold text-foreground">
-                  {trip.time_arrive}
-                </div>
               </div>
               <div className="flex flex-col items-center gap-1 px-1 sm:px-2 flex-shrink-0">
                 <div className="w-2 h-2 rounded-full bg-primary" />
@@ -394,9 +391,6 @@ function TripCard({ trip }: { trip: Trip }) {
                 <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">المغادرة</div>
                 <div className="font-bold text-foreground text-xs sm:text-sm truncate">
                   {trip.from}
-                </div>
-                <div className="text-base sm:text-lg font-extrabold text-foreground">
-                  {trip.time_depart}
                 </div>
               </div>
             </div>
