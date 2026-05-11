@@ -145,7 +145,7 @@ export default function Register() {
         <div className="border-b border-primary-foreground/30 pb-2 flex items-center gap-3 justify-end">
           <input
             type="tel"
-            placeholder="55546663"
+            placeholder="55######"
             value={form.phone}
             onChange={(e) => update("phone", e.target.value)}
             className="flex-1 bg-transparent text-primary-foreground placeholder:text-primary-foreground/60 text-right text-sm focus:outline-none py-1"

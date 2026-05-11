@@ -124,7 +124,7 @@ export default function SATrans() {
             استكشف الوجهات وقم بحجز تذكرتك في خطوات بسيطة
           </p>
           <Link
-            href="/trip-booking"
+            href="/schedule"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity"
             data-testid="button-book-trip"
           >

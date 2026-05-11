@@ -295,7 +295,7 @@ function HeroSection() {
         >
           <div className="flex justify-center mb-3">
             <Link
-              href="/register"
+              href="/schedule"
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg"
               data-testid="button-reserve-trip"
             >

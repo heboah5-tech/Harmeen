@@ -8,6 +8,7 @@ import {
   Clock,
   ChevronLeft,
 } from "lucide-react";
+import { Link } from "wouter";
 import { BottomNav } from "./services";
 
 const cities = [
@@ -95,12 +96,13 @@ function TripCard({ trip, passengers }: { trip: Trip; passengers: number }) {
           <span className="text-2xl font-black text-primary">{total}</span>
           <span className="text-sm text-muted-foreground mr-1">ر.س</span>
         </div>
-        <button
+        <Link
+          href="/schedule"
           className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow whitespace-nowrap"
           data-testid={`button-book-trip-${trip.id}`}
         >
           احجز الآن
-        </button>
+        </Link>
       </div>
     </div>
   );
