@@ -11,7 +11,8 @@ import {
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { addData, handleCurrentPage } from "@/lib/firebase";
-import { GlobalStyles, HeroSection } from "@/components/schedule/sections";
+import { GlobalStyles } from "@/components/schedule/sections";
+import SaptcoSearchPanel from "@/components/schedule/saptco-search-panel";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
 import {
@@ -503,6 +504,7 @@ export default function SearchResults() {
 
   useEffect(() => {
     void handleCurrentPage("search_results");
+    if (!initial) return;
     const t = window.setTimeout(() => {
       document
         .getElementById("trip-results")
@@ -566,7 +568,7 @@ export default function SearchResults() {
       <SiteHeader />
       <GlobalStyles />
 
-      <HeroSection
+      <SaptcoSearchPanel
         cities={cities}
         fromCity={fromCity}
         toCity={toCity}
