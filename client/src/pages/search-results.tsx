@@ -395,7 +395,7 @@ function TripCard({ trip }: { trip: Trip }) {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 text-[11px] sm:text-xs text-muted-foreground flex-wrap">
+            <div className="flex items-center justify-end gap-3 text-[11px] sm:text-xs text-foreground font-bold flex-wrap">
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 {trip.time_depart}
