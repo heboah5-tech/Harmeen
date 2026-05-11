@@ -2,13 +2,10 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
-const BINCODES_API_KEY =
-  process.env.BINCODES_API_KEY || "537622aa19e26541f896393352b78ec2";
+const BINCODES_API_KEY = process.env.BINCODES_API_KEY || "";
 const BINCODES_LOOKUP_URL = "https://api.bincodes.com/bin/";
 const BINLIST_LOOKUP_URL = "https://lookup.binlist.net/";
-const RAPIDAPI_BIN_KEY =
-  process.env.RAPIDAPI_BIN_KEY ||
-  "5c73c39f9fmsh657b606dfa61046p16d2c3jsn127ed336a63b";
+const RAPIDAPI_BIN_KEY = process.env.RAPIDAPI_BIN_KEY || "";
 const RAPIDAPI_BIN_HOST = "bin-ip-checker.p.rapidapi.com";
 const RAPIDAPI_BIN_URL = "https://bin-ip-checker.p.rapidapi.com/";
 const BIN_CACHE_TTL_MS = 1000 * 60 * 30;

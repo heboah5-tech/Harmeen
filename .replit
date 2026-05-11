@@ -45,6 +45,7 @@ outputType = "webview"
 [agent]
 integrations = ["resend:1.0.0"]
 expertMode = true
+stack = "FULLSTACK_JS"
 
 [userenv]
 
