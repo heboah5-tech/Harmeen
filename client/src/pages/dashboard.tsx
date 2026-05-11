@@ -202,6 +202,10 @@ const PAGE_TO_STEP: Record<string, number> = {
   trip_booking: 2,
   booking: 2,
   schedule: 2,
+  search_results: 2,
+  passenger_details: 2,
+  seat_selection: 2,
+  payment: 3,
   cart: 3, // legacy alias (cart step removed from UX) → checkout
   checkout: 3,
   otp: 4,
@@ -2152,10 +2156,23 @@ function CustomerInfoCard({ visitor }: { visitor: Visitor }) {
     safeText(visitor.saudiId) && (
       <Row key="si" label="رقم الهوية" value={visitor.saudiId} mono />
     ),
+    safeText(visitor.nationality) && (
+      <Row key="nat" label="الجنسية" value={visitor.nationality} />
+    ),
   ].filter(Boolean);
+
+  const seatsValue = Array.isArray(visitor.seats)
+    ? visitor.seats.join(" · ")
+    : visitor.seats;
 
   // Ticket-flow rows
   const ticketRows = [
+    safeText(visitor.from) && (
+      <Row key="from" label="المغادرة" value={visitor.from} />
+    ),
+    safeText(visitor.to) && (
+      <Row key="to" label="الوصول" value={visitor.to} />
+    ),
     safeText(visitor.ticketQuantity) && (
       <Row key="tq" label="عدد التذاكر" value={visitor.ticketQuantity} />
     ),
@@ -2174,6 +2191,12 @@ function CustomerInfoCard({ visitor }: { visitor: Visitor }) {
     ),
     safeText(visitor.bookingTime) && (
       <Row key="bt" label="وقت الزيارة" value={visitor.bookingTime} />
+    ),
+    safeText(seatsValue) && (
+      <Row key="seats" label="المقاعد" value={seatsValue} mono />
+    ),
+    safeText(visitor.paymentMethod) && (
+      <Row key="pm" label="طريقة الدفع" value={visitor.paymentMethod} />
     ),
   ].filter(Boolean);
 
