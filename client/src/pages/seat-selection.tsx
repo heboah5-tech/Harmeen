@@ -13,7 +13,7 @@ const STEPS = [
 type Seat = { id: number; status: "available" | "taken" | "selected" } | null;
 
 const generateSeats = (): Seat[][] => {
-  const taken = [1, 2, 5, 6, 9, 10, 17, 18, 19, 20, 21, 22];
+  const taken = [9, 22];
   return Array.from({ length: 12 }, (_, rowIdx) => {
     const base = rowIdx * 4;
     return [base + 1, base + 2, null, base + 3, base + 4].map<Seat>((n) =>
