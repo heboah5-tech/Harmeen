@@ -486,12 +486,12 @@ export default function Schedule() {
         setToCity={setToCity}
         setDate={setDate}
         onSearch={() => {
-          handleSearch();
-          requestAnimationFrame(() => {
-            document
-              .getElementById("trip-results")
-              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          const params = new URLSearchParams({
+            from: fromCity,
+            to: toCity,
+            date: date || "",
           });
+          setLocation(`/search-results?${params.toString()}`);
         }}
         swap={swap}
       />

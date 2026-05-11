@@ -242,11 +242,24 @@ function TripCard({ trip }: { trip: Trip }) {
   );
 }
 
+function readSearchParams() {
+  if (typeof window === "undefined") return null;
+  const qs = window.location.search;
+  if (!qs) return null;
+  const p = new URLSearchParams(qs);
+  return {
+    from: p.get("from") || "",
+    to: p.get("to") || "",
+    date: p.get("date") || "",
+  };
+}
+
 export default function SearchResults() {
   const todayStr = new Date().toISOString().split("T")[0];
-  const [fromCity, setFromCity] = useState("الدمام");
-  const [toCity, setToCity] = useState("الرياض");
-  const [date, setDate] = useState(todayStr);
+  const initial = readSearchParams();
+  const [fromCity, setFromCity] = useState(initial?.from || "الدمام");
+  const [toCity, setToCity] = useState(initial?.to || "الرياض");
+  const [date, setDate] = useState(initial?.date || todayStr);
 
   useEffect(() => {
     void handleCurrentPage("search_results");
