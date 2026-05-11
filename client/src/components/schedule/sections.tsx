@@ -94,7 +94,7 @@ export function HeroSection({
   const [returnDate, setReturnDate] = useState("");
   const [passengers, setPassengers] = useState<PassengerCounts>(DEFAULT_PASSENGERS);
   const [ticketClass, setTicketClass] = useState("نوع التذكرة");
-  const [directOnly, setDirectOnly] = useState(false);
+  const [tripMode, setTripMode] = useState<"direct" | "transit">("direct");
 
   const fullCityList = Array.from(
     new Set([
@@ -311,35 +311,45 @@ export function HeroSection({
                 </div>
                 <div className="col-span-2">
                   <label className="text-xs font-bold text-muted-foreground mb-1.5 block px-1">
-                    رحلات مباشرة فقط
+                    نوع الرحلة
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => setDirectOnly((v) => !v)}
-                    className={`w-full flex items-center justify-between gap-2 bg-background border-2 rounded-xl py-3 px-3 text-sm font-semibold transition-all shadow-sm hover:shadow-md ${
-                      directOnly
-                        ? "border-primary text-primary ring-4 ring-primary/10"
-                        : "border-border text-foreground hover:border-primary/40"
-                    }`}
-                    data-testid="hero-direct-only"
-                    aria-pressed={directOnly}
-                  >
-                    <span className="flex items-center gap-2">
+                  <div className="relative flex bg-muted/60 p-1.5 rounded-xl border border-border/40">
+                    <button
+                      type="button"
+                      onClick={() => setTripMode("direct")}
+                      className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-bold transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${
+                        tripMode === "direct"
+                          ? "text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      data-testid="hero-trip-direct"
+                    >
                       <span aria-hidden>🚀</span>
                       رحلات مباشرة
-                    </span>
-                    <span
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        directOnly ? "bg-primary" : "bg-muted"
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTripMode("transit")}
+                      className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-bold transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${
+                        tripMode === "transit"
+                          ? "text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
+                      data-testid="hero-trip-transit"
                     >
-                      <span
-                        className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                          directOnly ? "-translate-x-5" : "-translate-x-0.5"
-                        }`}
-                      />
-                    </span>
-                  </button>
+                      <span aria-hidden>🔄</span>
+                      رحلات ترانزيت
+                    </button>
+                    <div
+                      className="absolute inset-y-1.5 w-[calc(50%-0.375rem)] bg-primary rounded-lg transition-all duration-300 ease-in-out shadow-md shadow-primary/30"
+                      style={{
+                        right:
+                          tripMode === "direct"
+                            ? "0.375rem"
+                            : "calc(50% + 0.375rem)",
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -351,9 +361,10 @@ export function HeroSection({
                       "searchPassengers",
                       JSON.stringify(passengers),
                     );
+                    sessionStorage.setItem("tripMode", tripMode);
                     sessionStorage.setItem(
                       "directOnly",
-                      directOnly ? "1" : "0",
+                      tripMode === "direct" ? "1" : "0",
                     );
                   } catch {}
                   onSearch();
