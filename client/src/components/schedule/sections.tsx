@@ -168,8 +168,8 @@ export function HeroSection({
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="lg:col-span-5 relative z-10"
           >
-            <div className="bg-card rounded-[2rem] p-6 lg:p-8 shadow-2xl border border-border/50 relative overflow-hidden h-full">
-              <div className="absolute top-0 right-0 w-full h-1/2 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
+            <div className="bg-card rounded-[2rem] p-6 lg:p-8 shadow-2xl border border-border/50 relative h-full">
+              <div className="absolute top-0 right-0 w-full h-1/2 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none rounded-t-[2rem]" />
 
               <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-8 relative">
                 أين تفضل الذهاب <span className="text-primary">اليوم؟</span>
