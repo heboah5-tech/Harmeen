@@ -225,7 +225,7 @@ function TripCard({ trip }: { trip: Trip }) {
                     <span className="font-bold">{row.sub} ر.س</span>
                     <span className="text-end">
                       {row.qty && (
-                        <span className="text-muted-foreground ml-1">
+                        <span className="text-muted-foreground me-1">
                           {row.qty} {row.price} ر.س
                         </span>
                       )}

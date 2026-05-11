@@ -66,7 +66,7 @@ export default function PassengerPickerMulti({ value, onChange }: Props) {
         className="w-full flex items-center bg-background border border-border rounded-xl hover:border-primary focus-within:border-primary transition-all"
         data-testid="passenger-picker-multi-button"
       >
-        <div className="w-10 h-10 flex items-center justify-center border-l border-border bg-muted/30 rounded-r-xl">
+        <div className="w-10 h-10 flex items-center justify-center border-s border-border bg-muted/30 rounded-e-xl">
           <Users className="w-4 h-4 text-muted-foreground" />
         </div>
         <span className="flex-1 text-right py-2.5 px-3 text-sm text-foreground">

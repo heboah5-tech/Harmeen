@@ -78,14 +78,14 @@ export default function CityCombobox({
         >
           <div className="p-2 border-b border-border bg-muted/30">
             <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Search className="w-3.5 h-3.5 absolute start-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 ref={inputRef}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="ابحث عن مدينة..."
-                className="w-full bg-white rounded-lg ps-3 pe-8 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none border border-border focus:border-primary/40 text-right"
+                className="w-full bg-white rounded-lg pe-3 ps-8 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none border border-border focus:border-primary/40 text-end"
                 data-testid={testId ? `${testId}-search` : undefined}
               />
             </div>

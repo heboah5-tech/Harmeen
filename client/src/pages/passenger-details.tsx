@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { User, Phone, ChevronDown, ChevronLeft, Clock, Check, AlertCircle } from "lucide-react";
+import {
+  User,
+  Phone,
+  ChevronDown,
+  ChevronLeft,
+  Clock,
+  Check,
+  AlertCircle,
+} from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { handleCurrentPage } from "@/lib/firebase";
 
@@ -54,7 +62,11 @@ function StepBar() {
                     : "bg-background border-border text-muted-foreground"
               }`}
             >
-              {step.done ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : i + 1}
+              {step.done ? (
+                <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              ) : (
+                i + 1
+              )}
             </div>
             <span
               className={`text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
@@ -69,7 +81,9 @@ function StepBar() {
             </span>
           </div>
           {i < STEPS.length - 1 && (
-            <div className={`w-6 sm:w-12 h-0.5 mb-4 ${i === 0 ? "bg-primary" : "bg-border"}`} />
+            <div
+              className={`w-6 sm:w-12 h-0.5 mb-4 ${i === 0 ? "bg-primary" : "bg-border"}`}
+            />
           )}
         </div>
       ))}
@@ -92,7 +106,10 @@ function PassengerForm({
     onChange({ ...data, [key]: val });
 
   return (
-    <div className="bg-background border border-border rounded-2xl overflow-hidden mb-4" dir="rtl">
+    <div
+      className="bg-background border border-border rounded-2xl overflow-hidden mb-4"
+      dir="rtl"
+    >
       <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-muted/30">
         <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
           {index}
@@ -132,7 +149,9 @@ function PassengerForm({
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground block mb-1 text-end">اللقب *</label>
+              <label className="text-xs text-muted-foreground block mb-1 text-end">
+                اللقب *
+              </label>
               <div className="relative">
                 <select
                   value={data.title}
@@ -145,7 +164,7 @@ function PassengerForm({
                   <option value="السيدة">السيدة</option>
                   <option value="الآنسة">الآنسة</option>
                 </select>
-                <ChevronDown className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                <ChevronDown className="absolute end-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               </div>
             </div>
           </div>
@@ -168,7 +187,9 @@ function PassengerForm({
           </div>
 
           <div className="mb-3">
-            <label className="text-xs text-muted-foreground block mb-1 text-end">الجنسية *</label>
+            <label className="text-xs text-muted-foreground block mb-1 text-end">
+              الجنسية *
+            </label>
             <div className="relative">
               <select
                 value={data.nationality}
@@ -181,13 +202,15 @@ function PassengerForm({
                   <option key={n}>{n}</option>
                 ))}
               </select>
-              <ChevronDown className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+              <ChevronDown className="absolute end-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             </div>
           </div>
         </div>
 
         <div>
-          <p className="text-xs font-bold text-muted-foreground mb-3 text-end">• وثيقة الهوية</p>
+          <p className="text-xs font-bold text-muted-foreground mb-3 text-end">
+            • وثيقة الهوية
+          </p>
 
           <div className="mb-3">
             <label className="text-xs text-muted-foreground block mb-1.5 text-end">
@@ -228,7 +251,9 @@ function PassengerForm({
         </div>
 
         <div>
-          <p className="text-xs font-bold text-muted-foreground mb-3 text-end">• معلومات الاتصال</p>
+          <p className="text-xs font-bold text-muted-foreground mb-3 text-end">
+            • معلومات الاتصال
+          </p>
           <div className="flex items-center gap-2">
             <input
               value={data.phone}
@@ -250,18 +275,27 @@ function PassengerForm({
 
 function BookingSummary() {
   return (
-    <div className="bg-background border border-border rounded-2xl p-5 mt-4" dir="rtl">
-      <h3 className="font-bold text-foreground text-base mb-4 text-end">ملخص الحجز</h3>
+    <div
+      className="bg-background border border-border rounded-2xl p-5 mt-4"
+      dir="rtl"
+    >
+      <h3 className="font-bold text-foreground text-base mb-4 text-end">
+        ملخص الحجز
+      </h3>
 
       <div className="mb-3 pb-3 border-b border-border/50">
-        <p className="text-xs text-muted-foreground text-end mb-2">رحلة المغادرة</p>
+        <p className="text-xs text-muted-foreground text-end mb-2">
+          رحلة المغادرة
+        </p>
         <div className="flex justify-between text-sm text-end">
           <span className="font-bold">138.26 ر.س</span>
           <span className="text-muted-foreground">البالغين (الأساسية)</span>
         </div>
         <div className="flex justify-between text-sm mt-1">
           <span className="text-primary text-xs">× 138.26</span>
-          <span className="text-xs text-muted-foreground text-end">البالغين 1</span>
+          <span className="text-xs text-muted-foreground text-end">
+            البالغين 1
+          </span>
         </div>
       </div>
 
@@ -312,7 +346,11 @@ export default function PassengerDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30" dir="rtl" data-testid="page-passenger-details">
+    <div
+      className="min-h-screen bg-muted/30"
+      dir="rtl"
+      data-testid="page-passenger-details"
+    >
       <StepBar />
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
@@ -321,7 +359,7 @@ export default function PassengerDetails() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-background border border-border rounded-2xl p-5 mb-4"
         >
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex gap-4">
             <div className="text-start">
               <div className="w-12 h-12 rounded-xl bg-muted border border-border flex items-center justify-center mb-2">
                 <div className="text-center">
@@ -333,7 +371,9 @@ export default function PassengerDetails() {
             </div>
             <div className="flex-1 text-end">
               <div className="flex items-center justify-end gap-2 mb-2">
-                <h2 className="text-lg font-extrabold text-foreground">تفاصيل المسافرين</h2>
+                <h2 className="text-lg font-extrabold text-foreground">
+                  تفاصيل المسافرين
+                </h2>
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <User className="w-4 h-4 text-primary" />
                 </div>

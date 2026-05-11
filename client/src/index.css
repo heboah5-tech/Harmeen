@@ -278,11 +278,6 @@ h6 {
   background: hsl(var(--primary));
 }
 
-/* RTL support */
-[dir="rtl"] .text-right {
-  text-align: right;
-}
-
 /* Line clamp */
 .line-clamp-2 {
   display: -webkit-box;
