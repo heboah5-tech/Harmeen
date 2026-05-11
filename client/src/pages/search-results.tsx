@@ -128,7 +128,7 @@ function TripCard({ trip }: { trip: Trip }) {
     >
       <div className="p-4 sm:p-5">
         <div className="flex items-start justify-between gap-3 sm:gap-4">
-          <div className="text-left flex-shrink-0">
+          <div className="text-start flex-shrink-0">
             <div className="text-xl sm:text-2xl font-extrabold text-primary leading-none">
               {trip.price} <span className="text-sm sm:text-base font-bold">ر.س</span>
             </div>
