@@ -123,14 +123,31 @@ function PassengerForm({
   label,
   data,
   onChange,
+  showErrors = false,
 }: {
   index: number;
   label: string;
   data: PassengerData;
   onChange: (next: PassengerData) => void;
+  showErrors?: boolean;
 }) {
   const set = <K extends keyof PassengerData>(key: K, val: PassengerData[K]) =>
     onChange({ ...data, [key]: val });
+  const missing = (v: string) => showErrors && !v.trim();
+  const errClass = (v: string) =>
+    missing(v)
+      ? "border-destructive focus:ring-destructive/30"
+      : "border-border focus:ring-primary/30";
+  const ErrText = ({
+    v,
+    msg = "هذا الحقل مطلوب",
+  }: {
+    v: string;
+    msg?: string;
+  }) =>
+    missing(v) ? (
+      <p className="text-[11px] text-destructive mt-1 text-start">{msg}</p>
+    ) : null;
 
   return (
     <div className="bg-background border border-border rounded-2xl overflow-hidden mb-4">
@@ -154,7 +171,7 @@ function PassengerForm({
               <select
                 value={data.title}
                 onChange={(e) => set("title", e.target.value)}
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background appearance-none cursor-pointer"
+                className={`w-full border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 bg-background appearance-none cursor-pointer ${errClass(data.title === "اختار" ? "" : data.title)}`}
                 data-testid={`select-title-${index}`}
               >
                 <option value="">السيد أو السيدة</option>
@@ -164,6 +181,10 @@ function PassengerForm({
               </select>
               <ChevronDown className="absolute end-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             </div>
+            <ErrText
+              v={data.title === "اختار" ? "" : data.title}
+              msg="الرجاء اختيار اللقب"
+            />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
             <div>
@@ -174,9 +195,10 @@ function PassengerForm({
                 value={data.firstName}
                 onChange={(e) => set("firstName", e.target.value)}
                 placeholder="أدخل الاسم الأول"
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+                className={`w-full border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 bg-background ${errClass(data.firstName)}`}
                 data-testid={`input-firstname-${index}`}
               />
+              <ErrText v={data.firstName} />
             </div>
 
             <div>
@@ -187,9 +209,10 @@ function PassengerForm({
                 value={data.lastName}
                 onChange={(e) => set("lastName", e.target.value)}
                 placeholder="أدخل اسم العائلة"
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+                className={`w-full border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 bg-background ${errClass(data.lastName)}`}
                 data-testid={`input-lastname-${index}`}
               />
+              <ErrText v={data.lastName} />
             </div>
           </div>
 
@@ -205,9 +228,10 @@ function PassengerForm({
               type="date"
               value={data.dob}
               onChange={(e) => set("dob", e.target.value)}
-              className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+              className={`w-full border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 bg-background ${errClass(data.dob)}`}
               data-testid={`input-dob-${index}`}
             />
+            <ErrText v={data.dob} />
           </div>
 
           <div className="mb-3">
@@ -218,7 +242,7 @@ function PassengerForm({
               <select
                 value={data.nationality}
                 onChange={(e) => set("nationality", e.target.value)}
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background appearance-none cursor-pointer"
+                className={`w-full border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 bg-background appearance-none cursor-pointer ${errClass(data.nationality)}`}
                 data-testid={`select-nationality-${index}`}
               >
                 <option value="">اختار الجنسية</option>
@@ -228,6 +252,7 @@ function PassengerForm({
               </select>
               <ChevronDown className="absolute end-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             </div>
+            <ErrText v={data.nationality} msg="الرجاء اختيار الجنسية" />
           </div>
         </div>
 
@@ -268,7 +293,9 @@ function PassengerForm({
               const isPassport = data.idType === "جواز السفر";
               const v = data.idNumber;
               let err = "";
-              if (!isPassport && v) {
+              if (!v) {
+                if (showErrors) err = "هذا الحقل مطلوب";
+              } else if (!isPassport) {
                 if (!/^\d+$/.test(v)) err = "يجب أن يحتوي على أرقام فقط";
                 else if (v.length !== 10) err = "يجب أن يتكون من 10 أرقام";
                 else if (!/^[12]/.test(v))
@@ -287,7 +314,9 @@ function PassengerForm({
                     inputMode={isPassport ? "text" : "numeric"}
                     maxLength={isPassport ? 12 : 10}
                     placeholder={
-                      isPassport ? "مثال: A1234567" : "مثال: 1XXXXXXXXX أو 2XXXXXXXXX"
+                      isPassport
+                        ? "مثال: A1234567"
+                        : "مثال: 1XXXXXXXXX أو 2XXXXXXXXX"
                     }
                     className={`w-full border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 bg-background tabular-nums ${
                       err
@@ -342,6 +371,7 @@ function PassengerForm({
             </div>
             <input
               value={data.phone}
+              maxLength={12}
               onChange={(e) => set("phone", e.target.value.replace(/\D/g, ""))}
               placeholder="5XXXXXXXX"
               inputMode="numeric"
@@ -373,7 +403,13 @@ const PAX_META: { key: keyof PaxCounts; label: string; factor: number }[] = [
 ];
 
 function readPax(): PaxCounts {
-  const fb: PaxCounts = { adults: 1, children: 0, infants: 0, special: 0, student: 0 };
+  const fb: PaxCounts = {
+    adults: 1,
+    children: 0,
+    infants: 0,
+    special: 0,
+    student: 0,
+  };
   try {
     const raw = sessionStorage.getItem("searchPassengers");
     if (!raw) return fb;
@@ -388,10 +424,14 @@ function readSelectedTrip(): { unit: number; className: string } {
     const raw = sessionStorage.getItem("selectedTrip");
     if (!raw) return { unit: 0, className: "الأساسية" };
     const t = JSON.parse(raw);
-    const idx = typeof t.selectedClassIndex === "number" ? t.selectedClassIndex : 0;
+    const idx =
+      typeof t.selectedClassIndex === "number" ? t.selectedClassIndex : 0;
     const cls = t.classes?.[idx];
     const className = cls?.name || "الأساسية";
-    const unit = idx === 1 ? Math.max(85, Math.round((t.price ?? 0) * 0.78)) : t.price ?? 0;
+    const unit =
+      idx === 1
+        ? Math.max(85, Math.round((t.price ?? 0) * 0.78))
+        : (t.price ?? 0);
     return { unit, className };
   } catch {
     return { unit: 0, className: "الأساسية" };
@@ -411,18 +451,27 @@ function BookingSummary() {
   const grandTotal = Math.round((subtotal + tax) * 100) / 100;
 
   return (
-    <div className="bg-background border border-border rounded-2xl p-5 mt-4" dir="rtl">
-      <h3 className="font-bold text-foreground text-base mb-4 text-start">ملخص الحجز</h3>
+    <div
+      className="bg-background border border-border rounded-2xl p-5 mt-4"
+      dir="rtl"
+    >
+      <h3 className="font-bold text-foreground text-base mb-4 text-start">
+        ملخص الحجز
+      </h3>
 
       <div className="mb-3 pb-3 border-b border-border/50">
-        <p className="text-xs text-muted-foreground text-start mb-3">رحلة المغادرة</p>
+        <p className="text-xs text-muted-foreground text-start mb-3">
+          رحلة المغادرة
+        </p>
         {lines.length === 0 ? (
           <p className="text-xs text-muted-foreground">لا توجد بيانات تذاكر</p>
         ) : (
           lines.map((l) => (
             <div key={l.label} className="mb-2 last:mb-0">
               <div className="flex justify-between text-sm">
-                <span className="font-bold tabular-nums">{l.lineTotal.toFixed(2)} ر.س</span>
+                <span className="font-bold tabular-nums">
+                  {l.lineTotal.toFixed(2)} ر.س
+                </span>
                 <span className="text-muted-foreground">
                   {l.label} ({className})
                 </span>
@@ -442,11 +491,15 @@ function BookingSummary() {
 
       <div className="space-y-2 text-sm text-start">
         <div className="flex justify-between">
-          <span className="font-semibold tabular-nums">{subtotal.toFixed(2)} ر.س</span>
+          <span className="font-semibold tabular-nums">
+            {subtotal.toFixed(2)} ر.س
+          </span>
           <span className="text-muted-foreground">الإجمالي قبل الضريبة</span>
         </div>
         <div className="flex justify-between">
-          <span className="font-semibold tabular-nums">{tax.toFixed(2)} ر.س</span>
+          <span className="font-semibold tabular-nums">
+            {tax.toFixed(2)} ر.س
+          </span>
           <span className="text-muted-foreground">الضريبة (15٪)</span>
         </div>
         <div className="flex justify-between">
