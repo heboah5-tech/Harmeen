@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ChevronDown,
@@ -65,67 +65,128 @@ type Trip = {
   classes: TripClass[];
 };
 
-const trips: Trip[] = [
-  {
-    id: 1,
-    from: "الدمام",
-    to: "شيراز",
-    date: "11 مايو 2025",
-    time_depart: "12:00",
-    time_arrive: "20:00",
-    duration: "8 ساعات",
-    price: 247,
-    classes: [
-      {
-        name: "الأساسية",
-        tag: "الأوفر",
-        selected: true,
-        summary: [
-          { label: "تذاكر الأساسية (البالغين)", qty: "1 ×", price: "120.00", sub: "120.00" },
-          { label: "تذاكر (الأطفال)", qty: "1 ×", price: "120.00", sub: "120.00" },
-          { label: "إضافي للرضع (0-3)", qty: "1 ×", price: "135.70", sub: "20.30" },
-          { label: "إجمالي المبلغ", sub: "159", total: true },
-          { label: "رسوم", sub: "0.30", fee: true },
-        ],
-      },
-      {
-        name: "الاقتصادية",
-        tag: "اقتصادية",
-        selected: false,
-        summary: [
-          { label: "تذاكر الاقتصادية (البالغين)", qty: "1 ×", price: "95.00", sub: "95.00" },
-          { label: "تذاكر (الأطفال)", qty: "1 ×", price: "95.00", sub: "95.00" },
-          { label: "إضافي للرضع (0-3)", qty: "1 ×", price: "110.70", sub: "15.70" },
-          { label: "إجمالي المبلغ", sub: "125", total: true },
-          { label: "رسوم", sub: "0.30", fee: true },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    from: "الرياض - الرانية (الثانية)",
-    to: "شيراز",
-    date: "13 مايو 2025",
-    time_depart: "09:00",
-    time_arrive: "18:00",
-    duration: "9 ساعات",
-    price: 235,
-    classes: [
-      { name: "الأساسية", tag: "الأوفر", selected: true, summary: [] },
-      {
-        name: "الاقتصادية",
-        tag: "اقتصادية",
-        selected: false,
-        summary: [
-          { label: "تذاكر الاقتصادية (البالغين)", qty: "1 ×", price: "180.00", sub: "180.00" },
-          { label: "إجمالي المبلغ", sub: "180", total: true },
-          { label: "رسوم", sub: "0.30", fee: true },
-        ],
-      },
-    ],
-  },
+const AR_MONTHS = [
+  "يناير",
+  "فبراير",
+  "مارس",
+  "أبريل",
+  "مايو",
+  "يونيو",
+  "يوليو",
+  "أغسطس",
+  "سبتمبر",
+  "أكتوبر",
+  "نوفمبر",
+  "ديسمبر",
 ];
+
+function formatArabicDate(iso: string): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return `${d.getDate()} ${AR_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+const CITY_BASE_PRICE: Record<string, number> = {
+  الرياض: 0,
+  جدة: 950,
+  "مكة المكرمة": 870,
+  "المدينة المنورة": 850,
+  الدمام: 400,
+  أبها: 1000,
+  تبوك: 1300,
+  القصيم: 330,
+  حائل: 640,
+  الخبر: 410,
+  الطائف: 750,
+  جازان: 1180,
+  نجران: 1170,
+  الباحة: 880,
+  عرعر: 1100,
+  سكاكا: 1200,
+  الجوف: 1220,
+  ينبع: 950,
+  الأحساء: 320,
+};
+
+function distanceKm(a: string, b: string): number {
+  const da = CITY_BASE_PRICE[a] ?? 500;
+  const db = CITY_BASE_PRICE[b] ?? 500;
+  return Math.max(120, Math.abs(da - db));
+}
+
+function formatHM(totalMin: number): string {
+  const h = Math.floor(totalMin / 60) % 24;
+  const m = totalMin % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+function generateTripsForRoute(from: string, to: string, isoDate: string): Trip[] {
+  if (!from || !to || from === to || from === "الكل" || to === "الكل") return [];
+  const km = distanceKm(from, to);
+  const durationMin = Math.round((km / 80) * 60);
+  const hours = Math.floor(durationMin / 60);
+  const mins = durationMin % 60;
+  const duration = mins
+    ? `${hours} ساعة ${mins} دقيقة`
+    : `${hours} ${hours === 1 ? "ساعة" : "ساعات"}`;
+  const basePrice = Math.max(95, Math.round(km * 0.22));
+  const dateLabel = formatArabicDate(isoDate);
+  const departures = [
+    { hour: 7, mod: 0 },
+    { hour: 11, mod: 12 },
+    { hour: 15, mod: -8 },
+    { hour: 21, mod: 20 },
+  ];
+  return departures.map((d, i) => {
+    const departMin = d.hour * 60 + 30;
+    const arriveMin = departMin + durationMin;
+    const price = basePrice + d.mod;
+    const economyPrice = Math.max(85, Math.round(price * 0.78));
+    return {
+      id: i + 1,
+      from,
+      to,
+      date: dateLabel,
+      time_depart: formatHM(departMin),
+      time_arrive: formatHM(arriveMin),
+      duration,
+      price,
+      classes: [
+        {
+          name: "الأساسية",
+          tag: i === 0 ? "الأوفر" : null,
+          selected: true,
+          summary: [
+            {
+              label: "تذاكر الأساسية (البالغين)",
+              qty: "1 ×",
+              price: price.toFixed(2),
+              sub: price.toFixed(2),
+            },
+            { label: "إجمالي المبلغ", sub: String(price), total: true },
+            { label: "رسوم", sub: "0.30", fee: true },
+          ],
+        },
+        {
+          name: "الاقتصادية",
+          tag: "اقتصادية",
+          selected: false,
+          summary: [
+            {
+              label: "تذاكر الاقتصادية (البالغين)",
+              qty: "1 ×",
+              price: economyPrice.toFixed(2),
+              sub: economyPrice.toFixed(2),
+            },
+            { label: "إجمالي المبلغ", sub: String(economyPrice), total: true },
+            { label: "رسوم", sub: "0.30", fee: true },
+          ],
+        },
+      ],
+    };
+  });
+}
 
 function TripCard({ trip }: { trip: Trip }) {
   const [expanded, setExpanded] = useState(trip.id === 1);
@@ -320,6 +381,11 @@ export default function SearchResults() {
     setToCity(fromCity);
   };
 
+  const trips = useMemo(
+    () => generateTripsForRoute(fromCity, toCity, date),
+    [fromCity, toCity, date],
+  );
+
   return (
     <div
       className="min-h-screen bg-background flex flex-col"
@@ -347,13 +413,23 @@ export default function SearchResults() {
 
       <div id="trip-results" className="bg-muted/30 flex-1">
         <div className="max-w-3xl mx-auto px-4 py-6">
-          {trips.map((trip) => (
-            <TripCard key={trip.id} trip={trip} />
-          ))}
-
-          <div className="text-center py-8 text-muted-foreground text-sm">
-            لا توجد رحلات إضافية متاحة
-          </div>
+          {trips.length > 0 ? (
+            <>
+              <div className="mb-4 flex items-center justify-between text-xs text-muted-foreground">
+                <span>{trips.length} رحلة متاحة</span>
+                <span className="font-bold text-foreground">
+                  {fromCity} ← {toCity} • {formatArabicDate(date)}
+                </span>
+              </div>
+              {trips.map((trip) => (
+                <TripCard key={`${fromCity}-${toCity}-${date}-${trip.id}`} trip={trip} />
+              ))}
+            </>
+          ) : (
+            <div className="text-center py-16 text-muted-foreground text-sm">
+              لا توجد رحلات متاحة لهذا المسار. يرجى اختيار مدن مختلفة.
+            </div>
+          )}
         </div>
       </div>
 
