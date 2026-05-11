@@ -338,11 +338,9 @@ export default function SearchResults() {
         setToCity={setToCity}
         setDate={setDate}
         onSearch={() => {
-          requestAnimationFrame(() => {
-            document
-              .getElementById("trip-results")
-              ?.scrollIntoView({ behavior: "smooth", block: "start" });
-          });
+          document
+            .getElementById("trip-results")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
         }}
         swap={swap}
       />

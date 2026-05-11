@@ -486,6 +486,9 @@ export default function Schedule() {
         setToCity={setToCity}
         setDate={setDate}
         onSearch={() => {
+          document
+            .getElementById("trip-results")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
           const params = new URLSearchParams({
             from: fromCity,
             to: toCity,

@@ -59,7 +59,7 @@ export default function PassengerPickerMulti({ value, onChange }: Props) {
   }, [open]);
 
   return (
-    <div ref={ref} className="relative" dir="rtl">
+    <div ref={ref} className="relative z-[2000]" dir="rtl">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -75,7 +75,7 @@ export default function PassengerPickerMulti({ value, onChange }: Props) {
       </button>
 
       {open && (
-        <div className="absolute z-[300] mt-1 left-0 right-0 sm:left-auto sm:right-0 sm:w-72 bg-white border border-border rounded-2xl shadow-xl p-4 text-start max-h-[60vh] overflow-y-auto">
+        <div className="absolute z-[2000] mt-1 left-0 right-0 sm:left-auto sm:right-0 sm:w-72 bg-white border border-border rounded-2xl shadow-xl p-4 text-start max-h-[60vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-2">
             <button
               type="button"

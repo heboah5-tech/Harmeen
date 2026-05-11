@@ -104,7 +104,7 @@ function formatCard(v: string) {
 export default function Payment() {
   const [, setLocation] = useLocation();
   const [selected, setSelected] = useState<string>("mada");
-  const [agreed, setAgreed] = useState(false);
+  const [agreed, setAgreed] = useState(true);
 
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
