@@ -184,6 +184,7 @@ export default function SeatSelection() {
   const [, setLocation] = useLocation();
   const [seats, setSeats] = useState<Seat[][]>(generateSeats);
   const [selected, setSelected] = useState<number[]>([]);
+  const adultsCount = readPax().adults || 1;
 
   useEffect(() => {
     void handleCurrentPage("seat_selection");
@@ -199,7 +200,7 @@ export default function SeatSelection() {
       if (s.status === "selected") {
         s.status = "available";
         setSelected((sel) => sel.filter((id) => id !== s.id));
-      } else if (selected.length < 1) {
+      } else if (selected.length < adultsCount) {
         s.status = "selected";
         setSelected((sel) => [...sel, s.id]);
       }
@@ -216,7 +217,7 @@ export default function SeatSelection() {
   };
 
   const onContinue = () => {
-    if (selected.length === 0) return;
+    if (selected.length !== adultsCount) return;
     sessionStorage.setItem("selectedSeats", JSON.stringify(selected));
     void addData({
       seats: selected,
@@ -256,7 +257,9 @@ export default function SeatSelection() {
         <div className="bg-background border border-border rounded-2xl p-5 mb-4">
           <div className="flex items-center justify-between mb-4">
             <div className="text-xs text-muted-foreground">
-              {selected.length > 0 ? `مقعد ${selected[0]} محدد` : "لم يُحدد مقعد"}
+              {selected.length > 0
+                ? `${selected.length} / ${adultsCount} مقاعد محددة (${selected.join("، ")})`
+                : `لم تُحدد مقاعد — اختر ${adultsCount} مقعد`}
             </div>
             <h3 className="font-bold text-foreground text-base">اختار مقاعدك</h3>
           </div>
@@ -306,7 +309,7 @@ export default function SeatSelection() {
           </div>
 
           <p className="text-center text-xs text-muted-foreground mt-4">
-            يمكنك اختيار مقعد واحد فقط لكل راكب
+            يجب اختيار {adultsCount} {adultsCount === 1 ? "مقعد" : "مقاعد"} حسب عدد البالغين
           </p>
         </div>
 
@@ -330,16 +333,18 @@ export default function SeatSelection() {
 
         <button
           onClick={onContinue}
-          disabled={selected.length === 0}
+          disabled={selected.length !== adultsCount}
           className={`w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 transition-all duration-300 mb-4 ${
-            selected.length === 0
+            selected.length !== adultsCount
               ? "bg-muted text-muted-foreground cursor-not-allowed"
               : "bg-emerald-600 text-white hover:bg-emerald-700 hover:-translate-y-0.5 hover:shadow-lg"
           }`}
           data-testid="button-continue-payment"
         >
           <ChevronLeft className="w-5 h-5" />
-          المتابعة للدفع
+          {selected.length === adultsCount
+            ? "المتابعة للدفع"
+            : `اختر ${adultsCount - selected.length} مقعد إضافي`}
         </button>
 
         <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
