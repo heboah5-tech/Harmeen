@@ -499,29 +499,9 @@ export default function Schedule() {
         swap={swap}
       />
 
-      <div
-        id="trip-results"
-        className="max-w-5xl w-full mx-auto px-4 mb-2 mt-4 flex items-center justify-between"
-      >
-        <span className="text-xs text-muted-foreground" />
-        {(searchFrom !== "الكل" || searchTo !== "الكل") && (
-          <button
-            onClick={() => {
-              setFromCity("الكل");
-              setToCity("الكل");
-              setSearchFrom("الكل");
-              setSearchTo("الكل");
-              setDate("");
-            }}
-            className="text-xs text-primary hover:underline"
-            data-testid="button-clear"
-          >
-            مسح
-          </button>
-        )}
-      </div>
+      <div id="trip-results" className="hidden" />
 
-      <div className="max-w-5xl w-full mx-auto px-4 pb-8 flex flex-col gap-3">
+      <div className="hidden max-w-5xl w-full mx-auto px-4 pb-8 flex flex-col gap-3">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
