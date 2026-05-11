@@ -33,12 +33,6 @@ const PAYMENT_METHODS = [
       "https://media.base44.com/images/public/6a0141c514678b9757e134f7/41fe88fde_satrans_com_sa_master-card-logo0y_enem50ek-_055b28cd.svg",
     ],
   },
-  {
-    id: "tabby",
-    label: "تابي",
-    description: "4 دفعات بدون فوائد",
-    badge: "تقسيط",
-  },
 ] as const;
 
 function StepBar() {
@@ -243,11 +237,7 @@ export default function Payment() {
                         <img key={i} src={l} alt="" className="h-6 w-auto object-contain" />
                       ))}
                     </div>
-                  ) : (
-                    <div className="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded-lg">
-                      {("badge" in method && method.badge) || ""}
-                    </div>
-                  )}
+                  ) : null}
                 </div>
 
                 <div className="flex items-center gap-3">
