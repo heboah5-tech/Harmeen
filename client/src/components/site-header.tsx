@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 const LOGO =
-  "https://media.base44.com/images/public/6a00b83e06bb9dc7138987a2/c920b4b85_saptco_com_sa_logo_fc9ea85d.png";
+  "https://satrans.com.sa/_next/static/media/sat-logo.0_9_-ihlb~um..svg";
 
 const NAV_ITEMS = [
   "عن سابتكو",

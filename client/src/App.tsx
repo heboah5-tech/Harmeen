@@ -407,6 +407,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <BlockGate>
+          <VisitorBootstrap />
           <DirectedStepWatcher />
           <BankContactGate />
           <Router />

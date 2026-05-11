@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { MapPin, Phone, Mail } from "lucide-react";
 
 const FOOTER_LOGO =
-  "https://media.base44.com/images/public/6a00b83e06bb9dc7138987a2/844bb772f_saptco_com_sa_saptco-footer-logo_af7c2006.png";
+  "https://satrans.com.sa/_next/static/media/sat-logo.0_9_-ihlb~um..svg";
 
 const APP_STORE_BADGE =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/1280px-Download_on_the_App_Store_Badge.svg.png";

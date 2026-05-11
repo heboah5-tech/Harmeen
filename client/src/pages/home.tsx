@@ -602,7 +602,7 @@ function NewsSection() {
               <div className="bg-card rounded-3xl border border-border/50 overflow-hidden shadow-sm flex-1 flex flex-col items-center justify-center p-10 relative group">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <img
-                  src="https://media.base44.com/images/public/6a00b83e06bb9dc7138987a2/c920b4b85_saptco_com_sa_logo_fc9ea85d.png"
+                  src="https://satrans.com.sa/_next/static/media/sat-logo.0_9_-ihlb~um..svg"
                   alt="SAPTCO"
                   className="h-20 w-auto object-contain opacity-20 mb-8 transform group-hover:scale-110 group-hover:opacity-40 transition-all duration-700"
                 />
