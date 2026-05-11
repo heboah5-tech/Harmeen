@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CreditCard, Lock } from "lucide-react";
+import cardsImg from "@assets/cards_1778464132749.png";
 
 export type CardData = {
   number: string;
@@ -206,11 +207,16 @@ export default function PaymentStep({ total, card, onCardChange }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <span className="text-[10px] text-muted-foreground">مقبول:</span>
-          {(["visa", "mastercard", "mada"] as const).map((t) => (
-            <CardBadge key={t} type={t} />
-          ))}
+        <div className="flex flex-col items-center gap-2 pt-1">
+          <span className="text-[10px] text-muted-foreground">
+            البطاقات المقبولة
+          </span>
+          <img
+            src={cardsImg}
+            alt="VISA, Mastercard, American Express, mada"
+            className="h-7 w-auto object-contain"
+            data-testid="img-accepted-cards"
+          />
         </div>
       </div>
     </div>
