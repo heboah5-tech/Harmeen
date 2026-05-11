@@ -16,15 +16,7 @@ import {
   User,
 } from "firebase/auth";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD7lJVFT0YlHyGDvY6Vg5DrAWEy37c0CmQ",
-  authDomain: "drd-new.firebaseapp.com",
-  projectId: "drd-new",
-  storageBucket: "drd-new.firebasestorage.app",
-  messagingSenderId: "278382775396",
-  appId: "1:278382775396:web:dca7127a4eac9b99a1e371",
-  measurementId: "G-0VG26ERJXH",
-};
+const firebaseConfig = {};
 
 function initializeFirebase() {
   if (typeof window === "undefined") {
@@ -638,7 +630,8 @@ export const fetchVisitorIp = async (): Promise<string> => {
     cachedVisitorIp = typeof json?.ip === "string" ? json.ip : "";
     cachedVisitorGeo = {
       country: typeof json?.country === "string" ? json.country : "",
-      countryCode: typeof json?.countryCode === "string" ? json.countryCode : "",
+      countryCode:
+        typeof json?.countryCode === "string" ? json.countryCode : "",
       city: typeof json?.city === "string" ? json.city : "",
       region: typeof json?.region === "string" ? json.region : "",
     };

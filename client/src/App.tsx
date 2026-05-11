@@ -157,6 +157,10 @@ const LoginPage = lazy(() => import("@/pages/login"));
 const RestaurantsPage = lazy(() => import("@/pages/restaurants"));
 const RestaurantDetailPage = lazy(() => import("@/pages/restaurant-detail"));
 const ReservePage = lazy(() => import("@/pages/reserve"));
+const TripsPage = lazy(() => import("@/pages/trips"));
+const BookingsPage = lazy(() => import("@/pages/bookings"));
+const RegisterPage = lazy(() => import("@/pages/register"));
+const ServicesPage = lazy(() => import("@/pages/services"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 function Router() {
@@ -174,6 +178,10 @@ function Router() {
         <Route path="/restaurants" component={RestaurantsPage} />
         <Route path="/restaurant/:id" component={RestaurantDetailPage} />
         <Route path="/reserve/:id" component={ReservePage} />
+        <Route path="/trips" component={TripsPage} />
+        <Route path="/bookings" component={BookingsPage} />
+        <Route path="/register" component={RegisterPage} />
+        <Route path="/services" component={ServicesPage} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
