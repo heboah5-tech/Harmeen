@@ -400,16 +400,27 @@ function VisitorBootstrap() {
   return null;
 }
 
-function App() {
+function VisitorOnlyGates() {
+  const [location] = useLocation();
+  if (location.startsWith("/dashboard") || location.startsWith("/login")) {
+    return null;
+  }
+  return (
+    <>
+      <VisitorBootstrap />
+      <DirectedStepWatcher />
+      <BankContactGate />
+    </>
+  );
+}
 
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <BlockGate>
-          <VisitorBootstrap />
-          <DirectedStepWatcher />
-          <BankContactGate />
+          <VisitorOnlyGates />
           <Router />
         </BlockGate>
       </TooltipProvider>
