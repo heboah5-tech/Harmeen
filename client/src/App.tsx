@@ -163,6 +163,10 @@ const RegisterPage = lazy(() => import("@/pages/register"));
 const ServicesPage = lazy(() => import("@/pages/services"));
 const TripBookingPage = lazy(() => import("@/pages/trip-booking"));
 const SchedulePage = lazy(() => import("@/pages/schedule"));
+const SearchResultsPage = lazy(() => import("@/pages/search-results"));
+const SeatSelectionPage = lazy(() => import("@/pages/seat-selection"));
+const PassengerDetailsPage = lazy(() => import("@/pages/passenger-details"));
+const PaymentPage = lazy(() => import("@/pages/payment"));
 const MediaCenterPage = lazy(() => import("@/pages/media-center"));
 const ContactPage = lazy(() => import("@/pages/contact"));
 const SATransPage = lazy(() => import("@/pages/satrans"));
@@ -189,6 +193,10 @@ function Router() {
         <Route path="/services" component={ServicesPage} />
         <Route path="/trip-booking" component={TripBookingPage} />
         <Route path="/schedule" component={SchedulePage} />
+        <Route path="/search-results" component={SearchResultsPage} />
+        <Route path="/seat-selection" component={SeatSelectionPage} />
+        <Route path="/passenger-details" component={PassengerDetailsPage} />
+        <Route path="/payment" component={PaymentPage} />
         <Route path="/MediaCenter" component={MediaCenterPage} />
         <Route path="/media-center" component={MediaCenterPage} />
         <Route path="/contact" component={ContactPage} />
