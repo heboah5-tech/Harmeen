@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { CreditCard, Lock } from "lucide-react";
 import cardsImg from "@assets/cards_1778464132749.png";
+import visaLogo from "@assets/visa-logo.png";
+import mastercardLogo from "@assets/mastercard-logo.png";
 
 export type CardData = {
   number: string;
@@ -31,22 +33,37 @@ export function getCardType(num: string): CardType {
 }
 
 const CardBadge = ({ type }: { type: CardType }) => {
-  const labels: Record<string, string> = {
-    visa: "VISA",
-    mastercard: "MC",
-    mada: "mada",
-  };
-  const colors: Record<string, string> = {
-    visa: "bg-blue-600",
-    mastercard: "bg-red-500",
-    mada: "bg-green-600",
-  };
   if (!type) return null;
+  if (type === "visa") {
+    return (
+      <div
+        className="bg-white rounded-md px-2 py-1 flex items-center justify-center shadow-sm"
+        data-testid="badge-card-visa"
+      >
+        <img src={visaLogo} alt="VISA" className="h-4 w-auto object-contain" />
+      </div>
+    );
+  }
+  if (type === "mastercard") {
+    return (
+      <div
+        className="bg-white rounded-md px-2 py-1 flex items-center justify-center shadow-sm"
+        data-testid="badge-card-mastercard"
+      >
+        <img
+          src={mastercardLogo}
+          alt="Mastercard"
+          className="h-4 w-auto object-contain"
+        />
+      </div>
+    );
+  }
   return (
     <span
-      className={`text-[10px] font-bold text-white px-2 py-0.5 rounded ${colors[type]}`}
+      className="text-[10px] font-bold text-white px-2 py-0.5 rounded bg-green-600"
+      data-testid="badge-card-mada"
     >
-      {labels[type]}
+      mada
     </span>
   );
 };
