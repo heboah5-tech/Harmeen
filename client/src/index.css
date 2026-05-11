@@ -278,6 +278,7 @@ h6 {
   background: hsl(var(--primary));
 }
 
+/* RTL support */
 /* Line clamp */
 .line-clamp-2 {
   display: -webkit-box;

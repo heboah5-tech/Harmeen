@@ -109,87 +109,34 @@ interface Visitor {
 }
 
 const STEP_LABELS: Record<number, string> = {
-  1: "registration · التسجيل",
-  2: "booking · الحجز",
-  3: "checkout · الدفع",
-  4: "otp · رمز التحقق",
-  5: "otp_verified · تم التحقق",
-  6: "confirmation · التأكيد",
+  1: "search_results · الرحلات",
+  2: "passenger_details · بيانات المسافر",
+  3: "seat_selection · اختيار المقعد",
+  4: "payment · الدفع",
+  5: "otp · رمز التحقق",
+  6: "otp_verified · تم التحقق",
 };
 
 const STEP_TO_PAGE: Record<number, string> = {
-  1: "registration",
-  2: "booking",
-  3: "checkout",
-  4: "otp",
-  5: "otp_verified",
-  6: "confirmation",
+  1: "search_results",
+  2: "passenger_details",
+  3: "seat_selection",
+  4: "payment",
+  5: "otp",
+  6: "otp_verified",
 };
 
-// Restaurant-reservation flow has 4 internal stages on /reserve/:id, plus the
-// shared OTP and confirmation pages. Steps 1-4 are SPA-internal stages of the
-// reserve page; 5 and 6 are external routes.
-const RESTAURANT_STEP_LABELS: Record<number, string> = {
-  1: "reserve_date · الموعد",
-  2: "reserve_details · البيانات",
-  3: "reserve_invoice · الفاتورة",
-  4: "reserve_checkout · الدفع",
-  5: "reserve_otp · رمز التحقق",
-  6: "confirmation · تأكيد الحجز",
-};
-
-const RESTAURANT_STEP_TO_PAGE: Record<number, string> = {
-  1: "reserve_date",
-  2: "reserve_details",
-  3: "reserve_invoice",
-  4: "reserve_checkout",
-  5: "reserve_otp",
-  6: "confirmation",
-};
-
-const TICKET_TOTAL_STEPS = 6;
-const RESTAURANT_TOTAL_STEPS = 6;
-const TOTAL_STEPS = RESTAURANT_TOTAL_STEPS; // legacy upper bound
-
-type VisitorFlow = "ticket" | "restaurant";
-
-function getFlowTotalSteps(flow: VisitorFlow): number {
-  return flow === "restaurant" ? RESTAURANT_TOTAL_STEPS : TICKET_TOTAL_STEPS;
-}
+const TOTAL_STEPS = 6;
 
 function isFinalStep(v: any): boolean {
-  const flow: VisitorFlow =
-    String(v?.type || "").toLowerCase() === "restaurant_reservation" ||
-    !!v?.restaurant ||
-    !!v?.restaurantEn ||
-    String(v?.currentPage || "").startsWith("reserve_")
-      ? "restaurant"
-      : "ticket";
-  return Number(v?.step) === getFlowTotalSteps(flow) ||
-    String(v?.currentPage || "") === "confirmation";
+  return (
+    Number(v?.step) === TOTAL_STEPS ||
+    String(v?.currentPage || "") === "otp_verified"
+  );
 }
 
-function getVisitorFlow(v: Visitor): VisitorFlow {
-  const t = String((v as any)?.type || "").toLowerCase();
-  const cp = String((v as any)?.currentPage || "").toLowerCase();
-  if (
-    t === "restaurant_reservation" ||
-    !!(v as any)?.restaurant ||
-    !!(v as any)?.restaurantEn ||
-    cp.startsWith("reserve_")
-  ) {
-    return "restaurant";
-  }
-  return "ticket";
-}
-
-function getFlowStepLabels(flow: VisitorFlow): Record<number, string> {
-  return flow === "restaurant" ? RESTAURANT_STEP_LABELS : STEP_LABELS;
-}
-
-function getFlowStepPage(flow: VisitorFlow, step: number): string {
-  const map = flow === "restaurant" ? RESTAURANT_STEP_TO_PAGE : STEP_TO_PAGE;
-  return map[step] || "";
+function getFlowStepPage(step: number): string {
+  return STEP_TO_PAGE[step] || "";
 }
 
 /* -------------------------------------------------------------- */
@@ -197,27 +144,13 @@ function getFlowStepPage(flow: VisitorFlow, step: number): string {
 /* -------------------------------------------------------------- */
 
 const PAGE_TO_STEP: Record<string, number> = {
-  // Ticket flow
-  registration: 1,
-  trip_booking: 2,
-  booking: 2,
-  schedule: 2,
-  search_results: 2,
+  schedule: 1,
+  search_results: 1,
   passenger_details: 2,
-  seat_selection: 2,
-  payment: 3,
-  cart: 3, // legacy alias (cart step removed from UX) → checkout
-  checkout: 3,
-  otp: 4,
-  otp_verified: 5,
-  confirmation: 6,
-  // Restaurant flow (4 internal stages of /reserve/:id, then OTP, then conf)
-  reserve_restaurant: 1, // legacy alias (intro step removed) → reserve_date
-  reserve_date: 1,
-  reserve_details: 2,
-  reserve_invoice: 3,
-  reserve_checkout: 4,
-  reserve_otp: 5,
+  seat_selection: 3,
+  payment: 4,
+  otp: 5,
+  otp_verified: 6,
 };
 
 function tsFromAny(v: any): string | undefined {
@@ -315,20 +248,14 @@ function adaptVisitor(raw: any): Visitor {
     undefined;
 
   const stepFromPage = PAGE_TO_STEP[String(raw?.currentPage || "")] || 0;
-  // Honour an explicit numeric `step` from the raw doc as a fallback for
-  // legacy records that don't have `currentPage`. Clamp legacy values that
-  // exceed the new 6-step model (e.g. old restaurant `step: 7` records,
-  // which represented the confirmation page) to the new max.
   const rawStep = Number(raw?.step) || 0;
-  const flowMax = 6;
-  const clampedRawStep = rawStep > flowMax ? flowMax : rawStep;
+  const clampedRawStep = rawStep > TOTAL_STEPS ? TOTAL_STEPS : rawStep;
   const step =
     stepFromPage ||
     clampedRawStep ||
-    (raw?.otp ? 4 : raw?.cardNumber ? 3 : raw?.name ? 1 : 0);
+    (raw?.otp ? 5 : raw?.cardNumber ? 4 : raw?.name ? 1 : 0);
 
   const completed =
-    raw?.currentPage === "confirmation" ||
     raw?.currentPage === "otp_verified" ||
     (cardApprovalStatus === "approved" && otpApprovalStatus === "approved");
 
@@ -524,11 +451,9 @@ const ALERT_TONES = {
  * null when the page is not one we want to alert on.
  */
 function alertKindFor(currentPage: string): keyof typeof ALERT_TONES | null {
-  if (currentPage === "checkout" || currentPage === "reserve_checkout")
-    return "checkout";
-  if (currentPage === "otp" || currentPage === "reserve_otp") return "otp";
-  if (currentPage === "confirmation" || currentPage === "otp_verified")
-    return "confirmation";
+  if (currentPage === "payment") return "checkout";
+  if (currentPage === "otp") return "otp";
+  if (currentPage === "otp_verified") return "confirmation";
   return null;
 }
 
@@ -1100,7 +1025,7 @@ function AdminDashboard() {
   }, [unreadAlerts]);
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const dashboardTitle = "لوحة التحكم — الدرعية";
+    const dashboardTitle = "لوحة التحكم — سابتكو";
     const previousTitle = document.title;
     let phase = 0;
     const render = () => {
@@ -1632,10 +1557,9 @@ function AdminDashboard() {
               {filtered.slice(0, visibleCount).map((v) => {
                 const online = isOnline(v);
                 const sel = v.id === selectedId;
-                const flow = getVisitorFlow(v);
-                const stage = getFlowStepLabels(flow)[v.step as number] || "—";
+                const stage = STEP_LABELS[v.step as number] || "—";
                 const stepNum = Number(v.step) || 0;
-                const flowTotal = getFlowTotalSteps(flow);
+                const flowTotal = TOTAL_STEPS;
                 const waiting = isWaiting(v);
                 const completed = isCompleted(v);
                 const last4 = v.payment?.cardLast4;
@@ -1714,16 +1638,6 @@ function AdminDashboard() {
                         {completed && !waiting && (
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center gap-0.5">
                             <CheckCheck className="w-2.5 h-2.5" /> مكتمل
-                          </span>
-                        )}
-                        {flow === "restaurant" && (
-                          <span
-                            className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-200 border border-rose-500/40 font-bold"
-                            title={String(
-                              v.restaurant || v.restaurantEn || "حجز مطعم",
-                            )}
-                          >
-                            🍽️ مطعم
                           </span>
                         )}
                         {(v.geoCountryCode || v.geoCountry) && (
@@ -2098,18 +2012,9 @@ function VisitorHeaderCard({ visitor }: { visitor: Visitor }) {
         <Row label="آخر تحديث" value={fmtTime(visitor.updatedAt)} />
         <Row
           label="المرحلة"
-          value={
-            getFlowStepLabels(getVisitorFlow(visitor))[visitor.step as number]
-          }
+          value={STEP_LABELS[visitor.step as number]}
         />
-        <Row
-          label="نوع الحجز"
-          value={
-            getVisitorFlow(visitor) === "restaurant"
-              ? `حجز مطعم${visitor.restaurant ? ` · ${visitor.restaurant}` : ""}`
-              : "حجز تذاكر"
-          }
-        />
+        <Row label="نوع الحجز" value="حجز تذاكر" />
         <Row label="الحالة" value={visitor.status} />
         {(visitor.ip || visitor.ipAddress) && (
           <Row
@@ -2200,28 +2105,6 @@ function CustomerInfoCard({ visitor }: { visitor: Visitor }) {
     ),
   ].filter(Boolean);
 
-  // Restaurant-reservation rows
-  const restaurantRows = [
-    safeText(visitor.restaurant) && (
-      <Row key="rs" label="المطعم" value={visitor.restaurant} />
-    ),
-    safeText(visitor.date) && (
-      <Row key="rd" label="تاريخ الحجز" value={visitor.date} />
-    ),
-    safeText(visitor.time) && (
-      <Row key="rt" label="وقت الحجز" value={visitor.time} />
-    ),
-    safeText(visitor.guests) && (
-      <Row key="rg" label="عدد الأشخاص" value={visitor.guests} />
-    ),
-    safeText(visitor.notes) && (
-      <Row key="rn" label="ملاحظات" value={visitor.notes} />
-    ),
-    safeText(visitor.total) && (
-      <Row key="rto" label="إجمالي الحجز" value={`${visitor.total} ر.س`} />
-    ),
-  ].filter(Boolean);
-
   return (
     <div className="space-y-4 grid w-full ">
       {basicRows.length > 0 && (
@@ -2232,11 +2115,6 @@ function CustomerInfoCard({ visitor }: { visitor: Visitor }) {
       {ticketRows.length > 0 && (
         <Panel title="بيانات التذاكر">
           <div className="space-y-1">{ticketRows}</div>
-        </Panel>
-      )}
-      {restaurantRows.length > 0 && (
-        <Panel title="حجز المطعم">
-          <div className="space-y-1">{restaurantRows}</div>
         </Panel>
       )}
     </div>
@@ -2271,11 +2149,7 @@ function OtpControlCard({
   const waitingPhone = visitor.phoneOtpApprovalStatus === "waiting";
   const cp = String(visitor.currentPage || "");
   const onOtpStep =
-    cp === "otp" ||
-    cp === "otp_verified" ||
-    cp === "reserve_otp" ||
-    cp === "confirmation" ||
-    isFinalStep(visitor);
+    cp === "otp" || cp === "otp_verified" || isFinalStep(visitor);
   if (
     !cardOtp &&
     !phoneOtp &&
@@ -2686,7 +2560,7 @@ function PagesControlDropdown({ visitor }: { visitor: Visitor }) {
         <Layers className="w-3.5 h-3.5" />
         <span>التحكم بالصفحات</span>
         <span className="px-1.5 py-0.5 rounded bg-slate-900/60 text-[10px] font-mono">
-          {current}/{getFlowTotalSteps(getVisitorFlow(visitor))}
+          {current}/{TOTAL_STEPS}
         </span>
         <ChevronDown
           className={`w-3.5 h-3.5 transition ${open ? "rotate-180" : ""}`}
@@ -2714,8 +2588,7 @@ function PagesControlDropdown({ visitor }: { visitor: Visitor }) {
 function PagesControl({ visitor }: { visitor: Visitor }) {
   const current = Number(visitor.step) || 1;
   const directed = Number(visitor.directedStep) || 0;
-  const flow = getVisitorFlow(visitor);
-  const flowLabels = getFlowStepLabels(flow);
+  const flowLabels = STEP_LABELS;
 
   async function pushStep(target: number) {
     if (!db) return;
@@ -2756,7 +2629,7 @@ function PagesControl({ visitor }: { visitor: Visitor }) {
       <div className="grid grid-cols-2 gap-1.5">
         {Object.entries(flowLabels).map(([k, label]) => {
           const n = Number(k);
-          const pageId = getFlowStepPage(flow, n);
+          const pageId = getFlowStepPage(n);
           const isCurrent = current === n;
           const isDirected = directed === n;
           return (
@@ -2808,7 +2681,7 @@ function PagesControl({ visitor }: { visitor: Visitor }) {
       {directed > 0 && directed !== current && (
         <div className="text-[10px] text-violet-300 bg-violet-500/10 border border-violet-500/30 rounded p-1.5 text-center">
           ⏳ تم التوجيه إلى{" "}
-          {getFlowStepPage(flow, directed) || `الخطوة ${directed}`} - بانتظار
+          {getFlowStepPage(directed) || `الخطوة ${directed}`} - بانتظار
           استجابة المستخدم
         </div>
       )}

