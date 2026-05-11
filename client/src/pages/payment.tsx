@@ -38,14 +38,14 @@ const PAYMENT_METHODS = [
 function StepBar() {
   return (
     <div
-      className="flex items-center justify-center bg-background border-b border-border py-3 px-4 sticky top-0 z-30"
+      className="flex items-center justify-center bg-background border-b border-border py-2.5 sm:py-3 px-2 sticky top-0 z-30 overflow-x-auto"
       dir="rtl"
     >
       {STEPS.map((step, i) => (
-        <div key={i} className="flex items-center">
-          <div className="flex flex-col items-center gap-1 px-3 sm:px-5">
+        <div key={i} className="flex items-center flex-shrink-0">
+          <div className="flex flex-col items-center gap-1 px-2 sm:px-5">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${
+              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all ${
                 step.done
                   ? "bg-primary border-primary text-primary-foreground"
                   : step.active
@@ -53,10 +53,10 @@ function StepBar() {
                     : "bg-background border-border text-muted-foreground"
               }`}
             >
-              {step.done ? <Check className="w-4 h-4" /> : i + 1}
+              {step.done ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : i + 1}
             </div>
             <span
-              className={`text-[10px] font-medium ${
+              className={`text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
                 step.active
                   ? "text-emerald-700"
                   : step.done
@@ -68,7 +68,7 @@ function StepBar() {
             </span>
           </div>
           {i < STEPS.length - 1 && (
-            <div className="w-8 sm:w-12 h-0.5 mb-4 bg-primary" />
+            <div className="w-6 sm:w-12 h-0.5 mb-4 bg-primary" />
           )}
         </div>
       ))}
@@ -213,7 +213,7 @@ export default function Payment() {
     <div className="min-h-screen bg-muted/30" dir="rtl" data-testid="page-payment">
       <StepBar />
 
-      <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         <div className="bg-background border border-border rounded-2xl p-5 mb-4">
           <h3 className="font-bold text-foreground text-base mb-4 text-end">طريقة الدفع</h3>
 
@@ -221,29 +221,40 @@ export default function Payment() {
             {PAYMENT_METHODS.map((method) => (
               <label
                 key={method.id}
-                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                className={`flex items-center justify-between gap-3 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
                   selected === method.id
                     ? "border-emerald-600 bg-emerald-50"
                     : "border-border bg-background hover:border-primary/40"
                 }`}
                 data-testid={`payment-method-${method.id}`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   {"logo" in method && method.logo ? (
-                    <img src={method.logo} alt={method.label} className="h-7 w-auto object-contain" />
+                    <img
+                      src={method.logo}
+                      alt={method.label}
+                      className="h-6 sm:h-7 w-auto object-contain"
+                    />
                   ) : "logos" in method ? (
                     <div className="flex gap-1">
                       {method.logos.map((l, i) => (
-                        <img key={i} src={l} alt="" className="h-6 w-auto object-contain" />
+                        <img
+                          key={i}
+                          src={l}
+                          alt=""
+                          className="h-5 sm:h-6 w-auto object-contain"
+                        />
                       ))}
                     </div>
                   ) : null}
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="text-end">
-                    <div className="text-sm font-bold text-foreground">{method.label}</div>
-                    <div className="text-xs text-muted-foreground">{method.description}</div>
+                <div className="flex items-center gap-3 min-w-0 flex-1 justify-end">
+                  <div className="text-end min-w-0">
+                    <div className="text-sm font-bold text-foreground truncate">{method.label}</div>
+                    <div className="text-[11px] sm:text-xs text-muted-foreground truncate">
+                      {method.description}
+                    </div>
                   </div>
                   <div
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${

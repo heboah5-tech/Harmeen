@@ -127,35 +127,43 @@ function TripCard({ trip }: { trip: Trip }) {
       data-testid={`trip-card-${trip.id}`}
     >
       <div className="p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-3 sm:gap-4">
           <div className="text-left flex-shrink-0">
-            <div className="text-2xl font-extrabold text-primary">
-              {trip.price} <span className="text-base font-bold">ر.س</span>
+            <div className="text-xl sm:text-2xl font-extrabold text-primary leading-none">
+              {trip.price} <span className="text-sm sm:text-base font-bold">ر.س</span>
             </div>
-            <div className="text-xs text-muted-foreground">للفرد</div>
+            <div className="text-[11px] sm:text-xs text-muted-foreground mt-1">للفرد</div>
           </div>
 
-          <div className="flex-1 text-end">
-            <div className="flex items-center justify-end gap-3 mb-2">
-              <div className="text-end">
-                <div className="text-xs text-muted-foreground mb-0.5">الوصول</div>
-                <div className="font-bold text-foreground text-sm">{trip.to}</div>
-                <div className="text-lg font-extrabold text-foreground">{trip.time_arrive}</div>
+          <div className="flex-1 min-w-0 text-end">
+            <div className="flex items-center justify-end gap-2 sm:gap-3 mb-2">
+              <div className="text-end min-w-0">
+                <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">الوصول</div>
+                <div className="font-bold text-foreground text-xs sm:text-sm truncate">
+                  {trip.to}
+                </div>
+                <div className="text-base sm:text-lg font-extrabold text-foreground">
+                  {trip.time_arrive}
+                </div>
               </div>
-              <div className="flex flex-col items-center gap-1 px-2">
+              <div className="flex flex-col items-center gap-1 px-1 sm:px-2 flex-shrink-0">
                 <div className="w-2 h-2 rounded-full bg-primary" />
-                <div className="w-px h-8 bg-border" />
+                <div className="w-px h-6 sm:h-8 bg-border" />
                 <Bus className="w-4 h-4 text-primary" />
-                <div className="w-px h-8 bg-border" />
+                <div className="w-px h-6 sm:h-8 bg-border" />
                 <div className="w-2 h-2 rounded-full bg-emerald-600" />
               </div>
-              <div className="text-end">
-                <div className="text-xs text-muted-foreground mb-0.5">المغادرة</div>
-                <div className="font-bold text-foreground text-sm">{trip.from}</div>
-                <div className="text-lg font-extrabold text-foreground">{trip.time_depart}</div>
+              <div className="text-end min-w-0">
+                <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">المغادرة</div>
+                <div className="font-bold text-foreground text-xs sm:text-sm truncate">
+                  {trip.from}
+                </div>
+                <div className="text-base sm:text-lg font-extrabold text-foreground">
+                  {trip.time_depart}
+                </div>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 text-xs text-muted-foreground">
+            <div className="flex items-center justify-end gap-3 text-[11px] sm:text-xs text-muted-foreground flex-wrap">
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 {trip.duration}

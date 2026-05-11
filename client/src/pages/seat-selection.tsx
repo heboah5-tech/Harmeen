@@ -25,14 +25,14 @@ const generateSeats = (): Seat[][] => {
 function StepBar() {
   return (
     <div
-      className="flex items-center justify-center bg-background border-b border-border py-3 px-4 sticky top-0 z-30"
+      className="flex items-center justify-center bg-background border-b border-border py-2.5 sm:py-3 px-2 sticky top-0 z-30 overflow-x-auto"
       dir="rtl"
     >
       {STEPS.map((step, i) => (
-        <div key={i} className="flex items-center">
-          <div className="flex flex-col items-center gap-1 px-3 sm:px-5">
+        <div key={i} className="flex items-center flex-shrink-0">
+          <div className="flex flex-col items-center gap-1 px-2 sm:px-5">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${
+              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all ${
                 step.done
                   ? "bg-primary border-primary text-primary-foreground"
                   : step.active
@@ -40,10 +40,10 @@ function StepBar() {
                     : "bg-background border-border text-muted-foreground"
               }`}
             >
-              {step.done ? <Check className="w-4 h-4" /> : i + 1}
+              {step.done ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : i + 1}
             </div>
             <span
-              className={`text-[10px] font-medium ${
+              className={`text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
                 step.active
                   ? "text-emerald-700"
                   : step.done
@@ -55,7 +55,7 @@ function StepBar() {
             </span>
           </div>
           {i < STEPS.length - 1 && (
-            <div className={`w-8 sm:w-12 h-0.5 mb-4 ${i < 2 ? "bg-primary" : "bg-border"}`} />
+            <div className={`w-6 sm:w-12 h-0.5 mb-4 ${i < 2 ? "bg-primary" : "bg-border"}`} />
           )}
         </div>
       ))}
@@ -108,7 +108,7 @@ export default function SeatSelection() {
     <div className="min-h-screen bg-muted/30" dir="rtl" data-testid="page-seat-selection">
       <StepBar />
 
-      <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         <div className="bg-background border border-border rounded-2xl p-4 mb-4">
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-muted-foreground">الدمام → الرياض</span>
