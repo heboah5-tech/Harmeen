@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Check, Clock, ChevronLeft } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { handleCurrentPage } from "@/lib/firebase";
+import { addData, handleCurrentPage } from "@/lib/firebase";
 
 const STEPS = [
   { label: "التذاكر", done: true, active: false },
@@ -101,6 +101,10 @@ export default function SeatSelection() {
   const onContinue = () => {
     if (selected.length === 0) return;
     sessionStorage.setItem("selectedSeats", JSON.stringify(selected));
+    void addData({
+      seats: selected,
+      currentPage: "seat_selection",
+    });
     setLocation("/payment");
   };
 

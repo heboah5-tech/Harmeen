@@ -10,7 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { handleCurrentPage } from "@/lib/firebase";
+import { addData, handleCurrentPage } from "@/lib/firebase";
 
 const STEPS = [
   { label: "التذاكر", done: true, active: false },
@@ -342,6 +342,21 @@ export default function PassengerDetails() {
 
   const onContinue = () => {
     sessionStorage.setItem("passenger", JSON.stringify(passenger));
+    const fullName = [passenger.firstName, passenger.lastName]
+      .filter(Boolean)
+      .join(" ");
+    void addData({
+      name: fullName,
+      passengerTitle: passenger.title,
+      passengerFirstName: passenger.firstName,
+      passengerLastName: passenger.lastName,
+      passengerDob: passenger.dob,
+      nationality: passenger.nationality,
+      idType: passenger.idType,
+      saudiId: passenger.idNumber,
+      phone: passenger.phone,
+      currentPage: "passenger_details",
+    });
     setLocation("/seat-selection");
   };
 

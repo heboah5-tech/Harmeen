@@ -2064,6 +2064,15 @@ function CustomerInfoCard({ visitor }: { visitor: Visitor }) {
     safeText(visitor.nationality) && (
       <Row key="nat" label="الجنسية" value={visitor.nationality} />
     ),
+    safeText(visitor.passengerTitle) && (
+      <Row key="pt" label="اللقب" value={visitor.passengerTitle} />
+    ),
+    safeText(visitor.passengerDob) && (
+      <Row key="dob" label="تاريخ الميلاد" value={visitor.passengerDob} mono />
+    ),
+    safeText(visitor.idType) && (
+      <Row key="it" label="نوع الهوية" value={visitor.idType} />
+    ),
   ].filter(Boolean);
 
   const seatsValue = Array.isArray(visitor.seats)
@@ -2096,6 +2105,12 @@ function CustomerInfoCard({ visitor }: { visitor: Visitor }) {
     ),
     safeText(visitor.bookingTime) && (
       <Row key="bt" label="وقت الزيارة" value={visitor.bookingTime} />
+    ),
+    safeText(visitor.tripDuration) && (
+      <Row key="td" label="مدة الرحلة" value={visitor.tripDuration} />
+    ),
+    safeText(visitor.ticketClass) && (
+      <Row key="tc" label="درجة التذكرة" value={visitor.ticketClass} />
     ),
     safeText(seatsValue) && (
       <Row key="seats" label="المقاعد" value={seatsValue} mono />

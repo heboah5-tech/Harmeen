@@ -9,7 +9,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useLocation } from "wouter";
-import { handleCurrentPage } from "@/lib/firebase";
+import { addData, handleCurrentPage } from "@/lib/firebase";
 import { GlobalStyles, HeroSection } from "@/components/schedule/sections";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
@@ -133,10 +133,23 @@ function TripCard({ trip }: { trip: Trip }) {
   const [, setLocation] = useLocation();
 
   const onBook = () => {
+    const tripClass = trip.classes[selectedClass];
     sessionStorage.setItem(
       "selectedTrip",
       JSON.stringify({ ...trip, selectedClassIndex: selectedClass }),
     );
+    void addData({
+      from: trip.from,
+      to: trip.to,
+      bookingDate: trip.date,
+      bookingTime: trip.time_depart,
+      tripDuration: trip.duration,
+      ticketClass: tripClass?.name || "",
+      ticketPrice: trip.price,
+      totalAmount: trip.price,
+      ticketQuantity: 1,
+      currentPage: "search_results",
+    });
     setLocation("/passenger-details");
   };
 

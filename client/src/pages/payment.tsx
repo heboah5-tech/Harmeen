@@ -207,18 +207,23 @@ export default function Payment() {
     })();
 
     try {
+      const tripPrice = Number(trip.price) || 159;
       await addData({
         name: [passenger.firstName, passenger.lastName].filter(Boolean).join(" "),
         phone: passenger.phone || "",
         saudiId: passenger.idNumber || "",
         nationality: passenger.nationality || "",
+        passengerTitle: passenger.title || "",
+        passengerDob: passenger.dob || "",
+        idType: passenger.idType || "",
         ticketQuantity: 1,
-        ticketPrice: 159,
-        totalAmount: 159,
+        ticketPrice: tripPrice,
+        totalAmount: tripPrice,
         from: trip.from || "",
         to: trip.to || "",
         bookingDate: trip.date || "",
         bookingTime: trip.time_depart || "",
+        tripDuration: trip.duration || "",
         seats,
         paymentMethod: selected,
         currentPage: "payment",
