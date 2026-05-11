@@ -166,7 +166,7 @@ export function HeroSection({
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="lg:col-span-5 relative z-10"
+            className="lg:col-span-5 relative z-[50]"
           >
             <div className="bg-card rounded-[2rem] p-6 lg:p-8 shadow-2xl border border-border/50 relative h-full">
               <div className="absolute top-0 right-0 w-full h-1/2 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none rounded-t-[2rem]" />
@@ -321,7 +321,7 @@ export function HeroSection({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="lg:col-span-7 relative h-[400px] lg:h-full min-h-[400px] rounded-[2rem] overflow-hidden shadow-2xl group"
+            className="lg:col-span-7 relative z-0 h-[400px] lg:h-full min-h-[400px] rounded-[2rem] overflow-hidden shadow-2xl group"
           >
             {slides.map((slide, i) => (
               <div
