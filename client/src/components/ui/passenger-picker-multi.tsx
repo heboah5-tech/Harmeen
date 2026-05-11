@@ -59,7 +59,7 @@ export default function PassengerPickerMulti({ value, onChange }: Props) {
   }, [open]);
 
   return (
-    <div ref={ref} className="relative z-[2000]" dir="rtl">
+    <div ref={ref} className={`relative ${open ? "z-[2000]" : ""}`} dir="rtl">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
