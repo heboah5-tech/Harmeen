@@ -88,7 +88,18 @@ const trips: Trip[] = [
           { label: "رسوم", sub: "0.30", fee: true },
         ],
       },
-      { name: "الاقتصادية", tag: null, selected: false, summary: [] },
+      {
+        name: "الاقتصادية",
+        tag: "اقتصادية",
+        selected: false,
+        summary: [
+          { label: "تذاكر الاقتصادية (البالغين)", qty: "1 ×", price: "95.00", sub: "95.00" },
+          { label: "تذاكر (الأطفال)", qty: "1 ×", price: "95.00", sub: "95.00" },
+          { label: "إضافي للرضع (0-3)", qty: "1 ×", price: "110.70", sub: "15.70" },
+          { label: "إجمالي المبلغ", sub: "125", total: true },
+          { label: "رسوم", sub: "0.30", fee: true },
+        ],
+      },
     ],
   },
   {
@@ -100,7 +111,19 @@ const trips: Trip[] = [
     time_arrive: "18:00",
     duration: "9 ساعات",
     price: 235,
-    classes: [{ name: "الأساسية", tag: "الأوفر", selected: false, summary: [] }],
+    classes: [
+      { name: "الأساسية", tag: "الأوفر", selected: true, summary: [] },
+      {
+        name: "الاقتصادية",
+        tag: "اقتصادية",
+        selected: false,
+        summary: [
+          { label: "تذاكر الاقتصادية (البالغين)", qty: "1 ×", price: "180.00", sub: "180.00" },
+          { label: "إجمالي المبلغ", sub: "180", total: true },
+          { label: "رسوم", sub: "0.30", fee: true },
+        ],
+      },
+    ],
   },
 ];
 
