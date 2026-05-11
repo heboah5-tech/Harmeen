@@ -8,10 +8,17 @@ import {
   Calendar,
 } from "lucide-react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { addData, handleCurrentPage } from "@/lib/firebase";
 import { GlobalStyles, HeroSection } from "@/components/schedule/sections";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
+import {
+  fetchSaptcoTrips,
+  lookupStopId,
+  type SaptcoTrip,
+  type SaptcoFareOption,
+} from "@/lib/saptco";
 
 const cities = [
   "الكل",
@@ -184,6 +191,79 @@ function buildSummary(
   rows.push({ label: "إجمالي المبلغ", sub: total.toFixed(2), total: true });
   rows.push({ label: "رسوم", sub: fee.toFixed(2), fee: true });
   return { rows, total };
+}
+
+function pickSaptcoFare(t: SaptcoTrip): SaptcoFareOption | null {
+  return (
+    t.price?.base_fare_option ||
+    t.price?.flexable_option ||
+    t.price?.reduced_option ||
+    t.price?.minimum_option ||
+    null
+  );
+}
+
+function pickSaptcoEconomyFare(t: SaptcoTrip): SaptcoFareOption | null {
+  return (
+    t.price?.minimum_option ||
+    t.price?.reduced_option ||
+    t.price?.base_fare_option ||
+    null
+  );
+}
+
+function saptcoTripsToTrips(
+  saptcoTrips: SaptcoTrip[],
+  fromCity: string,
+  toCity: string,
+  isoDate: string,
+  pax: PassengerCounts,
+): Trip[] {
+  return saptcoTrips
+    .map((t, i) => {
+      const base = pickSaptcoFare(t);
+      const eco = pickSaptcoEconomyFare(t);
+      if (!base) return null;
+      const baseUnit = parseFloat(base.tickets?.[0]?.price_of_ticket || "0") || base.subtotal || 0;
+      const ecoUnit = eco
+        ? parseFloat(eco.tickets?.[0]?.price_of_ticket || "0") || eco.subtotal || baseUnit
+        : Math.max(85, Math.round(baseUnit * 0.78));
+      const dep = t.stops?.find((s) => s.departure_time)?.departure_time || "";
+      const arr = t.stops?.find((s) => s.arrival_time)?.arrival_time || "";
+      const durationMin = t.duration || 0;
+      const hours = Math.floor(durationMin / 60);
+      const mins = durationMin % 60;
+      const duration = mins
+        ? `${hours} ساعة ${mins} دقيقة`
+        : `${hours} ${hours === 1 ? "ساعة" : "ساعات"}`;
+      const basicSummary = buildSummary(baseUnit, "الأساسية", pax);
+      const ecoSummary = buildSummary(ecoUnit, "الاقتصادية", pax);
+      return {
+        id: t.id || i + 1,
+        from: fromCity,
+        to: toCity,
+        date: formatArabicDate(isoDate),
+        time_depart: dep,
+        time_arrive: arr,
+        duration,
+        price: Math.round(baseUnit),
+        classes: [
+          {
+            name: "الأساسية",
+            tag: i === 0 ? "الأوفر" : null,
+            selected: true,
+            summary: basicSummary.rows,
+          },
+          {
+            name: "الاقتصادية",
+            tag: "اقتصادية",
+            selected: false,
+            summary: ecoSummary.rows,
+          },
+        ],
+      } as Trip;
+    })
+    .filter(Boolean) as Trip[];
 }
 
 function generateTripsForRoute(
@@ -439,10 +519,36 @@ export default function SearchResults() {
 
   const [passengers] = useState<PassengerCounts>(() => readPassengerCounts());
 
-  const trips = useMemo(
-    () => generateTripsForRoute(fromCity, toCity, date, passengers),
-    [fromCity, toCity, date, passengers],
-  );
+  const stopsMapped =
+    !!lookupStopId(fromCity) && !!lookupStopId(toCity) && fromCity !== toCity;
+
+  const saptcoQuery = useQuery({
+    queryKey: ["saptco-trips", fromCity, toCity, date, passengers],
+    queryFn: () =>
+      fetchSaptcoTrips({
+        fromCity,
+        toCity,
+        isoDate: date,
+        passengers: {
+          adults: passengers.adults || 1,
+          children: passengers.children || 0,
+          infants: passengers.infants || 0,
+        },
+      }),
+    enabled: stopsMapped && !!date,
+    staleTime: 60_000,
+    retry: 0,
+  });
+
+  const trips = useMemo(() => {
+    if (saptcoQuery.data && saptcoQuery.data.length > 0) {
+      return saptcoTripsToTrips(saptcoQuery.data, fromCity, toCity, date, passengers);
+    }
+    return generateTripsForRoute(fromCity, toCity, date, passengers);
+  }, [saptcoQuery.data, fromCity, toCity, date, passengers]);
+
+  const usingApi = !!(saptcoQuery.data && saptcoQuery.data.length > 0);
+  const apiLoading = saptcoQuery.isLoading && stopsMapped;
 
   return (
     <div
@@ -471,21 +577,33 @@ export default function SearchResults() {
 
       <div id="trip-results" className="bg-muted/30 flex-1">
         <div className="max-w-3xl mx-auto px-4 py-6">
+          {apiLoading && (
+            <div className="text-center py-8 text-muted-foreground text-sm">
+              جاري البحث عن الرحلات…
+            </div>
+          )}
           {trips.length > 0 ? (
             <>
-              <div className="mb-4 flex items-center justify-end text-xs text-muted-foreground">
+              <div className="mb-4 flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-bold text-foreground">
                   {fromCity} ← {toCity} • {formatArabicDate(date)}
                 </span>
+                {usingApi && (
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
+                    رحلات SAPTCO فعلية
+                  </span>
+                )}
               </div>
               {trips.map((trip) => (
                 <TripCard key={`${fromCity}-${toCity}-${date}-${trip.id}`} trip={trip} />
               ))}
             </>
           ) : (
-            <div className="text-center py-16 text-muted-foreground text-sm">
-              لا توجد رحلات متاحة لهذا المسار. يرجى اختيار مدن مختلفة.
-            </div>
+            !apiLoading && (
+              <div className="text-center py-16 text-muted-foreground text-sm">
+                لا توجد رحلات متاحة لهذا المسار. يرجى اختيار مدن مختلفة.
+              </div>
+            )
           )}
         </div>
       </div>
