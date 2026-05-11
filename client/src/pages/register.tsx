@@ -72,13 +72,22 @@ export default function Register() {
     setLocation("/trip-booking");
   };
 
-  const textFields: { label: string; key: keyof FormState; placeholder: string; type?: string }[] = [
+  const textFields: {
+    label: string;
+    key: keyof FormState;
+    placeholder: string;
+    type?: string;
+  }[] = [
     { label: "الاسم الأول", key: "firstName", placeholder: "ادخل الاسم الأول" },
-    { label: "الاسم الأخير", key: "lastName", placeholder: "Soubi" },
+    {
+      label: "الاسم الأخير",
+      key: "lastName",
+      placeholder: "ادخل الاسم الأخير",
+    },
     {
       label: "البريد الإلكتروني",
       key: "email",
-      placeholder: "moathaza@gmail.com",
+      placeholder: "example@mail.com",
       type: "email",
     },
     {

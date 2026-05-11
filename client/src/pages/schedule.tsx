@@ -472,7 +472,7 @@ export default function Schedule() {
         )}
       </div>
 
-      <BottomNav active="الرحلات" />
+      <BottomNav active="" />
     </div>
   );
 }
