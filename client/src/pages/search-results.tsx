@@ -478,8 +478,7 @@ export default function SearchResults() {
         <div className="max-w-3xl mx-auto px-4 py-6">
           {trips.length > 0 ? (
             <>
-              <div className="mb-4 flex items-center justify-between text-xs text-muted-foreground">
-                <span>{trips.length} رحلة متاحة</span>
+              <div className="mb-4 flex items-center justify-end text-xs text-muted-foreground">
                 <span className="font-bold text-foreground">
                   {fromCity} ← {toCity} • {formatArabicDate(date)}
                 </span>
