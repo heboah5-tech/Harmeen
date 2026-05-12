@@ -363,7 +363,7 @@ function TripCard({ trip }: { trip: Trip }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:border-primary/30 transition-all duration-300 mb-4"
+      className="card-premium overflow-hidden mb-4"
       dir="rtl"
       data-testid={`trip-card-${trip.id}`}
     >
@@ -474,7 +474,7 @@ function TripCard({ trip }: { trip: Trip }) {
 
           <button
             onClick={onBook}
-            className="w-full bg-emerald-600 text-white py-3.5 rounded-xl font-bold text-base hover:bg-emerald-700 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300"
+            className="btn-gold w-full py-3.5 text-base"
             data-testid={`button-book-trip-${trip.id}`}
           >
             احجز الآن

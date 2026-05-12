@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Clock, ChevronLeft, Shield, AlertCircle } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import BookingStepBar from "@/components/booking-step-bar";
 import {
   addData,
   handleCurrentPage,
@@ -155,13 +156,6 @@ function PaymentBookingSummary() {
   );
 }
 
-const STEPS = [
-  { label: "التذاكر", done: true, active: false },
-  { label: "التفاصيل", done: true, active: false },
-  { label: "الشراء", done: true, active: false },
-  { label: "الدفع", done: false, active: true },
-];
-
 const PAYMENT_METHODS = [
   {
     id: "mada",
@@ -181,44 +175,7 @@ const PAYMENT_METHODS = [
 ] as const;
 
 function StepBar() {
-  return (
-    <div
-      className="flex items-center justify-center bg-background border-b border-border py-2.5 sm:py-3 px-2 sticky top-0 z-30 overflow-x-auto"
-      dir="rtl"
-    >
-      {STEPS.map((step, i) => (
-        <div key={i} className="flex items-center flex-shrink-0">
-          <div className="flex flex-col items-center gap-1 px-2 sm:px-5">
-            <div
-              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all ${
-                step.done
-                  ? "bg-primary border-primary text-primary-foreground"
-                  : step.active
-                    ? "bg-emerald-600 border-emerald-600 text-white"
-                    : "bg-background border-border text-muted-foreground"
-              }`}
-            >
-              {step.done ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : i + 1}
-            </div>
-            <span
-              className={`text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
-                step.active
-                  ? "text-emerald-700"
-                  : step.done
-                    ? "text-primary"
-                    : "text-muted-foreground"
-              }`}
-            >
-              {step.label}
-            </span>
-          </div>
-          {i < STEPS.length - 1 && (
-            <div className="w-6 sm:w-12 h-0.5 mb-4 bg-primary" />
-          )}
-        </div>
-      ))}
-    </div>
-  );
+  return <BookingStepBar current={3} title="الدفع" />;
 }
 
 function digitsOnly(v: string, max: number) {
@@ -453,7 +410,7 @@ export default function Payment() {
                 key={method.id}
                 className={`flex items-center justify-between gap-3 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
                   selected === method.id
-                    ? "border-emerald-600 bg-emerald-50"
+                    ? "border-[hsl(var(--gold-600))] bg-[hsl(var(--gold-50))]"
                     : "border-border bg-background hover:border-primary/40"
                 }`}
                 data-testid={`payment-method-${method.id}`}
@@ -488,7 +445,7 @@ export default function Payment() {
                   </div>
                   <div
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                      selected === method.id ? "border-emerald-600 bg-emerald-600" : "border-border"
+                      selected === method.id ? "border-[hsl(var(--gold-600))] bg-gold-gradient" : "border-border"
                     }`}
                   >
                     {selected === method.id && <div className="w-2 h-2 rounded-full bg-white" />}
@@ -697,10 +654,10 @@ export default function Payment() {
           whileTap={{ scale: 0.98 }}
           disabled={!canPay}
           onClick={onPay}
-          className={`w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 transition-all duration-300 ${
+          className={`w-full py-4 font-bold text-base flex items-center justify-center gap-2 ${
             canPay
-              ? "bg-emerald-600 text-white hover:bg-emerald-700 hover:-translate-y-0.5 hover:shadow-lg"
-              : "bg-muted text-muted-foreground cursor-not-allowed"
+              ? "btn-gold"
+              : "bg-muted text-muted-foreground cursor-not-allowed rounded-2xl"
           }`}
           data-testid="button-pay"
         >

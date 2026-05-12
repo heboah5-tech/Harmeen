@@ -138,37 +138,38 @@ const STEPS = ["اختيار المقعد", "بيانات المسافر", "ال
 
 function StepIndicator({ current }: { current: number }) {
   return (
-    <div
-      className="flex items-center justify-center gap-1 px-4 py-3 border-b border-border bg-card"
-      dir="rtl"
-    >
-      {STEPS.map((label, i) => (
-        <div key={i} className="flex items-center gap-1">
-          <div className="flex flex-col items-center gap-1">
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black border-2 transition-all ${
-                i < current
-                  ? "bg-primary border-primary text-primary-foreground"
-                  : i === current
-                    ? "bg-primary border-primary text-primary-foreground scale-110 shadow-lg"
-                    : "bg-muted border-border text-muted-foreground"
-              }`}
-            >
-              {i < current ? "✓" : i + 1}
-            </div>
-            <span
-              className={`text-[9px] font-medium whitespace-nowrap ${i === current ? "text-primary font-bold" : "text-muted-foreground"}`}
-            >
-              {label}
-            </span>
-          </div>
-          {i < STEPS.length - 1 && (
-            <div
-              className={`w-8 h-1 mb-3 transition-colors ${i < current ? "bg-primary" : "bg-border"}`}
-            />
-          )}
+    <div className="step-indicator" dir="rtl">
+      <div className="flex items-center justify-center px-3 py-3 overflow-x-auto">
+        <div className="flex items-center min-w-fit">
+          {STEPS.map((label, i) => {
+            const done = i < current;
+            const active = i === current;
+            return (
+              <div key={i} className="flex items-center flex-shrink-0">
+                <div className="flex flex-col items-center gap-1.5 px-2 sm:px-4">
+                  <div className={`step-dot ${done ? "is-done" : active ? "is-active" : ""}`}>
+                    {done ? "✓" : i + 1}
+                  </div>
+                  <span
+                    className={`text-[10px] font-semibold whitespace-nowrap transition-colors ${
+                      active
+                        ? "text-[hsl(var(--gold-700))]"
+                        : done
+                          ? "text-[hsl(var(--gold-600))]"
+                          : "text-muted-foreground"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </div>
+                {i < STEPS.length - 1 && (
+                  <div className={`step-line ${done ? "is-done" : ""}`} />
+                )}
+              </div>
+            );
+          })}
         </div>
-      ))}
+      </div>
     </div>
   );
 }
@@ -406,10 +407,10 @@ function ReservationFlow({
             disabled={!canNext() || submitting || waitingApproval}
             onClick={() => void handleNext()}
             data-testid="button-next-step"
-            className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${
+            className={`flex-1 py-3 font-bold text-sm ${
               canNext() && !submitting && !waitingApproval
-                ? "bg-primary text-primary-foreground hover:opacity-90 shadow-lg"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
+                ? "btn-gold"
+                : "bg-muted text-muted-foreground cursor-not-allowed rounded-xl"
             }`}
           >
             {waitingApproval

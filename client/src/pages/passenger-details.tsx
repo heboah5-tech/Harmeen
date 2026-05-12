@@ -7,18 +7,11 @@ import {
   ChevronDown,
   ChevronLeft,
   Clock,
-  Check,
   AlertCircle,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { addData, handleCurrentPage } from "@/lib/firebase";
-
-const STEPS = [
-  { label: "التذاكر", done: true, active: false },
-  { label: "التفاصيل", done: false, active: true },
-  { label: "الشراء", done: false, active: false },
-  { label: "الدفع", done: false, active: false },
-];
+import BookingStepBar from "@/components/booking-step-bar";
 
 const NATIONALITIES = [
   "سعودي",
@@ -74,50 +67,7 @@ type PassengerData = {
 };
 
 function StepBar() {
-  return (
-    <div
-      className="flex items-center justify-center bg-background border-b border-border py-2.5 sm:py-3 px-2 sticky top-0 z-30 overflow-x-auto"
-      dir="rtl"
-    >
-      {STEPS.map((step, i) => (
-        <div key={i} className="flex items-center flex-shrink-0">
-          <div className="flex flex-col items-center gap-1 px-2 sm:px-5">
-            <div
-              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all ${
-                step.done
-                  ? "bg-primary border-primary text-primary-foreground"
-                  : step.active
-                    ? "bg-emerald-600 border-emerald-600 text-white"
-                    : "bg-background border-border text-muted-foreground"
-              }`}
-            >
-              {step.done ? (
-                <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              ) : (
-                i + 1
-              )}
-            </div>
-            <span
-              className={`text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
-                step.active
-                  ? "text-emerald-700"
-                  : step.done
-                    ? "text-primary"
-                    : "text-muted-foreground"
-              }`}
-            >
-              {step.label}
-            </span>
-          </div>
-          {i < STEPS.length - 1 && (
-            <div
-              className={`w-6 sm:w-12 h-0.5 mb-4 ${i === 0 ? "bg-primary" : "bg-border"}`}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  );
+  return <BookingStepBar current={1} title="المعلومات الشخصية" />;
 }
 
 function PassengerForm({
@@ -629,7 +579,7 @@ export default function PassengerDetails() {
 
         <button
           onClick={onContinue}
-          className="w-full mt-4 py-4 rounded-xl font-bold text-base bg-emerald-600 text-white hover:bg-emerald-700 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+          className="btn-gold w-full mt-4 py-4 text-base flex items-center justify-center gap-2"
           data-testid="button-continue-to-seats"
         >
           <ChevronLeft className="w-5 h-5" />

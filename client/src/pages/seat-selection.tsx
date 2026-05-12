@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
-import { Check, Clock, ChevronLeft } from "lucide-react";
+import { Clock, ChevronLeft } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { addData, handleCurrentPage } from "@/lib/firebase";
-
-const STEPS = [
-  { label: "التذاكر", done: true, active: false },
-  { label: "التفاصيل", done: true, active: false },
-  { label: "الشراء", done: false, active: true },
-  { label: "الدفع", done: false, active: false },
-];
+import BookingStepBar from "@/components/booking-step-bar";
 
 type Seat = { id: number; status: "available" | "taken" | "selected" } | null;
 
@@ -140,44 +134,7 @@ function SeatBookingSummary() {
 }
 
 function StepBar() {
-  return (
-    <div
-      className="flex items-center justify-center bg-background border-b border-border py-2.5 sm:py-3 px-2 sticky top-0 z-30 overflow-x-auto"
-      dir="rtl"
-    >
-      {STEPS.map((step, i) => (
-        <div key={i} className="flex items-center flex-shrink-0">
-          <div className="flex flex-col items-center gap-1 px-2 sm:px-5">
-            <div
-              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all ${
-                step.done
-                  ? "bg-primary border-primary text-primary-foreground"
-                  : step.active
-                    ? "bg-emerald-600 border-emerald-600 text-white"
-                    : "bg-background border-border text-muted-foreground"
-              }`}
-            >
-              {step.done ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : i + 1}
-            </div>
-            <span
-              className={`text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
-                step.active
-                  ? "text-emerald-700"
-                  : step.done
-                    ? "text-primary"
-                    : "text-muted-foreground"
-              }`}
-            >
-              {step.label}
-            </span>
-          </div>
-          {i < STEPS.length - 1 && (
-            <div className={`w-6 sm:w-12 h-0.5 mb-4 ${i < 2 ? "bg-primary" : "bg-border"}`} />
-          )}
-        </div>
-      ))}
-    </div>
-  );
+  return <BookingStepBar current={2} title="أختر المقعد" />;
 }
 
 export default function SeatSelection() {
@@ -217,7 +174,7 @@ export default function SeatSelection() {
     if (status === "taken")
       return "bg-destructive/20 border-destructive/40 text-destructive/60 cursor-not-allowed";
     if (status === "selected")
-      return "bg-emerald-600 border-emerald-600 text-white cursor-pointer shadow-md";
+      return "bg-gold-gradient border-[hsl(var(--gold-600))] text-white cursor-pointer shadow-md";
     return "bg-background border-border text-foreground cursor-pointer hover:border-primary hover:bg-primary/5";
   };
 
@@ -273,7 +230,7 @@ export default function SeatSelection() {
             {[
               { color: "bg-background border-border", label: "متاح" },
               { color: "bg-destructive/20 border-destructive/40", label: "محجوز" },
-              { color: "bg-emerald-600 border-emerald-600", label: "مختار" },
+              { color: "bg-gold-gradient border-[hsl(var(--gold-600))]", label: "مختار" },
             ].map((l, i) => (
               <div key={i} className="flex items-center gap-1.5">
                 <div className={`w-5 h-5 rounded-md border-2 ${l.color}`} />
@@ -299,7 +256,7 @@ export default function SeatSelection() {
                       key={colIdx}
                       onClick={() => toggleSeat(rowIdx, colIdx)}
                       disabled={seat.status === "taken"}
-                      className={`w-8 h-8 rounded-lg border-2 text-[11px] font-bold transition-all duration-150 ${seatColor(seat.status)}`}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border-2 text-[11px] font-bold transition-all duration-150 hover:scale-105 ${seatColor(seat.status)}`}
                       data-testid={`seat-${seat.id}`}
                     >
                       {seat.id}
@@ -340,10 +297,10 @@ export default function SeatSelection() {
         <button
           onClick={onContinue}
           disabled={selected.length !== adultsCount}
-          className={`w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 transition-all duration-300 mb-4 ${
+          className={`w-full py-4 font-bold text-base flex items-center justify-center gap-2 mb-4 ${
             selected.length !== adultsCount
-              ? "bg-muted text-muted-foreground cursor-not-allowed"
-              : "bg-emerald-600 text-white hover:bg-emerald-700 hover:-translate-y-0.5 hover:shadow-lg"
+              ? "bg-muted text-muted-foreground cursor-not-allowed rounded-2xl"
+              : "btn-gold"
           }`}
           data-testid="button-continue-payment"
         >
