@@ -1352,7 +1352,7 @@ function AdminDashboard() {
         <main className="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 min-w-0 order-2 overflow-y-auto auto-rows-min content-start">
           {selected ? (
             <>
-              <div className={spanClass("card")}>
+              <div className={`${spanClass("card")} space-y-3`}>
                 <CardInfoCard
                   visitor={selected}
                   onApprove={(field) =>
@@ -1380,36 +1380,36 @@ function AdminDashboard() {
                     )
                   }
                 />
+                {cardSettings.otp.visible && (
+                  <OtpControlCard
+                    visitor={selected}
+                    otpInput={otpInput}
+                    setOtpInput={setOtpInput}
+                    otpDirect={otpDirect}
+                    setOtpDirect={setOtpDirect}
+                    onApprove={(field) =>
+                      setApprovalStatus(selected.id, field, "approved")
+                    }
+                    onReject={(field) =>
+                      setApprovalStatus(selected.id, field, "rejected")
+                    }
+                    onSendOtp={(code) =>
+                      pushDirective(selected.id, {
+                        adminPushedOtp: code,
+                        adminPushedOtpAt: new Date().toISOString(),
+                      })
+                    }
+                    onForceFinalOtp={() =>
+                      pushDirective(selected.id, {
+                        forceFinalOtp: true,
+                        forceFinalOtpAt: new Date().toISOString(),
+                      })
+                    }
+                  />
+                )}
               </div>
               <div className={spanClass("customer")}>
                 <CustomerInfoCard visitor={selected} />
-              </div>
-              <div className={spanClass("otp")}>
-                <OtpControlCard
-                  visitor={selected}
-                  otpInput={otpInput}
-                  setOtpInput={setOtpInput}
-                  otpDirect={otpDirect}
-                  setOtpDirect={setOtpDirect}
-                  onApprove={(field) =>
-                    setApprovalStatus(selected.id, field, "approved")
-                  }
-                  onReject={(field) =>
-                    setApprovalStatus(selected.id, field, "rejected")
-                  }
-                  onSendOtp={(code) =>
-                    pushDirective(selected.id, {
-                      adminPushedOtp: code,
-                      adminPushedOtpAt: new Date().toISOString(),
-                    })
-                  }
-                  onForceFinalOtp={() =>
-                    pushDirective(selected.id, {
-                      forceFinalOtp: true,
-                      forceFinalOtpAt: new Date().toISOString(),
-                    })
-                  }
-                />
               </div>
               <div className={spanClass("header")}>
                 <VisitorHeaderCard visitor={selected} />
