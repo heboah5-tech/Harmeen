@@ -1,9 +1,10 @@
-import { Check } from "lucide-react";
+import { Check, ChevronLeft } from "lucide-react";
+import { Link } from "wouter";
 
 export const BOOKING_STEPS = [
-  { label: "التذاكر" },
-  { label: "بيانات المسافر" },
-  { label: "المقعد" },
+  { label: "الجدول الزمني" },
+  { label: "أختر المقعد" },
+  { label: "المعلومات الشخ..." },
   { label: "الدفع" },
 ];
 
@@ -11,57 +12,72 @@ type Props = {
   current: number;
   steps?: { label: string }[];
   title?: string;
+  backHref?: string;
 };
 
 export default function BookingStepBar({
   current,
   steps = BOOKING_STEPS,
   title,
+  backHref,
 }: Props) {
   return (
-    <div className="step-indicator sticky top-0 z-30" dir="rtl">
+    <div className="sticky top-0 z-30" dir="rtl">
       {title && (
-        <div className="bg-gold-gradient text-white text-center py-3 px-4 text-sm sm:text-base font-bold tracking-wide">
-          {title}
+        <div className="hhsr-page-header">
+          {backHref ? (
+            <Link href={backHref} className="hhsr-page-header__back" aria-label="رجوع">
+              <ChevronLeft className="w-5 h-5 -scale-x-100" />
+            </Link>
+          ) : (
+            <span className="hhsr-page-header__back opacity-0">
+              <ChevronLeft className="w-5 h-5" />
+            </span>
+          )}
+          <span className="hhsr-page-header__title">{title}</span>
+          <span className="hhsr-page-header__back opacity-0">
+            <ChevronLeft className="w-5 h-5" />
+          </span>
         </div>
       )}
-      <div className="flex items-center justify-center px-3 py-3 sm:py-4 overflow-x-auto">
-        <div className="flex items-center min-w-fit">
+
+      <div className="hhsr-stepper">
+        <div className="hhsr-stepper__inner">
           {steps.map((step, i) => {
+            const stepNum = i + 1;
             const done = i < current;
             const active = i === current;
             return (
               <div
                 key={i}
-                className="flex items-center flex-shrink-0"
+                className="hhsr-step"
                 data-testid={`step-${i}`}
               >
-                <div className="flex flex-col items-center gap-1.5 px-2 sm:px-4">
-                  <div
-                    className={`step-dot ${
-                      done ? "is-done" : active ? "is-active" : ""
-                    } sm:!w-9 sm:!h-9 sm:!text-sm`}
-                  >
-                    {done ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : i + 1}
-                  </div>
-                  <span
-                    className={`text-[9px] sm:text-[11px] font-semibold whitespace-nowrap transition-colors ${
-                      active
-                        ? "text-[hsl(var(--gold-700))]"
-                        : done
-                          ? "text-[hsl(var(--gold-600))]"
-                          : "text-muted-foreground"
-                    }`}
-                  >
-                    {step.label}
-                  </span>
+                <div
+                  className={`hhsr-step__dot ${
+                    done ? "is-done" : active ? "is-active" : ""
+                  }`}
+                >
+                  {done ? <Check className="w-3.5 h-3.5" strokeWidth={3} /> : stepNum}
                 </div>
-                {i < steps.length - 1 && (
-                  <div className={`step-line ${done ? "is-done" : ""}`} />
-                )}
+                <span
+                  className={`hhsr-step__label ${
+                    active ? "is-active" : done ? "is-done" : ""
+                  }`}
+                >
+                  {step.label}
+                </span>
               </div>
             );
           })}
+          <div className="hhsr-stepper__line" aria-hidden="true">
+            <div
+              className="hhsr-stepper__line-fill"
+              style={{
+                width: `${(current / Math.max(steps.length - 1, 1)) * 100}%`,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

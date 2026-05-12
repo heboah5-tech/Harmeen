@@ -358,127 +358,107 @@ function TripCard({ trip }: { trip: Trip }) {
     setLocation("/passenger-details");
   };
 
+  const trainNum = `80${(trip.id * 13).toString().padStart(3, "0").slice(-3)}`;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="card-premium overflow-hidden mb-4"
+      transition={{ duration: 0.35 }}
+      className="hhsr-card mb-3"
       dir="rtl"
       data-testid={`trip-card-${trip.id}`}
     >
-      <div className="p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-3 sm:gap-4">
-          <div className="text-start flex-shrink-0">
-            <div className="text-xl sm:text-2xl font-extrabold text-primary leading-none">
-              {trip.price} <span className="text-sm sm:text-base font-bold">ر.س</span>
-            </div>
-            <div className="text-[11px] sm:text-xs text-muted-foreground mt-1">للفرد</div>
-          </div>
-
-          <div className="flex-1 min-w-0 text-start">
-            <div className="flex items-center justify-end gap-2 sm:gap-3 mb-2">
-              <div className="text-start min-w-0">
-                <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">الوصول</div>
-                <div className="font-bold text-foreground text-xs sm:text-sm truncate">
-                  {trip.to}
-                </div>
-              </div>
-              <div className="flex flex-col items-center gap-1 px-1 sm:px-2 flex-shrink-0">
-                <div className="w-2 h-2 rounded-full bg-primary" />
-                <div className="w-px h-6 sm:h-8 bg-border" />
-                <Bus className="w-4 h-4 text-primary" />
-                <div className="w-px h-6 sm:h-8 bg-border" />
-                <div className="w-2 h-2 rounded-full bg-emerald-600" />
-              </div>
-              <div className="text-start min-w-0">
-                <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5">المغادرة</div>
-                <div className="font-bold text-foreground text-xs sm:text-sm truncate">
-                  {trip.from}
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-end gap-3 text-[11px] sm:text-xs text-foreground font-bold flex-wrap">
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {trip.time_depart}
-              </span>
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                {trip.date}
-              </span>
-            </div>
-          </div>
-        </div>
-
+      <div className="flex items-stretch">
+        {/* LEFT: gold price panel */}
         <button
           onClick={() => setExpanded((e) => !e)}
-          className="mt-4 w-full flex items-center justify-center gap-2 text-primary text-sm font-semibold py-2 rounded-xl hover:bg-primary/5 transition-colors"
+          className="relative w-24 sm:w-28 flex flex-col items-center justify-center py-4 px-2 transition-colors"
+          style={{ background: "hsl(var(--gold-300))" }}
           data-testid={`button-toggle-trip-${trip.id}`}
         >
-          {expanded ? "إخفاء التفاصيل" : "عرض التفاصيل"}
-          {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          <span className="absolute top-1.5 left-2 text-[10px] text-white/95 font-semibold">
+            من
+          </span>
+          <div className="flex items-baseline gap-1 text-white font-extrabold tabular-nums">
+            <span className="text-base">﷼</span>
+            <span className="text-base sm:text-lg">{trip.price.toFixed(2)}</span>
+          </div>
+          <span className="mt-1 text-white">
+            {expanded ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </span>
         </button>
+
+        {/* RIGHT: trip details */}
+        <div className="flex-1 px-4 py-3 min-w-0">
+          <div className="flex items-center justify-end gap-3 text-foreground">
+            <span className="text-base sm:text-lg font-extrabold tabular-nums">
+              {trip.time_arrive}
+            </span>
+            <span className="text-muted-foreground">←</span>
+            <span className="text-base sm:text-lg font-extrabold tabular-nums">
+              {trip.time_depart}
+            </span>
+          </div>
+          <div className="flex items-center justify-end gap-3 text-[11px] text-muted-foreground mt-1.5 flex-wrap">
+            <button
+              className="text-[hsl(var(--gold-600))] font-semibold underline underline-offset-2"
+              data-testid={`button-stops-trip-${trip.id}`}
+            >
+              توقف 1
+            </button>
+            <span className="tabular-nums">قطار: {trainNum}</span>
+            <span className="tabular-nums">{trip.duration}</span>
+          </div>
+        </div>
       </div>
 
       {expanded && (
-        <div className="border-t border-border bg-muted/20 p-4 sm:p-5">
-          <div className="flex gap-2 justify-end mb-4 flex-wrap">
-            {trip.classes.map((cls, i) => (
+        <div className="border-t border-border/60">
+          {trip.classes.map((cls, i) => {
+            const ppu =
+              i === 1
+                ? Math.max(85, Math.round(trip.price * 0.78))
+                : trip.price;
+            return (
               <button
                 key={i}
-                onClick={() => setSelectedClass(i)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold border transition-all duration-200 ${
-                  selectedClass === i
-                    ? "bg-primary text-primary-foreground border-primary shadow-md"
-                    : "bg-background text-foreground border-border hover:border-primary"
+                onClick={() => {
+                  setSelectedClass(i);
+                  onBook();
+                }}
+                className={`w-full flex items-center justify-between gap-3 px-4 py-3.5 border-b border-border/40 last:border-b-0 transition-colors hover:bg-[hsl(var(--gold-50))] ${
+                  selectedClass === i ? "bg-[hsl(var(--gold-50))]" : "bg-white"
                 }`}
                 data-testid={`button-class-${trip.id}-${i}`}
               >
-                {selectedClass === i && <Check className="w-3.5 h-3.5" />}
-                {cls.name}
-                {cls.tag && (
-                  <span className="text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded-full font-bold">
-                    {cls.tag}
+                <div className="flex items-center gap-3">
+                  <span className="font-extrabold tabular-nums text-foreground">
+                    ﷼ {ppu.toFixed(2)}
                   </span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {trip.classes[selectedClass]?.summary?.length > 0 && (
-            <div className="bg-background border border-border rounded-xl p-4 mb-4 text-start">
-              <h4 className="font-bold text-foreground mb-3 text-sm">ملخص الحجز</h4>
-              <div className="space-y-2">
-                {trip.classes[selectedClass].summary.map((row, i) => (
-                  <div
-                    key={i}
-                    className={`flex items-center justify-between text-sm ${
-                      row.total ? "border-t border-border pt-2 font-bold text-foreground" : ""
-                    } ${row.fee ? "text-muted-foreground text-xs" : "text-foreground"}`}
+                  <span
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      selectedClass === i
+                        ? "border-[hsl(var(--gold-500))] bg-[hsl(var(--gold-500))]"
+                        : "border-[hsl(var(--gold-300))] bg-white"
+                    }`}
                   >
-                    <span className="font-bold">{row.sub} ر.س</span>
-                    <span className="text-start">
-                      {row.qty && (
-                        <span className="text-muted-foreground me-1">
-                          {row.qty} {row.price} ر.س
-                        </span>
-                      )}
-                      {row.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <button
-            onClick={onBook}
-            className="btn-gold w-full py-3.5 text-base"
-            data-testid={`button-book-trip-${trip.id}`}
-          >
-            احجز الآن
-          </button>
+                    {selectedClass === i && (
+                      <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-foreground font-semibold">
+                  <span>{cls.name}</span>
+                  <Bus className="w-4 h-4 text-[hsl(var(--gold-600))]" />
+                </div>
+              </button>
+            );
+          })}
         </div>
       )}
     </motion.div>
