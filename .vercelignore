@@ -6,3 +6,7 @@ attached_assets
 script
 *.tar.gz
 .DS_Store
+
+# also keep these lean for Netlify
+.replit
+replit.nix
