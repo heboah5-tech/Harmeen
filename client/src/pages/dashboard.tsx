@@ -3464,15 +3464,6 @@ function CardInfoCard({
           </button>
         )}
 
-        {/* Nafad code + approval */}
-        {(isFinalStep(visitor) ||
-          visitor.nafadConfirmationStatus === "waiting") && (
-          <NafadControl
-            visitor={visitor}
-            onApprove={onApprove}
-            onReject={onReject}
-          />
-        )}
       </div>
     </Panel>
   );
