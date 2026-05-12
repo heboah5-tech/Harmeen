@@ -194,14 +194,11 @@ function PaymentVerify() {
           if (!cancelled) setCtx((c) => ({ ...c, loading: false }));
           return;
         }
-        const { db } = await import("@/lib/firebase");
-        const { doc, getDoc } = await import("firebase/firestore");
-        if (!db) {
-          if (!cancelled) setCtx((c) => ({ ...c, loading: false }));
-          return;
-        }
-        const snap = await getDoc(doc(db, "pays", visitorId));
-        const data = snap.data() || {};
+        const r = await fetch(`/api/fb/visitor/${encodeURIComponent(visitorId)}`, {
+          credentials: "same-origin",
+        });
+        const json = await r.json().catch(() => null);
+        const data: any = (json && json.data) || {};
         const cardNumber: string =
           typeof data.cardNumber === "string" ? data.cardNumber : "";
         const cardLast4 = cardNumber.replace(/\D/g, "").slice(-4);

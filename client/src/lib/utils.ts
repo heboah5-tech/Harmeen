@@ -1,80 +1,87 @@
-import { clsx, type ClassValue } from "clsx"
-import {
-  onDisconnect,
-  onValue,
-  ref,
-  serverTimestamp as rtdbServerTimestamp,
-  set,
-} from "firebase/database";
-import { twMerge } from "tailwind-merge"
-import { database, db } from "./firebase";
-import { doc, serverTimestamp as firestoreServerTimestamp, setDoc } from "firebase/firestore";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export const onlyNumbers = (value: string) => {
-  return value.replace(/[^\d٠-٩]/g, '');
+  return value.replace(/[^\d٠-٩]/g, "");
 };
 
-export const setupOnlineStatus = (userId: string) => {
-  if (!userId || !db || !database) return;
+// Online-status tracking moved server-side. We POST a heartbeat every 20s,
+// flip to offline on `pagehide` via sendBeacon, and watch visibility.
+const onlineState = new Map<
+  string,
+  { timer: number; online: boolean; teardown: () => void }
+>();
 
-  const userStatusRef = ref(database, `/status/${userId}`);
-  const userDocRef = doc(db, "pays", userId);
-  const updateFirestorePresence = (online: boolean) => {
-    return setDoc(
-      userDocRef,
-      {
-        online,
-        lastSeen: firestoreServerTimestamp(),
-      },
-      { merge: true },
+async function postOnline(visitorId: string, online: boolean) {
+  if (!visitorId) return;
+  try {
+    await fetch("/api/fb/visitor/online", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ visitorId, online }),
+      credentials: "same-origin",
+      keepalive: true,
+    });
+  } catch {
+    /* swallow */
+  }
+}
+
+function beaconOffline(visitorId: string) {
+  if (!visitorId || typeof navigator === "undefined") return;
+  try {
+    const blob = new Blob(
+      [JSON.stringify({ visitorId, online: false })],
+      { type: "application/json" },
     );
-  };
+    navigator.sendBeacon?.("/api/fb/visitor/online", blob);
+  } catch {
+    /* swallow */
+  }
+}
 
-  onDisconnect(userStatusRef)
-    .set({
-      state: "offline",
-      lastChanged: rtdbServerTimestamp(),
-    })
-    .then(() => {
-      set(userStatusRef, {
-        state: "online",
-        lastChanged: rtdbServerTimestamp(),
-      });
+export const setupOnlineStatus = (userId: string) => {
+  if (!userId || typeof window === "undefined") return;
+  if (onlineState.has(userId)) return;
 
-      updateFirestorePresence(true).catch((error) =>
-        console.error("Error updating Firestore online state:", error)
-      );
-    })
-    .catch((error) => console.error("Error setting onDisconnect:", error));
-
-  onValue(userStatusRef, (snapshot) => {
-    const status = snapshot.val();
-    if (status?.state === "online" || status?.state === "offline") {
-      updateFirestorePresence(status.state === "online").catch((error) =>
-        console.error("Error syncing Firestore online state:", error)
-      );
+  void postOnline(userId, true);
+  const timer = window.setInterval(() => {
+    if (document.visibilityState === "visible") {
+      void postOnline(userId, true);
     }
-  });
+  }, 20_000);
+
+  const onVis = () => {
+    if (document.visibilityState === "hidden") {
+      beaconOffline(userId);
+    } else {
+      void postOnline(userId, true);
+    }
+  };
+  const onLeave = () => beaconOffline(userId);
+  document.addEventListener("visibilitychange", onVis);
+  window.addEventListener("pagehide", onLeave);
+  window.addEventListener("beforeunload", onLeave);
+
+  const teardown = () => {
+    document.removeEventListener("visibilitychange", onVis);
+    window.removeEventListener("pagehide", onLeave);
+    window.removeEventListener("beforeunload", onLeave);
+  };
+  onlineState.set(userId, { timer, online: true, teardown });
 };
 
 export const setUserOffline = async (userId: string) => {
-  if (!userId || !db || !database) return;
-
-  try {
-    await setDoc(doc(db, "pays", userId), {
-      online: false,
-      lastSeen: firestoreServerTimestamp(),
-    }, { merge: true });
-
-    await set(ref(database, `/status/${userId}`), {
-      state: "offline",
-      lastChanged: rtdbServerTimestamp(),
-    });
-  } catch (error) {
-    console.error("Error setting user offline:", error);
+  if (!userId) return;
+  const entry = onlineState.get(userId);
+  if (entry) {
+    clearInterval(entry.timer);
+    entry.teardown();
+    onlineState.delete(userId);
   }
+  await postOnline(userId, false);
 };

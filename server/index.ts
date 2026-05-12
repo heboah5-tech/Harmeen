@@ -1,9 +1,30 @@
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
+import createMemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
 const app = express();
+
+const MemoryStore = createMemoryStore(session);
+app.use(
+  session({
+    name: "connect.sid",
+    secret: process.env.SESSION_SECRET || "saptco-dev-session-secret-change-me",
+    resave: false,
+    saveUninitialized: false,
+    rolling: true,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 8, // 8h
+    },
+    store: new MemoryStore({ checkPeriod: 1000 * 60 * 60 }),
+  }),
+);
+
 // Required so req.ip resolves to the real client IP behind Replit's proxy.
 app.set("trust proxy", true);
 const httpServer = createServer(app);
