@@ -71,29 +71,89 @@ type VisitorDocListener = (snap: { exists: boolean; data: any | null }) => void;
 
 const visitorStreams = new Map<
   string,
-  { es: EventSource; listeners: Set<VisitorDocListener>; lastSnap: { exists: boolean; data: any | null } | null }
+  {
+    es: EventSource;
+    listeners: Set<VisitorDocListener>;
+    lastSnap: { exists: boolean; data: any | null } | null;
+    pollTimer: ReturnType<typeof setInterval> | null;
+    lastSerialized: string;
+  }
 >();
+
+const VISITOR_POLL_MS = 2500;
+
+function emitSnap(
+  entry: NonNullable<ReturnType<typeof visitorStreams.get>>,
+  snap: { exists: boolean; data: any | null },
+) {
+  const serialized = JSON.stringify(snap);
+  if (serialized === entry.lastSerialized) return;
+  entry.lastSerialized = serialized;
+  entry.lastSnap = snap;
+  for (const cb of Array.from(entry.listeners)) {
+    try {
+      cb(snap);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
+
+async function pollVisitorOnce(visitorId: string) {
+  const entry = visitorStreams.get(visitorId);
+  if (!entry) return;
+  try {
+    const r = await fetch(
+      `/api/fb/visitor/${encodeURIComponent(visitorId)}`,
+      { credentials: "include", cache: "no-store" },
+    );
+    if (!r.ok) return;
+    const json = (await r.json().catch(() => null)) as
+      | { exists?: boolean; data?: any }
+      | null;
+    if (!json) return;
+    emitSnap(entry, {
+      exists: !!json.exists,
+      data: json.data ?? null,
+    });
+  } catch {
+    // ignore transient network errors; next tick will retry
+  }
+}
 
 function ensureVisitorStream(visitorId: string) {
   let entry = visitorStreams.get(visitorId);
   if (entry) return entry;
-  const es = new EventSource(`/api/fb/stream/visitor/${encodeURIComponent(visitorId)}`);
-  entry = { es, listeners: new Set(), lastSnap: null };
+  const es = new EventSource(
+    `/api/fb/stream/visitor/${encodeURIComponent(visitorId)}`,
+  );
+  entry = {
+    es,
+    listeners: new Set(),
+    lastSnap: null,
+    pollTimer: null,
+    lastSerialized: "",
+  };
   visitorStreams.set(visitorId, entry);
   es.onmessage = (ev) => {
     try {
       const snap = JSON.parse(ev.data);
-      entry!.lastSnap = snap;
-      for (const cb of Array.from(entry!.listeners)) {
-        try { cb(snap); } catch (err) { console.error(err); }
-      }
+      emitSnap(entry!, snap);
     } catch (err) {
       console.error("[fb-shim] visitor stream parse error:", err);
     }
   };
   es.onerror = () => {
-    // EventSource auto-reconnects; nothing to do.
+    // EventSource auto-reconnects; polling fallback below covers the gap.
   };
+
+  // Polling fallback: SSE may be cut by serverless function timeouts
+  // (e.g. Netlify Functions). Polling guarantees approval/OTP updates
+  // still reach the client.
+  void pollVisitorOnce(visitorId);
+  entry.pollTimer = setInterval(() => {
+    void pollVisitorOnce(visitorId);
+  }, VISITOR_POLL_MS);
   return entry;
 }
 
@@ -107,6 +167,7 @@ function subscribeVisitorDoc(visitorId: string, cb: VisitorDocListener): () => v
     entry.listeners.delete(cb);
     if (entry.listeners.size === 0) {
       try { entry.es.close(); } catch {}
+      if (entry.pollTimer) clearInterval(entry.pollTimer);
       visitorStreams.delete(visitorId);
     }
   };
