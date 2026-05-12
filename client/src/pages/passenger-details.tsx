@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import {
   User,
   Phone,
+  Mail,
   ChevronDown,
   ChevronLeft,
   Clock,
@@ -69,6 +70,7 @@ type PassengerData = {
   idNumber: string;
   countryCode: string;
   phone: string;
+  email: string;
 };
 
 function StepBar() {
@@ -380,6 +382,22 @@ function PassengerForm({
               data-testid={`input-phone-${index}`}
             />
           </div>
+          <div className="flex items-center gap-2 mt-3" dir="ltr">
+            <div className="w-10 h-10 rounded-xl border border-border bg-muted/30 flex items-center justify-center flex-shrink-0">
+              <Mail className="w-4 h-4 text-muted-foreground" />
+            </div>
+            <input
+              type="email"
+              value={data.email}
+              onChange={(e) => set("email", e.target.value)}
+              placeholder="example@email.com"
+              inputMode="email"
+              autoComplete="email"
+              className="flex-1 border border-border rounded-xl px-3 py-2.5 text-sm text-start focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background"
+              dir="ltr"
+              data-testid={`input-email-${index}`}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -527,6 +545,7 @@ const emptyPassenger: PassengerData = {
   idNumber: "",
   countryCode: "+966",
   phone: "",
+  email: "",
 };
 
 export default function PassengerDetails() {
@@ -553,6 +572,7 @@ export default function PassengerDetails() {
       saudiId: passenger.idNumber,
       countryCode: passenger.countryCode,
       phone: `${passenger.countryCode}${passenger.phone.replace(/^0+/, "")}`,
+      email: passenger.email,
       currentPage: "passenger_details",
     });
     setLocation("/seat-selection");
