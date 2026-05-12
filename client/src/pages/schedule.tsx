@@ -486,13 +486,17 @@ export default function Schedule() {
         setToCity={setToCity}
         setDate={setDate}
         onSearch={() => {
-          document
-            .getElementById("trip-results")
-            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          const today = new Date().toISOString().slice(0, 10);
+          const fromVal =
+            !fromCity || fromCity === "الكل" ? "الرياض" : fromCity;
+          let toVal = !toCity || toCity === "الكل" ? "الدمام" : toCity;
+          if (toVal === fromVal) {
+            toVal = fromVal === "الرياض" ? "الدمام" : "الرياض";
+          }
           const params = new URLSearchParams({
-            from: fromCity,
-            to: toCity,
-            date: date || "",
+            from: fromVal,
+            to: toVal,
+            date: date || today,
           });
           setLocation(`/search-results?${params.toString()}`);
         }}
