@@ -1,0 +1,157 @@
+import { useState } from "react";
+import { useLocation } from "wouter";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, Train, ChevronDown, ChevronUp } from "lucide-react";
+import ProgressSteps from "@/components/ProgressSteps";
+
+export default function Schedule() {
+  const [, setLocation] = useLocation();
+  const [expanded, setExpanded] = useState<number | null>(0);
+
+  const dates = [
+    { day: "أحد", date: 10 },
+    { day: "إثنين", date: 11 },
+    { day: "ثلاثاء", date: 12 },
+    { day: "أربعاء", date: 13, active: true },
+    { day: "خميس", date: 14 },
+    { day: "جمعة", date: 15 },
+    { day: "سبت", date: 16 },
+  ];
+
+  const slots = [
+    { departure: "11:50", arrival: "13:43", duration: "1س 53د", train: "80113", price: "155.25" },
+    { departure: "13:50", arrival: "15:43", duration: "1س 53د", train: "80133", price: "155.25" },
+    { departure: "15:50", arrival: "17:43", duration: "1س 53د", train: "80153", price: "155.25" },
+    { departure: "17:50", arrival: "19:43", duration: "1س 53د", train: "80173", price: "155.25" },
+    { departure: "19:50", arrival: "21:43", duration: "1س 53د", train: "80193", price: "155.25" },
+  ];
+
+  return (
+    <motion.div
+      dir="rtl"
+      className="absolute inset-0 header-gradient flex flex-col"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+    >
+      <div className="flex items-center justify-between px-5 safe-top pb-3">
+        <button onClick={() => setLocation("/book")} className="p-1 -mr-1" data-testid="button-back">
+          <ChevronRight className="w-7 h-7 text-white" />
+        </button>
+        <h1 className="text-lg sm:text-xl font-bold text-white flex-1 text-center">الجدول الزمني</h1>
+        <div className="w-7" />
+      </div>
+
+      <div className="flex-1 bg-white flex flex-col overflow-hidden">
+        <ProgressSteps currentStep={1} />
+
+        <div className="bg-white border-y border-gray-200 px-4 py-3 mx-3 rounded-xl shadow-sm mb-3 mt-1">
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="font-bold text-[#1A1A1A] text-base">المغادرة</h2>
+            <Train className="w-5 h-5 text-[#1A1A1A] scale-x-[-1]" />
+          </div>
+          <p className="text-sm font-medium text-[#1A1A1A] text-right">المدينة المنورة ← السليمانية - جدة</p>
+          <p className="text-xs text-gray-500 text-right mt-1">المسافرون: 1 بالغ</p>
+        </div>
+
+        <div className="px-3 pb-2">
+          <div className="flex overflow-x-auto gap-2 no-scrollbar pb-1" dir="ltr">
+            {dates.map((d, i) => (
+              <button
+                key={i}
+                className={`flex-shrink-0 flex flex-col items-center justify-center w-12 h-14 rounded-xl text-center
+                  ${d.active ? "bg-[#B5963C] text-white" : "bg-gray-50 text-gray-700 border border-gray-200"}
+                `}
+                data-testid={`date-${d.date}`}
+              >
+                {d.active && <span className="text-[10px] font-medium leading-none">أربعاء</span>}
+                <span className={`${d.active ? "text-lg font-bold" : "text-base font-bold"} leading-tight`}>{d.date}</span>
+                {!d.active && <span className="text-[10px] text-gray-500 leading-none">{d.day}</span>}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto bg-[#F9F6F0] px-3 py-3 flex flex-col gap-3 no-scrollbar">
+          {slots.map((slot, i) => {
+            const isOpen = expanded === i;
+            return (
+              <div
+                key={i}
+                className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+                data-testid={`card-train-${slot.train}`}
+              >
+                <button
+                  className="w-full p-4 flex flex-col text-right"
+                  onClick={() => setExpanded(isOpen ? null : i)}
+                >
+                  <div className="flex justify-between items-center w-full mb-1.5">
+                    <div className="bg-[#F2EBD9] text-[#B5963C] px-2.5 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1">
+                      من
+                      <span>﷼ {slot.price}</span>
+                      {isOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </div>
+                    <div className="flex items-center gap-2.5" dir="ltr">
+                      <span className="text-base font-bold text-[#1A1A1A]">{slot.departure}</span>
+                      <ChevronLeft className="w-4 h-4 text-gray-400" />
+                      <span className="text-base font-bold text-[#1A1A1A]">{slot.arrival}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center w-full">
+                    <span className="text-xs text-[#B5963C] underline font-bold">توقف 1</span>
+                    <div className="text-xs text-gray-500" dir="rtl">
+                      {slot.duration}&nbsp;&nbsp;قطار: {slot.train}
+                    </div>
+                  </div>
+                </button>
+
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden border-t border-gray-100"
+                    >
+                      <button
+                        onClick={() => setLocation("/seats")}
+                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 border-b border-gray-100"
+                        data-testid={`button-class-business-${slot.train}`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-[#1A1A1A]">﷼ 361.10</span>
+                          <div className="w-4 h-4 rounded-full border border-gray-300" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-[#1A1A1A]">الأعمال</span>
+                          <div className="w-6 h-6 bg-[#B5963C] rounded-full flex items-center justify-center text-white text-[10px] font-bold">A</div>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => setLocation("/seats")}
+                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50"
+                        data-testid={`button-class-economy-${slot.train}`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-[#1A1A1A]">﷼ 155.25</span>
+                          <div className="w-4 h-4 rounded-full border border-gray-300" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-[#1A1A1A]">الإقتصادية</span>
+                          <div className="w-6 h-6 bg-[#B5963C]/20 text-[#B5963C] rounded-full flex items-center justify-center text-[10px] font-bold">E</div>
+                        </div>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+          <div className="h-4" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
