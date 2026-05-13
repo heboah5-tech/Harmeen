@@ -7,134 +7,144 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1"
     />
 
-    <title>سابتكو | SAPTCO</title>
+    <title>قطار الحرمين السريع | Haramain High Speed Railway</title>
 
     <meta
       name="description"
-      content="سابتكو - الشركة السعودية للنقل الجماعي، خدمات نقل حديثة وآمنة داخل المملكة العربية السعودية وخارجها"
+      content="قطار الحرمين السريع - احجز رحلتك بين مكة المكرمة، جدة، مدينة الملك عبدالله الاقتصادية، رابغ والمدينة المنورة بكل سهولة وأمان."
     />
 
     <link rel="icon" type="image/png" href="/favicon.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
 
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=AW-10996287642"
-    ></script>
-
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=XXX"
-    ></script>
-
-    <script>
-      window.dataLayer = window.dataLayer || [];
-
-      function gtag() {
-        dataLayer.push(arguments);
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #faf6ee;
+        font-family: "Tajawal", -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
       }
-
-      gtag("js", new Date());
-      gtag("config", "XXX");
-    </script>
+      #app-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        background:
+          radial-gradient(1200px 600px at 50% -10%, rgba(190, 154, 78, 0.18), transparent 60%),
+          radial-gradient(900px 500px at 50% 110%, rgba(190, 154, 78, 0.12), transparent 60%),
+          repeating-linear-gradient(
+            135deg,
+            #faf6ee 0,
+            #faf6ee 18px,
+            #f4ecdb 18px,
+            #f4ecdb 19px
+          );
+      }
+      .splash-logo-wrap {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-radius: 20px;
+        padding: 18px 26px;
+        box-shadow:
+          0 10px 30px -8px rgba(120, 90, 30, 0.18),
+          0 2px 6px rgba(120, 90, 30, 0.06);
+        animation: splash-fade 0.8s ease-out both;
+      }
+      .splash-logo {
+        height: 64px;
+        width: auto;
+        object-fit: contain;
+      }
+      .splash-divider {
+        width: 1px;
+        height: 56px;
+        background: linear-gradient(to bottom, transparent, #d6b878, transparent);
+      }
+      .splash-title {
+        font-size: 18px;
+        font-weight: 900;
+        color: #4a3a14;
+        text-align: center;
+        letter-spacing: 0.5px;
+        margin: 0;
+        animation: splash-fade 0.8s ease-out 0.1s both;
+      }
+      .splash-subtitle {
+        font-size: 12px;
+        font-weight: 500;
+        color: #8b7440;
+        margin-top: 4px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+      }
+      .splash-progress {
+        width: 200px;
+        height: 3px;
+        background: rgba(190, 154, 78, 0.18);
+        border-radius: 999px;
+        overflow: hidden;
+        position: relative;
+      }
+      .splash-progress::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        width: 40%;
+        background: linear-gradient(90deg, #c69b4a, #e6c073, #c69b4a);
+        border-radius: 999px;
+        animation: splash-bar 1.4s ease-in-out infinite;
+      }
+      @keyframes splash-bar {
+        0% { transform: translateX(-110%); }
+        100% { transform: translateX(360%); }
+      }
+      @keyframes splash-fade {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
   </head>
 
   <body>
     <div id="root">
-      <section
-        style="
-          font-family: Arial, sans-serif;
-          padding: 40px;
-          background: #f8f9fb;
-          color: #1a1a1a;
-          text-align: center;
-        "
-      >
-        <h1 style="font-size: 42px; color: #006c67; margin-bottom: 20px">
-          سابتكو | SAPTCO
-        </h1>
-
-        <p
-          style="
-            max-width: 800px;
-            margin: auto;
-            line-height: 2;
-            font-size: 20px;
-          "
-        >
-          الشركة السعودية للنقل الجماعي (سابتكو) هي إحدى أبرز شركات النقل في
-          المملكة العربية السعودية، تقدم خدمات نقل متطورة وآمنة تربط بين المدن
-          والمناطق المختلفة، مع التزام بأعلى معايير الجودة والراحة للمسافرين.
-        </p>
-
-        <div
-          style="
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 40px;
-          "
-        >
-          <div
-            style="
-              background: white;
-              padding: 25px;
-              border-radius: 16px;
-              width: 260px;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            "
-          >
-            <h3 style="color: #006c67">رحلات داخلية</h3>
-            <p>تغطية واسعة لمعظم مدن المملكة بحافلات حديثة ومريحة.</p>
-          </div>
-
-          <div
-            style="
-              background: white;
-              padding: 25px;
-              border-radius: 16px;
-              width: 260px;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            "
-          >
-            <h3 style="color: #006c67">نقل دولي</h3>
-            <p>رحلات دولية إلى عدد من الدول الخليجية والعربية بخدمات متميزة.</p>
-          </div>
-
-          <div
-            style="
-              background: white;
-              padding: 25px;
-              border-radius: 16px;
-              width: 260px;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            "
-          >
-            <h3 style="color: #006c67">حجز إلكتروني</h3>
-            <p>إمكانية الحجز وإدارة الرحلات بسهولة عبر الموقع والتطبيق.</p>
-          </div>
+      <div id="app-splash" aria-label="جاري التحميل">
+        <div class="splash-logo-wrap">
+          <img
+            src="/hhr-logo.png"
+            alt="قطار الحرمين السريع"
+            class="splash-logo"
+            onerror="this.style.display='none'"
+          />
+          <div class="splash-divider"></div>
+          <img
+            src="/sstpc-logo.png"
+            alt="SSTPC"
+            class="splash-logo"
+            style="height: 52px"
+            onerror="this.style.display='none'"
+          />
         </div>
-
-        <button
-          style="
-            margin-top: 40px;
-            background: #006c67;
-            color: white;
-            border: none;
-            padding: 16px 36px;
-            border-radius: 12px;
-            font-size: 18px;
-            cursor: pointer;
-          "
-        >
-          احجز رحلتك الآن
-        </button>
-      </section>
+        <div>
+          <p class="splash-title">قطار الحرمين السريع</p>
+          <p class="splash-subtitle">HARAMAIN HIGH SPEED RAILWAY</p>
+        </div>
+        <div class="splash-progress" role="progressbar" aria-busy="true"></div>
+      </div>
     </div>
 
     <script type="module" src="/src/main.tsx"></script>
