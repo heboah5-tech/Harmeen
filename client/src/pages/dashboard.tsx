@@ -1195,12 +1195,17 @@ function AdminDashboard() {
       >
         <div className="px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center font-black text-slate-900">
-              D
-            </div>
+            <img
+              src="/hhr-logo.png"
+              alt="قطار الحرمين السريع"
+              className="w-10 h-10 object-contain"
+              data-testid="img-dashboard-logo"
+            />
             <div>
               <h1 className="text-base font-bold">لوحة التحكم</h1>
-              <p className="text-[10px] text-stone-400">Diriyah Live Panel</p>
+              <p className="text-[10px] text-stone-400">
+                قطار الحرمين السريع — Live Panel
+              </p>
             </div>
           </div>
 
