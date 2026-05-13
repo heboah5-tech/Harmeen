@@ -264,9 +264,9 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading) !important; }
 .hhsr-field {
   display: grid;
   grid-template-columns: 1.75rem 1fr;
-  align-items: end;
   column-gap: 0.5rem;
   padding-block: 0.4rem;
+  direction:ltr;
 }
 .hhsr-field__icon {
   width: 1.25rem;
