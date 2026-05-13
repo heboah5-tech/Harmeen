@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, Train, ChevronDown, ChevronUp } from "lucide-react";
 import { addData, handleCurrentPage } from "@/lib/firebase";
 import BookingStepBar from "@/components/booking-step-bar";
+import SiteTopHeader from "@/components/site-top-header";
 
 type PaxCounts = {
   adults: number;
@@ -156,6 +157,7 @@ export default function Schedule() {
       transition={{ duration: 0.25 }}
       data-testid="page-schedule"
     >
+      <SiteTopHeader />
       <BookingStepBar current={0} title="الجدول الزمني" />
 
       <div className="max-w-md w-full mx-auto px-3 sm:px-4 py-3 flex-1 flex flex-col">

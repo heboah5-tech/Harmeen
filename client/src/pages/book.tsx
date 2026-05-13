@@ -19,6 +19,7 @@ import {
   Check,
 } from "lucide-react";
 import { addData, handleCurrentPage } from "@/lib/firebase";
+import SiteTopHeader from "@/components/site-top-header";
 
 const STATIONS = [
   { id: "1", name: "مكة المكرمة" },
@@ -108,8 +109,9 @@ export default function Book() {
       transition={{ duration: 0.25 }}
       data-testid="page-book"
     >
+      <SiteTopHeader />
       <div className="flex-1 overflow-y-auto pb-28 no-scrollbar">
-        <div className="flex items-center justify-between px-5 safe-top pb-4 max-w-md mx-auto w-full">
+        <div className="flex items-center justify-between px-5 pt-4 pb-4 max-w-md mx-auto w-full">
           <button
             className="p-1.5 rounded-full hover:bg-white/30 transition"
             data-testid="button-globe"
