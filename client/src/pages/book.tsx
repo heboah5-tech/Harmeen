@@ -304,8 +304,8 @@ export default function Book() {
         <BottomNavItem
           icon={<User className="w-5 h-5" />}
           label="ملفي الشخصي"
-          onClick={() => setLocation("/login")}
-          active={location === "/login"}
+          onClick={() => setLocation("/register")}
+          active={location === "/register"}
         />
         <BottomNavItem
           icon={<Search className="w-5 h-5" />}
