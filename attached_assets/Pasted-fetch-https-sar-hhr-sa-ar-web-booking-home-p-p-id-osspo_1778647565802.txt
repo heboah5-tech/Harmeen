@@ -1,0 +1,22 @@
+fetch("https://sar.hhr.sa/ar/web/booking/home?p_p_id=ossportlet_WAR_ossliferay&p_p_lifecycle=2&p_p_state=exclusive&p_p_mode=view&p_p_cacheability=cacheLevelPage&p_p_col_id=&p_p_col_count=0&_ossportlet_WAR_ossliferay__jsfBridgeAjax=true&_ossportlet_WAR_ossliferay__facesViewIdResource=%2FWEB-INF%2Fviews%2FsearchTravelResult.xhtml", {
+  "headers": {
+    "accept": "application/xml, text/xml, */*; q=0.01",
+    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+    "cache-control": "no-cache",
+    "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "faces-request": "partial/ajax",
+    "pragma": "no-cache",
+    "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-requested-with": "XMLHttpRequest"
+  },
+  "referrer": "https://sar.hhr.sa/ar/web/booking/home?p_p_id=ossportlet_WAR_ossliferay&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_count=1&_ossportlet_WAR_ossliferay__facesViewIdRender=%2FWEB-INF%2Fviews%2FindexTwo.xhtml",
+  "body": "javax.faces.partial.ajax=true&javax.faces.source=_ossportlet_WAR_ossliferay_%3AformSearchTravel%3Asearch&javax.faces.partial.execute=%40all&javax.faces.partial.render=_ossportlet_WAR_ossliferay_%3AformSearchTravel+_ossportlet_WAR_ossliferay_%3AdialogPromotionalCode&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3Asearch=_ossportlet_WAR_ossliferay_%3AformSearchTravel%3Asearch&_ossportlet_WAR_ossliferay_%3AformSearchTravel=_ossportlet_WAR_ossliferay_%3AformSearchTravel&javax.faces.encodedURL=https%3A%2F%2Fsar.hhr.sa%2Far%2Fweb%2Fbooking%2Fhome%3Fp_p_id%3Dossportlet_WAR_ossliferay%26p_p_lifecycle%3D2%26p_p_state%3Dexclusive%26p_p_mode%3Dview%26p_p_cacheability%3DcacheLevelPage%26p_p_col_id%3D%26p_p_col_count%3D0%26_ossportlet_WAR_ossliferay__jsfBridgeAjax%3Dtrue%26_ossportlet_WAR_ossliferay__facesViewIdResource%3D%252FWEB-INF%252Fviews%252FsearchTravelResult.xhtml&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AchoiceTravel=true&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AcomboStationFrom=1&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AcomboStationTo=3&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AselectCalendar=gregorian&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3Acalendar=24%2F05%2F2026&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3Aadults=1&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3Achildren=0&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3Ainfants=0&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AdtSearchResult%3A28%3AtabViewTariff%3A0%3AdtTariff_selection=&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AdtSearchResult%3A28%3AtabViewTariff%3A1%3AdtTariff_selection=&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AdtSearchResult%3A28%3AtabViewTariff_activeIndex=1&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AdtSearchResult_selection=1_3_05230&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AselectedTariff=&_ossportlet_WAR_ossliferay_%3AformSearchTravel%3AselectedTariffReturn=&javax.faces.ViewState=-3628877865333862732%3A-8881378845213546384",
+  "method": "POST",
+  "mode": "cors",
+  "credentials": "include"
+});
