@@ -295,30 +295,10 @@ export default function Book() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border px-1 pt-1 pb-2 sm:pb-3 grid grid-cols-5 z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-        <BottomNavItem
-          icon={<MoreHorizontal className="w-5 h-5" />}
-          label="للمزيد"
-          onClick={() => setLocation("/services")}
-          active={location === "/services"}
-        />
-        <BottomNavItem
-          icon={<User className="w-5 h-5" />}
-          label="ملفي الشخصي"
-          onClick={() => setLocation("/register")}
-          active={location === "/register"}
-        />
-        <BottomNavItem
-          icon={<Search className="w-5 h-5" />}
-          label="البحث عن التذاكر"
-          onClick={() => setLocation("/bookings")}
-          active={location === "/bookings"}
-        />
-        <BottomNavItem
-          icon={<Ticket className="w-5 h-5" />}
-          label="رحلاتي"
-          onClick={() => setLocation("/trips")}
-          active={location === "/trips"}
-        />
+        <BottomNavItem icon={<MoreHorizontal className="w-5 h-5" />} label="للمزيد" />
+        <BottomNavItem icon={<User className="w-5 h-5" />} label="ملفي الشخصي" />
+        <BottomNavItem icon={<Search className="w-5 h-5" />} label="البحث عن التذاكر" />
+        <BottomNavItem icon={<Ticket className="w-5 h-5" />} label="رحلاتي" />
         <BottomNavItem
           icon={<Train className="w-5 h-5" />}
           label="احجز رحلتك"

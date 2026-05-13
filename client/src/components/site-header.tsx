@@ -13,7 +13,6 @@ const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "من نحن", href: "#" },
   { label: "خيارات التذاكر", href: "#" },
   { label: "العروض", href: "#" },
-  { label: "المركز الإعلامي", href: "/MediaCenter" },
   { label: "الأسئلة الشائعة", href: "#" },
   { label: "تواصل معنا", href: "#" },
 ];
