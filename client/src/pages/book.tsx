@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { addData, handleCurrentPage } from "@/lib/firebase";
 import SiteTopHeader from "@/components/site-top-header";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const STATIONS = [
   { id: "1", name: "مكة المكرمة" },
@@ -368,28 +370,42 @@ function DateField({
   onChange: (v: string) => void;
   testid?: string;
 }) {
+  const minDate = min ? new Date(min) : undefined;
+  const selected = value ? new Date(value) : undefined;
   return (
-    <label
-      className="text-end w-full bg-white rounded-2xl p-3 border border-border shadow-sm hover:border-[hsl(var(--gold-300))] transition cursor-pointer block"
-      data-testid={testid}
-    >
-      <div className="flex items-center justify-between gap-2 mb-1.5">
-        <h3 className="text-sm font-bold text-foreground">{label}</h3>
-        <Calendar className="w-4 h-4 text-[hsl(var(--gold-600))]" />
-      </div>
-      <div className="border-b-2 border-dashed border-border pb-1 min-h-[20px] relative">
-        <span className="text-xs sm:text-sm font-semibold text-foreground text-end block truncate">
-          {fmtDate(value)}
-        </span>
-        <input
-          type="date"
-          value={value}
-          min={min}
-          onChange={(e) => e.target.value && onChange(e.target.value)}
-          className="absolute inset-0 opacity-0 cursor-pointer"
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="text-end w-full bg-white rounded-2xl p-3 border border-border shadow-sm hover:border-[hsl(var(--gold-300))] transition block"
+          data-testid={testid}
+        >
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <h3 className="text-sm font-bold text-foreground">{label}</h3>
+            <Calendar className="w-4 h-4 text-[hsl(var(--gold-600))]" />
+          </div>
+          <div className="border-b-2 border-dashed border-border pb-1 min-h-[20px]">
+            <span className="text-xs sm:text-sm font-semibold text-foreground text-end block truncate">
+              {fmtDate(value)}
+            </span>
+          </div>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="end">
+        <CalendarPicker
+          mode="single"
+          selected={selected}
+          onSelect={(d) => {
+            if (d) {
+              const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+              onChange(iso);
+            }
+          }}
+          disabled={minDate ? { before: minDate } : undefined}
+          initialFocus
         />
-      </div>
-    </label>
+      </PopoverContent>
+    </Popover>
   );
 }
 
