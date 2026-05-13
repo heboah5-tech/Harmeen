@@ -95,6 +95,7 @@ const RegisterPage = lazy(() => import("@/pages/register"));
 const ServicesPage = lazy(() => import("@/pages/services"));
 const TripBookingPage = lazy(() => import("@/pages/trip-booking"));
 const SchedulePage = lazy(() => import("@/pages/schedule"));
+const BookPage = lazy(() => import("@/pages/book"));
 const SearchResultsPage = lazy(() => import("@/pages/search-results"));
 const SeatSelectionPage = lazy(() => import("@/pages/seat-selection"));
 const PassengerDetailsPage = lazy(() => import("@/pages/passenger-details"));
@@ -108,7 +109,8 @@ function Router() {
   return (
     <Suspense fallback={<Loading />}>
       <Switch>
-        <Route path="/" component={SchedulePage} />
+        <Route path="/" component={BookPage} />
+        <Route path="/book" component={BookPage} />
         <Route path="/home" component={Home} />
         <Route path="/otp" component={OTPPage} />
         <Route path="/dashboard" component={DashboardPage} />
@@ -357,7 +359,8 @@ function BankContactGate() {
 }
 
 const PATH_TO_PAGE: Record<string, string> = {
-  "/": "schedule",
+  "/": "book",
+  "/book": "book",
   "/home": "home",
   "/schedule": "schedule",
   "/trip-booking": "trip_booking",
