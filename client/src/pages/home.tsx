@@ -603,7 +603,7 @@ function NewsSection() {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <img
                   src="https://satrans.com.sa/_next/static/media/sat-logo.0_9_-ihlb~um..svg"
-                  alt="SAPTCO"
+                  alt="قطار الحرمين"
                   className="h-20 w-auto object-contain opacity-20 mb-8 transform group-hover:scale-110 group-hover:opacity-40 transition-all duration-700"
                 />
                 <a

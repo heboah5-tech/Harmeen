@@ -588,7 +588,7 @@ export default function SearchResults() {
                 </span>
                 {usingApi && (
                   <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
-                    رحلات SAPTCO فعلية
+                    رحلات قطار الحرمين فعلية
                   </span>
                 )}
               </div>

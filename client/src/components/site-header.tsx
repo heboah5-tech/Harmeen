@@ -44,7 +44,7 @@ export default function SiteHeader() {
           >
             <img
               src={LOGO}
-              alt="SAPTCO ALSA"
+              alt="قطار الحرمين"
               className="h-12 w-auto object-contain"
             />
           </Link>
@@ -118,7 +118,7 @@ export default function SiteHeader() {
                   <Link href="/">
                     <img
                       src={LOGO}
-                      alt="SAPTCO ALSA"
+                      alt="قطار الحرمين"
                       className="h-10 w-auto object-contain"
                     />
                   </Link>

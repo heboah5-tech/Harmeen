@@ -56,13 +56,13 @@ export default function SATrans() {
         />
         <div className="relative z-10 h-full flex flex-col justify-end px-6 pb-5">
           <p className="text-xs text-primary-foreground/80 mb-1">
-            SAPTCO Transport
+            Haramain Train
           </p>
           <h1
             className="text-2xl font-bold text-primary-foreground"
             data-testid="text-satrans-title"
           >
-            سابتكو ترانس
+            قطار الحرمين
           </h1>
         </div>
       </div>
