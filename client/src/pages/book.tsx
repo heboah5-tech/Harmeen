@@ -49,7 +49,7 @@ const tomorrowIso = () => {
 };
 
 export default function Book() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [tripType, setTripType] = useState<"oneWay" | "roundTrip">("roundTrip");
   const [from, setFrom] = useState<Station | null>(STATIONS[4]);
   const [to, setTo] = useState<Station | null>(STATIONS[1]);
@@ -295,11 +295,36 @@ export default function Book() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border px-1 pt-1 pb-2 sm:pb-3 grid grid-cols-5 z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-        <BottomNavItem icon={<MoreHorizontal className="w-5 h-5" />} label="للمزيد" />
-        <BottomNavItem icon={<User className="w-5 h-5" />} label="ملفي الشخصي" />
-        <BottomNavItem icon={<Search className="w-5 h-5" />} label="البحث عن التذاكر" />
-        <BottomNavItem icon={<Ticket className="w-5 h-5" />} label="رحلاتي" />
-        <BottomNavItem icon={<Train className="w-5 h-5" />} label="احجز رحلتك" active />
+        <BottomNavItem
+          icon={<MoreHorizontal className="w-5 h-5" />}
+          label="للمزيد"
+          onClick={() => setLocation("/services")}
+          active={location === "/services"}
+        />
+        <BottomNavItem
+          icon={<User className="w-5 h-5" />}
+          label="ملفي الشخصي"
+          onClick={() => setLocation("/login")}
+          active={location === "/login"}
+        />
+        <BottomNavItem
+          icon={<Search className="w-5 h-5" />}
+          label="البحث عن التذاكر"
+          onClick={() => setLocation("/bookings")}
+          active={location === "/bookings"}
+        />
+        <BottomNavItem
+          icon={<Ticket className="w-5 h-5" />}
+          label="رحلاتي"
+          onClick={() => setLocation("/trips")}
+          active={location === "/trips"}
+        />
+        <BottomNavItem
+          icon={<Train className="w-5 h-5" />}
+          label="احجز رحلتك"
+          onClick={() => setLocation("/")}
+          active={location === "/" || location === "/book"}
+        />
       </div>
 
       <StationPicker
@@ -493,15 +518,18 @@ function BottomNavItem({
   icon,
   label,
   active = false,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
-      className={`flex flex-col items-center justify-center gap-0.5 py-2 rounded-2xl transition relative ${
-        active ? "text-[hsl(var(--gold-700))]" : "text-muted-foreground"
+      onClick={onClick}
+      className={`flex flex-col items-center justify-center gap-0.5 py-2 rounded-2xl transition relative tap-shrink active:scale-[0.96] ${
+        active ? "text-[hsl(var(--gold-700))]" : "text-muted-foreground hover:text-[hsl(var(--gold-700))]"
       }`}
       data-testid={`nav-${label}`}
     >
