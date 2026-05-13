@@ -2,7 +2,13 @@ import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, Train, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import {
+  ChevronLeft,
+  Train,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+} from "lucide-react";
 import { addData, handleCurrentPage } from "@/lib/firebase";
 import BookingStepBar from "@/components/booking-step-bar";
 import SiteTopHeader from "@/components/site-top-header";
@@ -16,7 +22,13 @@ type PaxCounts = {
 };
 
 function readPax(): PaxCounts {
-  const fb: PaxCounts = { adults: 1, children: 0, infants: 0, special: 0, student: 0 };
+  const fb: PaxCounts = {
+    adults: 1,
+    children: 0,
+    infants: 0,
+    special: 0,
+    student: 0,
+  };
   try {
     const raw = sessionStorage.getItem("searchPassengers");
     if (!raw) return fb;
@@ -62,8 +74,18 @@ function readQueryRoute(): {
 
 const AR_DAYS = ["أحد", "إثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت"];
 const AR_MONTHS = [
-  "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
-  "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
+  "يناير",
+  "فبراير",
+  "مارس",
+  "أبريل",
+  "مايو",
+  "يونيو",
+  "يوليو",
+  "أغسطس",
+  "سبتمبر",
+  "أكتوبر",
+  "نوفمبر",
+  "ديسمبر",
 ];
 
 function buildWeek(initialIso?: string) {
@@ -115,7 +137,15 @@ export default function Schedule() {
     ? `/api/hhr/search?from=${route.fromId}&to=${route.toId}&date=${activeDateIso}&adults=${route.adults}&children=${route.children}&infants=${route.infants}`
     : "";
   const { data, isLoading, isFetching } = useQuery<HhrSearchResponse>({
-    queryKey: ["/api/hhr/search", route.fromId, route.toId, activeDateIso, route.adults, route.children, route.infants],
+    queryKey: [
+      "/api/hhr/search",
+      route.fromId,
+      route.toId,
+      activeDateIso,
+      route.adults,
+      route.children,
+      route.infants,
+    ],
     enabled: !!searchUrl,
     queryFn: async () => {
       const r = await fetch(searchUrl);
@@ -188,7 +218,9 @@ export default function Schedule() {
         {/* Departure summary */}
         <div className="hhsr-card px-4 py-3 mb-3" data-testid="card-route">
           <div className="flex items-center justify-between mb-1">
-            <h2 className="font-extrabold text-foreground text-base">المغادرة</h2>
+            <h2 className="font-extrabold text-foreground text-base">
+              المغادرة
+            </h2>
             <Train className="w-5 h-5 text-foreground -scale-x-100" />
           </div>
           <p className="text-sm font-semibold text-foreground text-end">
@@ -243,16 +275,24 @@ export default function Schedule() {
 
         {/* Loading skeleton */}
         {isLoading && slots.length === 0 && (
-          <div className="flex-1 flex flex-col items-center justify-center py-10 gap-2" data-testid="loading-schedule">
+          <div
+            className="flex-1 flex flex-col items-center justify-center py-10 gap-2"
+            data-testid="loading-schedule"
+          >
             <Loader2 className="w-6 h-6 animate-spin text-[hsl(var(--gold-500))]" />
-            <span className="text-xs text-muted-foreground">جاري جلب الرحلات…</span>
+            <span className="text-xs text-muted-foreground">
+              جاري جلب الرحلات…
+            </span>
           </div>
         )}
 
         {/* Slots */}
         <div className="flex-1 flex flex-col gap-3 pb-6">
           {isFetching && !isLoading && slots.length > 0 && (
-            <div className="flex justify-center" data-testid="indicator-refreshing">
+            <div
+              className="flex justify-center"
+              data-testid="indicator-refreshing"
+            >
               <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
             </div>
           )}
@@ -272,7 +312,9 @@ export default function Schedule() {
                   <div className="flex justify-between items-center w-full mb-1.5">
                     <div className="bg-[hsl(var(--gold-100))] text-[hsl(var(--gold-700))] px-2.5 py-1 rounded-md text-[11px] font-bold flex items-center gap-1">
                       <span>من</span>
-                      <span className="tabular-nums">﷼ {slot.priceEconomy.toFixed(2)}</span>
+                      <span className="tabular-nums">
+                        ﷼ {slot.priceEconomy.toFixed(2)}
+                      </span>
                       {isOpen ? (
                         <ChevronUp className="w-3 h-3" />
                       ) : (

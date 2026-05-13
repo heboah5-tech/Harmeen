@@ -61,9 +61,7 @@ type PassengerData = {
 type ContactData = {
   countryCode: string;
   phone: string;
-  phoneConfirm: string;
   email: string;
-  emailConfirm: string;
 };
 
 const emptyPassenger = (kind: PaxKind): PassengerData => ({
@@ -83,9 +81,7 @@ const emptyPassenger = (kind: PaxKind): PassengerData => ({
 const emptyContact: ContactData = {
   countryCode: "+966",
   phone: "",
-  phoneConfirm: "",
   email: "",
-  emailConfirm: "",
 };
 
 type PaxCounts = {
@@ -350,19 +346,6 @@ function ContactInfoCard({
             data-testid="input-phone"
           />
         </Field>
-        <Field icon={Phone} label="تأكيد الهاتف" required>
-          <input
-            className="hhsr-field__input"
-            value={data.phoneConfirm}
-            onChange={(e) =>
-              set("phoneConfirm", e.target.value.replace(/\D/g, ""))
-            }
-            inputMode="numeric"
-            dir="ltr"
-            placeholder="—"
-            data-testid="input-phone-confirm"
-          />
-        </Field>
         <Field icon={Phone} label="مفتاح البلد" required>
           <select
             className="hhsr-field__select"
@@ -387,18 +370,6 @@ function ContactInfoCard({
             dir="ltr"
             placeholder="—"
             data-testid="input-email"
-          />
-        </Field>
-        <Field icon={Mail} label="تأكيد البريد الألكتروني" required>
-          <input
-            type="email"
-            className="hhsr-field__input"
-            value={data.emailConfirm}
-            onChange={(e) => set("emailConfirm", e.target.value)}
-            inputMode="email"
-            dir="ltr"
-            placeholder="—"
-            data-testid="input-email-confirm"
           />
         </Field>
         <p className="text-[11px] text-muted-foreground mt-2 text-end">
