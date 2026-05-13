@@ -15,8 +15,16 @@ import { addData, handleCurrentPage } from "@/lib/firebase";
 import BookingStepBar from "@/components/booking-step-bar";
 
 const NATIONALITIES = [
-  "سعودي", "مصري", "أردني", "إماراتي", "كويتي", "بحريني",
-  "عراقي", "يمني", "سوري", "أخرى",
+  "سعودي",
+  "مصري",
+  "أردني",
+  "إماراتي",
+  "كويتي",
+  "بحريني",
+  "عراقي",
+  "يمني",
+  "سوري",
+  "أخرى",
 ];
 const ID_TYPES = ["الهوية الوطنية / الإقامة", "جواز السفر"];
 
@@ -28,10 +36,10 @@ const COUNTRY_CODES: { code: string; flag: string; label: string }[] = [
   { code: "+965", flag: "🇰🇼", label: "الكويت" },
   { code: "+968", flag: "🇴🇲", label: "عُمان" },
   { code: "+962", flag: "🇯🇴", label: "الأردن" },
-  { code: "+20",  flag: "🇪🇬", label: "مصر" },
-  { code: "+90",  flag: "🇹🇷", label: "تركيا" },
-  { code: "+44",  flag: "🇬🇧", label: "بريطانيا" },
-  { code: "+1",   flag: "🇺🇸", label: "أمريكا" },
+  { code: "+20", flag: "🇪🇬", label: "مصر" },
+  { code: "+90", flag: "🇹🇷", label: "تركيا" },
+  { code: "+44", flag: "🇬🇧", label: "بريطانيا" },
+  { code: "+1", flag: "🇺🇸", label: "أمريكا" },
 ];
 
 type PassengerData = {
@@ -132,11 +140,14 @@ function PersonalInfoCard({
     onChange({ ...data, [key]: val });
   const trip = readSelectedTrip();
   const seats = readSelectedSeats();
-  const route = trip.from && trip.to ? `${trip.from} ← ${trip.to}` : "المدينة المنورة - السليمانية ← جدة";
+  const route =
+    trip.from && trip.to
+      ? `${trip.from} ← ${trip.to}`
+      : "المدينة المنورة - السليمانية ← جدة";
 
   return (
     <div className="hhsr-card mb-4">
-      <div className="flex items-start justify-between p-4 pb-2">
+      <div className="flex items-end justify-between p-4 pb-2">
         <button
           type="button"
           onClick={onToggle}
@@ -144,10 +155,16 @@ function PersonalInfoCard({
           aria-label={collapsed ? "توسيع" : "طي"}
           data-testid="button-toggle-passenger"
         >
-          {collapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+          {collapsed ? (
+            <ChevronDown className="w-4 h-4" />
+          ) : (
+            <ChevronUp className="w-4 h-4" />
+          )}
         </button>
         <div className="text-end flex-1 ms-3">
-          <h3 className="font-extrabold text-foreground text-lg">مسافر بالغ 1</h3>
+          <h3 className="font-extrabold text-foreground text-lg">
+            مسافر بالغ 1
+          </h3>
           <p className="text-xs text-muted-foreground mt-1">{route}</p>
           {seats.length > 0 && (
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -274,7 +291,9 @@ function ContactInfoCard({
         <span className="w-8 h-8 rounded-full bg-[hsl(var(--gold-400))] text-white flex items-center justify-center">
           <ChevronUp className="w-4 h-4" />
         </span>
-        <h3 className="font-extrabold text-foreground text-lg">معلومات الاتصال</h3>
+        <h3 className="font-extrabold text-foreground text-lg">
+          معلومات الاتصال
+        </h3>
       </div>
 
       <div className="px-4 pb-4 pt-1">
@@ -293,7 +312,9 @@ function ContactInfoCard({
           <input
             className="hhsr-field__input"
             value={data.phoneConfirm}
-            onChange={(e) => set("phoneConfirm", e.target.value.replace(/\D/g, ""))}
+            onChange={(e) =>
+              set("phoneConfirm", e.target.value.replace(/\D/g, ""))
+            }
             inputMode="numeric"
             dir="ltr"
             placeholder="—"
@@ -338,7 +359,9 @@ function ContactInfoCard({
             data-testid="input-email-confirm"
           />
         </Field>
-        <p className="text-[11px] text-muted-foreground mt-2 text-end">* مطلوب</p>
+        <p className="text-[11px] text-muted-foreground mt-2 text-end">
+          * مطلوب
+        </p>
       </div>
     </div>
   );
@@ -356,7 +379,11 @@ export default function PassengerDetails() {
 
   const onContinue = () => {
     sessionStorage.setItem("passenger", JSON.stringify(passenger));
-    const fullName = [passenger.firstName, passenger.middleName, passenger.lastName]
+    const fullName = [
+      passenger.firstName,
+      passenger.middleName,
+      passenger.lastName,
+    ]
       .filter(Boolean)
       .join(" ");
     void addData({
@@ -385,7 +412,11 @@ export default function PassengerDetails() {
       dir="rtl"
       data-testid="page-passenger-details"
     >
-      <BookingStepBar current={2} title="المعلومات الشخصية" backHref="/seat-selection" />
+      <BookingStepBar
+        current={2}
+        title="المعلومات الشخصية"
+        backHref="/seat-selection"
+      />
 
       <div className="max-w-md mx-auto px-3 sm:px-4 py-4">
         <motion.div
@@ -404,7 +435,10 @@ export default function PassengerDetails() {
         </motion.div>
 
         {/* Terms checkbox */}
-        <label className="flex items-start gap-3 px-2 py-3 cursor-pointer" dir="rtl">
+        <label
+          className="flex items-start gap-3 px-2 py-3 cursor-pointer"
+          dir="rtl"
+        >
           <button
             type="button"
             onClick={() => setAgreed((a) => !a)}
@@ -418,8 +452,18 @@ export default function PassengerDetails() {
             role="checkbox"
           >
             {agreed && (
-              <svg viewBox="0 0 12 12" className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M2 6 L5 9 L10 3" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                viewBox="0 0 12 12"
+                className="w-3 h-3 text-white"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path
+                  d="M2 6 L5 9 L10 3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             )}
           </button>
@@ -431,7 +475,8 @@ export default function PassengerDetails() {
             و{" "}
             <a href="#" className="text-[hsl(var(--gold-700))] underline">
               سياسة الخصوصية
-            </a>.
+            </a>
+            .
           </p>
         </label>
 

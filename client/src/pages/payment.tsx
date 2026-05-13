@@ -97,11 +97,6 @@ const PAYMENT_METHODS = [
       "https://media.base44.com/images/public/6a0141c514678b9757e134f7/53cfdc496_satrans_com_sa_mada-logo0zcnw-i5k6dfc_e3ec505d.svg",
     ],
   },
-  {
-    id: "applepay",
-    label: "Apple Pay",
-    appleLogo: true,
-  },
 ] as const;
 
 function digitsOnly(v: string, max: number) {
