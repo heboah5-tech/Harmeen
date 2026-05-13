@@ -161,7 +161,7 @@ export default function Book() {
           </div>
         </div>
 
-        <div className="bg-white mx-3 sm:mx-4 max-w-md md:mx-auto rounded-3xl card-elevated px-3 sm:px-4 py-4 flex flex-col gap-3">
+        <div className="bg-white mx-auto max-w-md w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] rounded-3xl card-elevated px-3 sm:px-4 py-4 flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-2.5 relative">
             <FieldCard
               label="من"
