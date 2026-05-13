@@ -26,7 +26,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 const STATIONS = [
   { id: "1", name: "مكة المكرمة" },
   { id: "2", name: "السليمانية - جدة" },
-  { id: "3", name: "المطار - جدة" },
+  { id: "3", name: "المطار- جدة" },
   { id: "4", name: "مدينة الملك عبدالله الاقتصادية" },
   { id: "5", name: "المدينة المنورة" },
 ];
