@@ -20,8 +20,8 @@ function buildHhrFallback(): HhrTrip[] {
       departure: dep,
       arrival: `${String(ah).padStart(2, "0")}:${String(am).padStart(2, "0")}`,
       duration: "1س 53د",
-      priceBusiness: 361.1,
-      priceEconomy: 155.25,
+      priceBusiness: Math.max(150, 190 - i * 8),
+      priceEconomy: Math.max(95, 130 - i * 7),
       stops: 1,
     };
   });
