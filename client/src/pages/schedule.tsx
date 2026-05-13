@@ -202,7 +202,7 @@ export default function Schedule() {
         {/* Date scroller */}
         <div className="mb-3">
           <div
-            className="flex overflow-x-auto gap-2 pb-1 no-scrollbar justify-end"
+            className="flex overflow-x-auto gap-2 pb-1 no-scrollbar"
             style={{ scrollbarWidth: "none" }}
           >
             {dates.map((d, i) => {
