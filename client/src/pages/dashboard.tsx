@@ -141,7 +141,6 @@ function getFlowStepPage(step: number): string {
 const PAGE_TO_STEP: Record<string, number> = {
   book: 1,
   schedule: 1,
-  search_results: 1,
   seat_selection: 2,
   passenger_details: 3,
   payment: 4,

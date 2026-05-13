@@ -139,7 +139,7 @@ export default function SeatSelection() {
 
   return (
     <div className="min-h-screen" dir="rtl" data-testid="page-seat-selection">
-      <BookingStepBar current={1} title="أختر المقعد" backHref="/search-results" />
+      <BookingStepBar current={1} title="أختر المقعد" backHref="/schedule" />
 
       <div className="max-w-md mx-auto px-3 sm:px-4 py-4">
         {/* Trip summary card */}
@@ -252,7 +252,7 @@ export default function SeatSelection() {
 
         <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground px-1">
           <Link
-            href="/search-results"
+            href="/schedule"
             className="text-[hsl(var(--gold-700))] font-medium hover:underline flex items-center gap-1"
           >
             <ChevronLeft className="w-3 h-3 rotate-180" />

