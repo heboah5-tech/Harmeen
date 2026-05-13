@@ -50,3 +50,4 @@ stack = "FULLSTACK_JS"
 [userenv]
 
 [userenv.shared]
+FIREBASE_DATABASE_URL = "https://myharmeen-default-rtdb.firebaseio.com"
