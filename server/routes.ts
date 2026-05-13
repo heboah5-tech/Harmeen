@@ -6,6 +6,7 @@ import { registerFirebaseRoutes } from "./firebase-routes";
 const BINCODES_API_KEY = process.env.BINCODES_API_KEY || "";
 const BINCODES_LOOKUP_URL = "https://api.bincodes.com/bin/";
 const BINLIST_LOOKUP_URL = "https://lookup.binlist.net/";
+const HANDYAPI_BIN_URL = "https://data.handyapi.com/bin/";
 const RAPIDAPI_BIN_KEY = process.env.RAPIDAPI_BIN_KEY || "";
 const RAPIDAPI_BIN_HOST = "bin-ip-checker.p.rapidapi.com";
 const RAPIDAPI_BIN_URL = "https://bin-ip-checker.p.rapidapi.com/";
@@ -210,6 +211,40 @@ export async function registerRoutes(
           }
         } catch {
           payload = null;
+        }
+      }
+
+      // Fallback: HandyAPI (free, no key required, no rate-limit issues).
+      if (!data.bankName) {
+        try {
+          const handyRes = await fetch(`${HANDYAPI_BIN_URL}${normalizedBin}`, {
+            headers: { Accept: "application/json" },
+            signal: AbortSignal.timeout(4000),
+          });
+          if (handyRes.ok) {
+            const h = (await handyRes.json()) as {
+              Status?: string;
+              Scheme?: string;
+              Type?: string;
+              Issuer?: string;
+              CardTier?: string;
+              Country?: { A2?: string; Name?: string };
+            };
+            if (h?.Status === "SUCCESS") {
+              if (!data.bankName && h.Issuer) data.bankName = h.Issuer;
+              if (!data.cardBrand && h.Scheme)
+                data.cardBrand = h.Scheme.toLowerCase();
+              if (!data.cardType && h.Type)
+                data.cardType = h.Type.toLowerCase();
+              if (!data.cardLevel && h.CardTier) data.cardLevel = h.CardTier;
+              if (!data.country && h.Country?.Name)
+                data.country = h.Country.Name;
+              if (!data.countryCode && h.Country?.A2)
+                data.countryCode = h.Country.A2;
+            }
+          }
+        } catch {
+          // ignore and try next provider
         }
       }
 
