@@ -1,5 +1,5 @@
 import type { Express, Request, Response, NextFunction } from "express";
-import { adminDb, adminAuth, FIREBASE_WEB_API_KEY } from "./firebase-admin";
+import { adminDb, adminAuth, adminRtdb, FIREBASE_WEB_API_KEY } from "./firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 
 const MAX_HISTORY_ITEMS = 20;
@@ -300,17 +300,17 @@ export function registerFirebaseRoutes(app: Express) {
     }
   });
 
-  // online/offline heartbeat
+  // online/offline heartbeat — writes to Realtime Database /status/{id}
   app.post("/api/fb/visitor/online", async (req, res) => {
-    const db = adminDb();
-    if (!db) return res.json({ ok: true });
+    const rtdb = adminRtdb();
+    if (!rtdb) return res.json({ ok: true });
     const { visitorId, online } = req.body || {};
     if (!visitorId || typeof visitorId !== "string") return res.status(400).json({ error: "missing_visitor_id" });
     try {
-      await db.collection("pays").doc(visitorId).set(
-        { online: online === false ? false : true, lastSeen: FieldValue.serverTimestamp() },
-        { merge: true }
-      );
+      await rtdb.ref(`/status/${visitorId}`).set({
+        online: online === false ? false : true,
+        lastSeen: Date.now(),
+      });
       return res.json({ ok: true });
     } catch {
       return res.json({ ok: true });
@@ -670,5 +670,37 @@ export function registerFirebaseRoutes(app: Express) {
       }
     );
     req.on("close", () => { clearInterval(ka); try { unsub(); } catch {} });
+  });
+
+  // Realtime Database online-status SSE for the dashboard.
+  app.get("/api/fb/admin/stream/online-status", requireAdminSse, (req, res) => {
+    const rtdb = adminRtdb();
+    if (!rtdb) { res.status(503).end(); return; }
+    openSse(res);
+    const ka = setInterval(() => res.write(": keep-alive\n\n"), 25_000);
+    const ref = rtdb.ref("/status");
+    const handler = ref.on(
+      "value",
+      (snap) => {
+        const statuses: Record<string, { online: boolean; lastSeen: number }> = {};
+        snap.forEach((child) => {
+          const v = child.val() || {};
+          statuses[child.key as string] = {
+            online: v.online === true,
+            lastSeen: typeof v.lastSeen === "number" ? v.lastSeen : 0,
+          };
+          return false;
+        });
+        sseSend(res, { statuses });
+      },
+      (err) => {
+        console.error("[fb] online-status SSE error:", err);
+        sseSend(res, { error: String((err as any)?.message || err) }, "error");
+      }
+    );
+    req.on("close", () => {
+      clearInterval(ka);
+      try { ref.off("value", handler); } catch {}
+    });
   });
 }

@@ -11,6 +11,8 @@ import {
   pushBankContactRequest,
   onAuthChange,
   subscribeAdminVisitors,
+  subscribeOnlineStatus,
+  type OnlineStatusMap,
   subscribeBlockedIps,
   adminAddBlockedIp,
   adminRemoveBlockedIp,
@@ -638,6 +640,7 @@ export default function Admin() {
 
 function AdminDashboard() {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
+  const onlineStatusRef = useRef<OnlineStatusMap>({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<
@@ -816,9 +819,20 @@ function AdminDashboard() {
   useEffect(() => {
     const unsub = subscribeAdminVisitors((rawList) => {
       {
-        const list: Visitor[] = rawList.map((d) =>
-          adaptVisitor({ id: d.id, ...(d as any) }),
-        );
+        const sm = onlineStatusRef.current || {};
+        const list: Visitor[] = rawList.map((d) => {
+          const v = adaptVisitor({ id: d.id, ...(d as any) });
+          const s = sm[v.id];
+          if (s) {
+            (v as any).online = s.online;
+            if (s.lastSeen) {
+              (v as any).updatedAt = new Date(s.lastSeen).toISOString();
+            }
+          } else {
+            (v as any).online = false;
+          }
+          return v;
+        });
         // Sort by updatedAt desc
         list.sort((a, b) => {
           const ta = new Date(a.updatedAt || 0).getTime() || 0;
@@ -970,6 +984,32 @@ function AdminDashboard() {
           return list[0]?.id ?? null;
         });
       }
+    });
+    return () => unsub();
+  }, []);
+
+  // Subscribe to Realtime Database online statuses and overlay them on the
+  // visitor list whenever they change.
+  useEffect(() => {
+    const unsub = subscribeOnlineStatus((statuses) => {
+      onlineStatusRef.current = statuses || {};
+      setVisitors((prev) => {
+        if (prev.length === 0) return prev;
+        let changed = false;
+        const next = prev.map((v) => {
+          const s = statuses[v.id];
+          const nextOnline = s ? s.online : false;
+          const nextUpdated = s && s.lastSeen
+            ? new Date(s.lastSeen).toISOString()
+            : v.updatedAt;
+          if ((v as any).online !== nextOnline || v.updatedAt !== nextUpdated) {
+            changed = true;
+            return { ...v, online: nextOnline, updatedAt: nextUpdated } as Visitor;
+          }
+          return v;
+        });
+        return changed ? next : prev;
+      });
     });
     return () => unsub();
   }, []);
