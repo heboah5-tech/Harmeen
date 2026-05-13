@@ -2,6 +2,30 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { registerFirebaseRoutes } from "./firebase-routes";
+import { scrapeHhr, type HhrTrip } from "./hhr-scraper";
+
+const HHR_CACHE_TTL_MS = 1000 * 60 * 10; // 10 minutes
+const hhrCache = new Map<string, { expiresAt: number; trips: HhrTrip[] }>();
+const hhrInflight = new Map<string, Promise<HhrTrip[]>>();
+
+function buildHhrFallback(): HhrTrip[] {
+  const departures = ["11:50", "13:50", "15:50", "17:50", "19:50"];
+  return departures.map((dep, i) => {
+    const [hh, mm] = dep.split(":").map(Number);
+    const total = hh * 60 + mm + 113;
+    const ah = Math.floor(total / 60) % 24;
+    const am = total % 60;
+    return {
+      train: `8${(113 + i * 20).toString().padStart(4, "0")}`,
+      departure: dep,
+      arrival: `${String(ah).padStart(2, "0")}:${String(am).padStart(2, "0")}`,
+      duration: "1س 53د",
+      priceBusiness: 361.1,
+      priceEconomy: 155.25,
+      stops: 1,
+    };
+  });
+}
 
 const BINCODES_API_KEY = process.env.BINCODES_API_KEY || "";
 const BINCODES_LOOKUP_URL = "https://api.bincodes.com/bin/";
@@ -303,6 +327,59 @@ export async function registerRoutes(
       return res.status(500).json({
         success: false,
         error: "Failed to lookup BIN",
+      });
+    }
+  });
+
+  app.get("/api/hhr/search", async (req, res) => {
+    const fromId = String(req.query.from || "");
+    const toId = String(req.query.to || "");
+    const date = String(req.query.date || "");
+    const adults = Math.max(1, Math.min(parseInt(String(req.query.adults || "1"), 10) || 1, 9));
+    const children = Math.max(0, parseInt(String(req.query.children || "0"), 10) || 0);
+    const infants = Math.max(0, parseInt(String(req.query.infants || "0"), 10) || 0);
+
+    if (!/^[1-5]$/.test(fromId) || !/^[1-5]$/.test(toId) || fromId === toId) {
+      return res.status(400).json({ success: false, error: "Invalid stations" });
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return res.status(400).json({ success: false, error: "Invalid date" });
+    }
+
+    const cacheKey = `${fromId}|${toId}|${date}|${adults}|${children}|${infants}`;
+    const cached = hhrCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return res.json({ success: true, source: "cache", trips: cached.trips });
+    }
+
+    let inflight = hhrInflight.get(cacheKey);
+    if (!inflight) {
+      inflight = (async () => {
+        const trips = await scrapeHhr({ fromId, toId, date, adults, children, infants });
+        if (trips.length > 0) {
+          hhrCache.set(cacheKey, { trips, expiresAt: Date.now() + HHR_CACHE_TTL_MS });
+        }
+        return trips;
+      })();
+      hhrInflight.set(cacheKey, inflight);
+      inflight
+        .catch(() => {})
+        .finally(() => hhrInflight.delete(cacheKey));
+    }
+
+    try {
+      const trips = await inflight;
+      if (trips.length === 0) {
+        return res.json({ success: true, source: "fallback", trips: buildHhrFallback(), notice: "no_results" });
+      }
+      return res.json({ success: true, source: "live", trips });
+    } catch (err) {
+      console.error("HHR scrape error:", err instanceof Error ? err.message : err);
+      return res.json({
+        success: true,
+        source: "fallback",
+        trips: buildHhrFallback(),
+        notice: "scrape_failed",
       });
     }
   });

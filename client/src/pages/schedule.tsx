@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, Train, ChevronDown, ChevronUp } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ChevronLeft, Train, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { addData, handleCurrentPage } from "@/lib/firebase";
 import BookingStepBar from "@/components/booking-step-bar";
 import SiteTopHeader from "@/components/site-top-header";
@@ -25,15 +26,37 @@ function readPax(): PaxCounts {
   }
 }
 
-function readQueryRoute(): { from: string; to: string; date?: string } {
+function readQueryRoute(): {
+  from: string;
+  to: string;
+  fromId: string;
+  toId: string;
+  date?: string;
+  adults: number;
+  children: number;
+  infants: number;
+} {
   if (typeof window === "undefined") {
-    return { from: "المدينة المنورة", to: "السليمانية - جدة" };
+    return {
+      from: "المدينة المنورة",
+      to: "السليمانية - جدة",
+      fromId: "5",
+      toId: "2",
+      adults: 1,
+      children: 0,
+      infants: 0,
+    };
   }
   const p = new URLSearchParams(window.location.search);
   return {
     from: p.get("from") || "المدينة المنورة",
     to: p.get("to") || "السليمانية - جدة",
+    fromId: p.get("fromId") || "5",
+    toId: p.get("toId") || "2",
     date: p.get("date") || undefined,
+    adults: parseInt(p.get("adults") || "1", 10) || 1,
+    children: parseInt(p.get("children") || "0", 10) || 0,
+    infants: parseInt(p.get("infants") || "0", 10) || 0,
   };
 }
 
@@ -60,8 +83,6 @@ function buildWeek(initialIso?: string) {
   });
 }
 
-const SLOT_DEPARTURES = ["11:50", "13:50", "15:50", "17:50", "19:50"];
-
 type Slot = {
   departure: string;
   arrival: string;
@@ -69,26 +90,15 @@ type Slot = {
   train: string;
   priceBusiness: number;
   priceEconomy: number;
+  stops?: number;
 };
 
-function buildSlots(): Slot[] {
-  const durationMin = 113; // 1h 53m
-  return SLOT_DEPARTURES.map((dep, i) => {
-    const [hh, mm] = dep.split(":").map(Number);
-    const arrTotal = hh * 60 + mm + durationMin;
-    const ah = Math.floor(arrTotal / 60) % 24;
-    const am = arrTotal % 60;
-    const arrival = `${String(ah).padStart(2, "0")}:${String(am).padStart(2, "0")}`;
-    return {
-      departure: dep,
-      arrival,
-      duration: "1س 53د",
-      train: `8${(113 + i * 20).toString().padStart(4, "0")}`,
-      priceBusiness: 361.1,
-      priceEconomy: 155.25,
-    };
-  });
-}
+type HhrSearchResponse = {
+  success: boolean;
+  source: "live" | "cache" | "fallback";
+  notice?: string;
+  trips: Slot[];
+};
 
 export default function Schedule() {
   const [, setLocation] = useLocation();
@@ -99,8 +109,22 @@ export default function Schedule() {
   const [activeIdx, setActiveIdx] = useState(
     initialActiveIdx >= 0 ? initialActiveIdx : 3,
   );
-  const slots = useMemo(() => buildSlots(), []);
   const pax = useMemo(() => readPax(), []);
+  const activeDateIso = dates[activeIdx]?.iso || route.date || "";
+  const searchUrl = activeDateIso
+    ? `/api/hhr/search?from=${route.fromId}&to=${route.toId}&date=${activeDateIso}&adults=${route.adults}&children=${route.children}&infants=${route.infants}`
+    : "";
+  const { data, isLoading, isFetching } = useQuery<HhrSearchResponse>({
+    queryKey: ["/api/hhr/search", route.fromId, route.toId, activeDateIso, route.adults, route.children, route.infants],
+    enabled: !!searchUrl,
+    queryFn: async () => {
+      const r = await fetch(searchUrl);
+      if (!r.ok) throw new Error(`HHR ${r.status}`);
+      return (await r.json()) as HhrSearchResponse;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+  const slots: Slot[] = data?.trips ?? [];
   const adultsLabel = `${pax.adults} بالغ${
     pax.children + pax.infants > 0 ? `، ${pax.children + pax.infants} طفل` : ""
   }`;
@@ -218,8 +242,31 @@ export default function Schedule() {
           </div>
         </div>
 
+        {/* Source notice */}
+        {data?.source === "fallback" && (
+          <div
+            className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mb-2 text-end"
+            data-testid="notice-fallback"
+          >
+            تم عرض جدول تقريبي — تعذّر جلب الرحلات المباشرة من sar.hhr.sa الآن.
+          </div>
+        )}
+
+        {/* Loading skeleton */}
+        {isLoading && slots.length === 0 && (
+          <div className="flex-1 flex flex-col items-center justify-center py-10 gap-2" data-testid="loading-schedule">
+            <Loader2 className="w-6 h-6 animate-spin text-[hsl(var(--gold-500))]" />
+            <span className="text-xs text-muted-foreground">جاري جلب الرحلات…</span>
+          </div>
+        )}
+
         {/* Slots */}
         <div className="flex-1 flex flex-col gap-3 pb-6">
+          {isFetching && !isLoading && slots.length > 0 && (
+            <div className="flex justify-center" data-testid="indicator-refreshing">
+              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+            </div>
+          )}
           {slots.map((slot, i) => {
             const isOpen = expanded === i;
             return (

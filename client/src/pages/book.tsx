@@ -94,7 +94,12 @@ export default function Book() {
     const params = new URLSearchParams({
       from: from.name,
       to: to.name,
+      fromId: from.id,
+      toId: to.id,
       date: departDate,
+      adults: String(adults),
+      children: String(children),
+      infants: String(infants),
     });
     setLocation(`/schedule?${params.toString()}`);
   };
