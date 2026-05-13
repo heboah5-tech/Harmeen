@@ -4,7 +4,7 @@ import { Link } from "wouter";
 export const BOOKING_STEPS = [
   { label: "الجدول الزمني" },
   { label: "أختر المقعد" },
-  { label: "المعلومات الشخ..." },
+  { label: "المعلومات الشخصية" },
   { label: "الدفع" },
 ];
 
