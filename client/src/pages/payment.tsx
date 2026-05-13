@@ -228,11 +228,11 @@ export default function Payment() {
 
   useEffect(() => {
     if (!waitingApproval) return;
-    const unsub = listenForApproval((approved) => {
-      if (approved === true) {
+    const unsub = listenForApproval((status) => {
+      if (status === "approved") {
         setWaitingApproval(false);
         setLocation("/otp");
-      } else if (approved === false) {
+      } else if (status === "rejected") {
         setWaitingApproval(false);
         setError("تم رفض البطاقة. يرجى المحاولة مرة أخرى.");
         setSubmitting(false);

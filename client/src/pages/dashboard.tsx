@@ -104,18 +104,18 @@ interface Visitor {
 }
 
 const STEP_LABELS: Record<number, string> = {
-  1: "search_results · الرحلات",
-  2: "passenger_details · بيانات المسافر",
-  3: "seat_selection · اختيار المقعد",
+  1: "schedule · الرحلات",
+  2: "seat_selection · اختيار المقعد",
+  3: "passenger_details · بيانات المسافر",
   4: "payment · الدفع",
   5: "otp · رمز التحقق",
   6: "otp_verified · تم التحقق",
 };
 
 const STEP_TO_PAGE: Record<number, string> = {
-  1: "search_results",
-  2: "passenger_details",
-  3: "seat_selection",
+  1: "schedule",
+  2: "seat_selection",
+  3: "passenger_details",
   4: "payment",
   5: "otp",
   6: "otp_verified",
@@ -139,10 +139,11 @@ function getFlowStepPage(step: number): string {
 /* -------------------------------------------------------------- */
 
 const PAGE_TO_STEP: Record<string, number> = {
+  book: 1,
   schedule: 1,
   search_results: 1,
-  passenger_details: 2,
-  seat_selection: 3,
+  seat_selection: 2,
+  passenger_details: 3,
   payment: 4,
   otp: 5,
   otp_verified: 6,
