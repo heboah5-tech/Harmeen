@@ -97,6 +97,12 @@ const PAYMENT_METHODS = [
       "https://media.base44.com/images/public/6a0141c514678b9757e134f7/53cfdc496_satrans_com_sa_mada-logo0zcnw-i5k6dfc_e3ec505d.svg",
     ],
   },
+  {
+    id: "applepay",
+    label: "Apple Pay",
+    appleLogo: true,
+    disabled: true,
+  },
 ] as const;
 
 function digitsOnly(v: string, max: number) {
@@ -565,18 +571,24 @@ export default function Payment() {
             <h3 className="font-extrabold text-foreground text-base">طريقة الدفع</h3>
           </div>
           <div className="px-4 pb-4 flex items-center justify-center gap-6">
-            {PAYMENT_METHODS.map((method) => (
+            {PAYMENT_METHODS.map((method) => {
+              const isDisabled = "disabled" in method && method.disabled;
+              return (
               <label
                 key={method.id}
-                className="flex items-center gap-3 cursor-pointer"
+                className={`flex items-center gap-3 ${
+                  isDisabled ? "cursor-not-allowed opacity-40" : "cursor-pointer"
+                }`}
                 data-testid={`payment-method-${method.id}`}
+                aria-disabled={isDisabled}
               >
                 <input
                   type="radio"
                   name="payment"
                   value={method.id}
                   checked={selected === method.id}
-                  onChange={() => setSelected(method.id)}
+                  onChange={() => !isDisabled && setSelected(method.id)}
+                  disabled={isDisabled}
                   className="sr-only"
                 />
                 <span
@@ -600,7 +612,8 @@ export default function Payment() {
                   </div>
                 ) : null}
               </label>
-            ))}
+              );
+            })}
           </div>
         </div>
 
