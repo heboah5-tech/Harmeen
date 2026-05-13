@@ -202,8 +202,7 @@ export default function Schedule() {
         {/* Date scroller */}
         <div className="mb-3">
           <div
-            className="flex overflow-x-auto gap-2 pb-1 no-scrollbar"
-            dir="ltr"
+            className="flex overflow-x-auto gap-2 pb-1 no-scrollbar justify-end"
             style={{ scrollbarWidth: "none" }}
           >
             {dates.map((d, i) => {
@@ -241,16 +240,6 @@ export default function Schedule() {
             })}
           </div>
         </div>
-
-        {/* Source notice */}
-        {data?.source === "fallback" && (
-          <div
-            className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mb-2 text-end"
-            data-testid="notice-fallback"
-          >
-            تم عرض جدول تقريبي — تعذّر جلب الرحلات المباشرة من sar.hhr.sa الآن.
-          </div>
-        )}
 
         {/* Loading skeleton */}
         {isLoading && slots.length === 0 && (
