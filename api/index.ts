@@ -1,13 +1,31 @@
-import express, {
-  type Express,
-  type Request,
-  type Response,
-  type NextFunction,
-} from "express";
+import express, { type Request, type Response, type NextFunction } from "express";
 import session from "express-session";
 import createMemoryStore from "memorystore";
-import { createServer, type Server } from "http";
+import { createServer } from "http";
 import { registerRoutes } from "../server/routes";
+import { buildFirewall } from "../server/firewall";
+
+const app = express();
+
+const MemoryStore = createMemoryStore(session);
+app.use(
+  session({
+    name: "connect.sid",
+    secret: process.env.SESSION_SECRET || "saptco-dev-session-secret-change-me",
+    resave: false,
+    saveUninitialized: false,
+    rolling: true,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: true,
+      maxAge: 1000 * 60 * 60 * 8,
+    },
+    store: new MemoryStore({ checkPeriod: 1000 * 60 * 60 }),
+  }),
+);
+
+app.set("trust proxy", true);
 
 declare module "http" {
   interface IncomingMessage {
@@ -15,74 +33,32 @@ declare module "http" {
   }
 }
 
-let cachedApp: Express | null = null;
-let initPromise: Promise<Express> | null = null;
+app.use(
+  express.json({
+    verify: (req, _res, buf) => {
+      (req as any).rawBody = buf;
+    },
+  }),
+);
+app.use(express.urlencoded({ extended: false }));
 
-async function buildApp(): Promise<Express> {
-  const app = express();
+app.use(
+  buildFirewall({
+    enabled: process.env.NODE_ENV === "production" && process.env.FIREWALL_DISABLED !== "1",
+    bypassToken: process.env.ADMIN_BYPASS_TOKEN || "",
+  }),
+);
 
-  const MemoryStore = createMemoryStore(session);
-  app.use(
-    session({
-      name: "connect.sid",
-      secret:
-        process.env.SESSION_SECRET || "saptco-dev-session-secret-change-me",
-      resave: false,
-      saveUninitialized: false,
-      rolling: true,
-      cookie: {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 1000 * 60 * 60 * 8,
-      },
-      store: new MemoryStore({ checkPeriod: 1000 * 60 * 60 }),
-    }),
-  );
-
-  app.set("trust proxy", true);
-
-  app.use(
-    express.json({
-      verify: (req, _res, buf) => {
-        req.rawBody = buf;
-      },
-    }),
-  );
-  app.use(express.urlencoded({ extended: false }));
-
-  const httpServer: Server = createServer(app);
-  await registerRoutes(httpServer, app);
-
+const httpServer = createServer(app);
+const ready = registerRoutes(httpServer, app).then(() => {
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-    console.error("Internal Server Error:", err);
     if (res.headersSent) return next(err);
-    return res.status(status).json({ message });
+    res.status(status).json({ message: err.message || "Internal Server Error" });
   });
-
-  return app;
-}
-
-async function getApp(): Promise<Express> {
-  if (cachedApp) return cachedApp;
-  if (!initPromise) {
-    initPromise = buildApp().then((a) => {
-      cachedApp = a;
-      return a;
-    });
-  }
-  return initPromise;
-}
+});
 
 export default async function handler(req: any, res: any) {
-  const app = await getApp();
-  return app(req, res);
+  await ready;
+  return (app as any)(req, res);
 }
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};

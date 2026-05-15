@@ -1,12 +1,13 @@
 node_modules
 .git
+.local
+.cache
+.upm
 .replit
 replit.nix
-attached_assets
-script
-*.tar.gz
-.DS_Store
-
-# also keep these lean for Netlify
-.replit
-replit.nix
+nixpacks.toml
+railway.json
+attached_assets/screenshots
+/tmp
+*.log
+dist/index.cjs
