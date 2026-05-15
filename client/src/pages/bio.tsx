@@ -26,13 +26,6 @@ type LinkItem = {
 
 const LINKS: LinkItem[] = [
   {
-    label: "حجز تذكرة قطار الحرمين",
-    sub: "احجز رحلتك الآن",
-    href: "/book",
-    icon: <Train className="w-6 h-6" />,
-    testid: "link-book",
-  },
-  {
     label: "الجدول الزمني للرحلات",
     sub: "مواعيد القطارات اليومية",
     href: "/book?tab=schedule",
