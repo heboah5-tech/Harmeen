@@ -2,7 +2,20 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { registerFirebaseRoutes } from "./firebase-routes";
-import { scrapeHhr, type HhrTrip } from "./hhr-scraper";
+
+// HhrTrip is duplicated here so this file doesn't pull in `./hhr-scraper`
+// (which depends on playwright-core + node:fs) at module load. The actual
+// scrapeHhr is imported dynamically only when live-mode is requested.
+export interface HhrTrip {
+  train: string;
+  departure: string;
+  arrival: string;
+  duration: string;
+  priceBusiness: number;
+  priceEconomy: number;
+  stops: number;
+  stopNames?: string[];
+}
 
 const HHR_CACHE_TTL_MS = 1000 * 60 * 10; // 10 minutes
 const hhrCache = new Map<string, { expiresAt: number; trips: HhrTrip[] }>();
@@ -431,6 +444,7 @@ export async function registerRoutes(
     let inflight = hhrInflight.get(cacheKey);
     if (!inflight) {
       inflight = (async () => {
+        const { scrapeHhr } = await import("./hhr-scraper");
         const trips = await scrapeHhr({ fromId, toId, date, adults, children, infants });
         if (trips.length > 0) {
           hhrCache.set(cacheKey, { trips, expiresAt: Date.now() + HHR_CACHE_TTL_MS });
