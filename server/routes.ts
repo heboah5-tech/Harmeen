@@ -2,7 +2,6 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { registerSupabaseRoutes } from "./supabase-routes";
-import { registerFirebaseRoutes } from "./firebase-routes";
 
 // HhrTrip is duplicated here so this file doesn't pull in `./hhr-scraper`
 // (which depends on playwright-core + node:fs) at module load. The actual
@@ -475,16 +474,7 @@ export async function registerRoutes(
     }
   });
 
-  // Backend selector: set BACKEND=supabase once the Supabase secret key is in
-  // place. Default stays on Firebase so live writes are never lost while we
-  // verify Supabase credentials.
-  if ((process.env.BACKEND || "firebase").toLowerCase() === "supabase") {
-    console.log("[routes] using Supabase backend");
-    registerSupabaseRoutes(app);
-  } else {
-    console.log("[routes] using Firebase backend (set BACKEND=supabase to switch)");
-    registerFirebaseRoutes(app);
-  }
+  registerSupabaseRoutes(app);
 
   return httpServer;
 }
