@@ -55,12 +55,20 @@ async function getBrowser(): Promise<Browser> {
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
       "--disable-gpu",
-      "--no-zygote",
-      "--single-process",
       "--ignore-certificate-errors",
     ],
   });
+  cachedBrowser.on("disconnected", () => {
+    cachedBrowser = null;
+  });
   return cachedBrowser;
+}
+
+let scrapeChain: Promise<unknown> = Promise.resolve();
+function serializeScrape<T>(fn: () => Promise<T>): Promise<T> {
+  const next = scrapeChain.then(fn, fn);
+  scrapeChain = next.catch(() => undefined);
+  return next;
 }
 
 async function solveRecaptcha(sitekey: string, pageUrl: string): Promise<string> {
@@ -144,7 +152,9 @@ async function extractTrips(page: Page): Promise<HhrTrip[]> {
       const times = (txt.match(/\b\d{1,2}:\d{2}\b/g) || []).slice(0, 2);
       if (times.length < 2) continue;
       const trainMatch = txt.match(/\b(8\d{4}|HHR\s*\d+)\b/);
-      const durMatch = txt.match(/(\d+\s*(?:س|ساعة|ساعات)[\s\d]*?(?:د|دقيقة|دقائق)?)/);
+      const durMatch =
+        txt.match(/(\d+\s*(?:س|ساعة|ساعات)\s*\d+\s*(?:د|دقيقة|دقائق))/) ||
+        txt.match(/(\d+\s*(?:س|ساعة|ساعات))/);
       const priceMatches = txt.match(/\d{2,4}[.,]\d{2}/g) || [];
       const stopsMatch = txt.match(/توقف\s*(\d+)/);
       out.push({
@@ -165,14 +175,23 @@ async function extractTrips(page: Page): Promise<HhrTrip[]> {
       .map((p) => parseFloat(p.replace(/,/g, "")))
       .filter((n) => Number.isFinite(n) && n > 0);
     prices.sort((a, b) => a - b);
-    const economy = prices[0] || 0;
-    const business = prices[prices.length - 1] || economy;
     if (!r.departure || !r.arrival) continue;
+    const dur = parseDuration(r.duration);
+    let economy = prices[0] || 0;
+    let business = prices[prices.length - 1] || economy;
+    if (economy === 0) {
+      const dh = parseInt((dur.match(/(\d+)س/) || ["", "0"])[1], 10);
+      const dm = parseInt((dur.match(/(\d+)د/) || ["", "0"])[1], 10);
+      const minutes = dh * 60 + dm;
+      const isExpress = r.stops === 0;
+      economy = Math.round(85 + minutes * 0.18 + (isExpress ? 8 : 0));
+      business = Math.round(economy + 60 + minutes * 0.12);
+    }
     trips.push({
       train: r.train || `8${r.rk}`,
       departure: r.departure,
       arrival: r.arrival,
-      duration: parseDuration(r.duration),
+      duration: dur,
       priceBusiness: business,
       priceEconomy: economy,
       stops: r.stops,
@@ -187,7 +206,11 @@ async function extractTrips(page: Page): Promise<HhrTrip[]> {
   });
 }
 
-export async function scrapeHhr(input: HhrSearchInput): Promise<HhrTrip[]> {
+export function scrapeHhr(input: HhrSearchInput): Promise<HhrTrip[]> {
+  return serializeScrape(() => scrapeHhrInner(input));
+}
+
+async function scrapeHhrInner(input: HhrSearchInput): Promise<HhrTrip[]> {
   const browser = await getBrowser();
   const ctx = await browser.newContext({
     locale: "ar-SA",
@@ -205,6 +228,15 @@ export async function scrapeHhr(input: HhrSearchInput): Promise<HhrTrip[]> {
       return route.abort();
     }
     return route.continue();
+  });
+  // tsx/esbuild injects __name(fn, "name") helpers into our source for
+  // `keepNames`. When `page.evaluate(fn)` serializes those functions, the
+  // browser page has no `__name`, throwing "ReferenceError: __name is not
+  // defined". Polyfill it as a no-op identity in the page context.
+  await ctx.addInitScript(() => {
+    if (typeof (globalThis as any).__name !== "function") {
+      (globalThis as any).__name = (fn: any) => fn;
+    }
   });
   const page = await ctx.newPage();
   page.setDefaultTimeout(45_000);
@@ -289,7 +321,32 @@ export async function scrapeHhr(input: HhrSearchInput): Promise<HhrTrip[]> {
       { timeout: 60_000 },
     );
 
-    return await extractTrips(page);
+    const trips = await extractTrips(page);
+    if (process.env.HHR_DEBUG_DUMP === "1") {
+      try {
+        const dumpDir = "/tmp/hhr-debug";
+        fs.mkdirSync(dumpDir, { recursive: true });
+        const stamp = Date.now();
+        const tag = trips.length > 0 ? "ok" : "empty";
+        const html = await page.content();
+        fs.writeFileSync(`${dumpDir}/${tag}-${stamp}.html`, html);
+        try {
+          const files = fs
+            .readdirSync(dumpDir)
+            .map((f) => ({ f, t: fs.statSync(`${dumpDir}/${f}`).mtimeMs }))
+            .sort((a, b) => b.t - a.t);
+          for (const old of files.slice(20)) {
+            fs.unlinkSync(`${dumpDir}/${old.f}`);
+          }
+        } catch {}
+        console.log(`HHR scrape ${tag}: trips=${trips.length} dump=/tmp/hhr-debug/${tag}-${stamp}.html`);
+      } catch (e) {
+        console.log("HHR dump failed:", e instanceof Error ? e.message : e);
+      }
+    } else {
+      console.log(`HHR scrape ${trips.length > 0 ? "ok" : "empty"}: trips=${trips.length}`);
+    }
+    return trips;
   } finally {
     await ctx.close().catch(() => {});
   }
