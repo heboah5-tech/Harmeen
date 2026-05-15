@@ -635,13 +635,14 @@ function DateRow({
 }) {
   const minDate = min ? new Date(min) : new Date();
   const selected = value ? new Date(value) : undefined;
+  const [open, setOpen] = useState(false);
   return (
     <div className="px-5 pt-4">
       <label className="block text-sm font-bold text-[#0b1c2c] mb-1.5 text-start">
         {label}
         {required && <span className="text-[#c0392b]"> *</span>}
       </label>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button
             type="button"
@@ -665,6 +666,7 @@ function DateRow({
               if (d) {
                 const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                 onChange(iso);
+                setOpen(false);
               }
             }}
             disabled={{ before: minDate }}
