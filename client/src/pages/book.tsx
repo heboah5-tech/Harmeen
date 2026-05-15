@@ -18,6 +18,8 @@ import { addData, handleCurrentPage } from "@/lib/firebase";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import heroBg from "@assets/makkah_hero_bg.jpg";
+import sstpcLogo from "@assets/sstpc_logo.png";
+import hhrLogo from "@assets/hhr_logo.png";
 
 const STATIONS = [
   { id: "1", name: "مكة المكرمة" },
@@ -138,21 +140,22 @@ export default function Book() {
       {/* White logo header */}
       <header className="bg-white border-b border-black/5">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1 className="text-base sm:text-lg font-extrabold leading-tight text-[#0b1c2c]">
-              قطار الحرمين السريع
-              <span className="block text-[10px] sm:text-[11px] text-[#0b1c2c]/70 font-semibold tracking-wide">
-                HARAMAIN HIGH SPEED RAILWAY
-              </span>
-            </h1>
+          <div className="flex items-center">
+            <img
+              src={hhrLogo}
+              alt="قطار الحرمين السريع - Haramain High Speed Railway"
+              className="h-10 sm:h-12 w-auto object-contain"
+              data-testid="img-logo-hhr"
+            />
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 pl-3 border-l border-black/10">
-              <Train className="w-7 h-7 text-[#b08a3e]" />
-              <div className="text-[10px] leading-tight text-[#0b1c2c]/80 font-semibold">
-                <span className="block">Operated by</span>
-                <span className="block text-sm font-extrabold text-[#0b1c2c]">SSTPC</span>
-              </div>
+            <div className="pl-3 border-l border-black/10">
+              <img
+                src={sstpcLogo}
+                alt="Operated by SSTPC"
+                className="h-8 sm:h-10 w-auto object-contain"
+                data-testid="img-logo-sstpc"
+              />
             </div>
             <button type="button" className="p-2" data-testid="button-menu">
               <Menu className="w-6 h-6 text-[#b08a3e]" />
@@ -302,7 +305,7 @@ function BookingCard(props: {
   const toError = submitted && !to;
 
   return (
-    <div className="bg-white rounded-md shadow-2xl overflow-hidden" data-testid="card-booking">
+    <div className="bg-white rounded-md shadow-2xl overflow-hidden" data-testid="card-booking" dir="rtl">
       {/* Tabs */}
       <div className="grid grid-cols-3 border-b border-black/10 bg-white">
         <TabButton label="حجز جديد" active={tab === "new"} onClick={() => setTab("new")} icon="train" testid="tab-new" />
