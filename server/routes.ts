@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { registerFirebaseRoutes } from "./firebase-routes";
+import { registerSupabaseRoutes } from "./supabase-routes";
 
 // HhrTrip is duplicated here so this file doesn't pull in `./hhr-scraper`
 // (which depends on playwright-core + node:fs) at module load. The actual
@@ -474,7 +474,7 @@ export async function registerRoutes(
     }
   });
 
-  registerFirebaseRoutes(app);
+  registerSupabaseRoutes(app);
 
   return httpServer;
 }

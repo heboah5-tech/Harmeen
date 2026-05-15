@@ -18,72 +18,69 @@ Vercel runs `npm run build`, which:
 1. Builds the Vite frontend → `dist/public`
 2. Bundles the server → `dist/index.cjs` (used on Replit/Railway, ignored on Vercel)
 
-The `api/index.ts` function is bundled separately by Vercel from source, importing
-`server/routes.ts` and `server/firewall.ts` directly.
+The `api/[...path].ts` function is bundled separately by Vercel from source,
+importing `server/routes.ts` directly.
 
 ## Required environment variables (Vercel → Project → Settings → Environment Variables)
 
-| Var                          | Why                                                                                                |
-| ---------------------------- | -------------------------------------------------------------------------------------------------- |
-| `NODE_ENV=production`        | Vercel sets this automatically                                                                     |
-| `SESSION_SECRET`             | Express session cookie signing                                                                     |
-| `ADMIN_BYPASS_TOKEN`         | `/admin-unlock?token=...` to bypass firewall                                                       |
-| `FIREBASE_SERVICE_ACCOUNT`   | **Required.** Full service-account JSON, single line. Without this the dashboard + visitor writes return 503/500. |
-| `FIREBASE_DATABASE_URL`      | Realtime DB URL, e.g. `https://dryah-875c0-default-rtdb.firebaseio.com`. Optional — falls back to `<project>-default-rtdb.firebaseio.com`. |
-| `FIREBASE_WEB_API_KEY`       | Web API key — needed for dashboard email/password sign-in                                          |
-| `HHR_USE_MOCK=1`             | Default — returns mock schedule. Set `0` for live (only works on a host with Chromium)             |
-| `CAPSOLVER_API_KEY`          | Only needed if you flip `HHR_USE_MOCK=0`                                                           |
-| `FIREWALL_DISABLED=1`        | (optional) disables SA-mobile-only firewall                                                        |
+| Var                             | Why                                                                                      |
+| ------------------------------- | ---------------------------------------------------------------------------------------- |
+| `NODE_ENV=production`           | Vercel sets this automatically                                                           |
+| `SESSION_SECRET`                | Express session cookie signing                                                           |
+| `ADMIN_BYPASS_TOKEN`            | `/admin-unlock?token=...` to bypass firewall (if firewall is re-enabled later)           |
+| **`SUPABASE_URL`**              | **Required.** `https://<project-ref>.supabase.co`                                        |
+| **`SUPABASE_SERVICE_ROLE_KEY`** | **Required.** Service-role key (bypasses RLS). Server-only, never exposed to client.     |
+| **`SUPABASE_ANON_KEY`**         | **Required.** Anon key — used by `/api/fb/admin/login` to call Supabase Auth REST.       |
+| `HHR_USE_MOCK=1`                | Default — returns mock schedule. Set `0` for live (only works on a host with Chromium).  |
+| `CAPSOLVER_API_KEY`             | Only needed if you flip `HHR_USE_MOCK=0`                                                 |
 
-### How to set `FIREBASE_SERVICE_ACCOUNT`
-1. Firebase Console → ⚙ Project settings → Service accounts → "Generate new private key" → download JSON.
-2. Vercel → Project → Settings → Environment Variables → New.
-3. Name: `FIREBASE_SERVICE_ACCOUNT`. Value: paste the **entire JSON** as one line
-   (Vercel preserves newlines fine; both forms work because the loader replaces `\n` in `private_key`).
-4. Apply to **Production** + **Preview** + **Development**.
+> The legacy `FIREBASE_SERVICE_ACCOUNT`, `FIREBASE_DATABASE_URL`, `FIREBASE_WEB_API_KEY`
+> variables are no longer needed by the running app. Keep them set on Vercel **only**
+> until the one-time data migration script (`scripts/migrate-firestore-to-supabase.ts`)
+> has been run; then they can be deleted.
+
+## One-time setup checklist (Supabase)
+
+1. **Apply the schema.** In Supabase → SQL Editor → New Query, paste the entire
+   contents of `supabase/schema.sql` and Run. This creates `visitors`,
+   `blocked_ips`, `blocked_bins`, `online_status`, `admins` and enables Realtime.
+2. **Create the dashboard admin user.**
+   - Supabase → Authentication → Users → "Add user" → email + password.
+   - Copy the new user's UID, then in SQL Editor run:
+     ```sql
+     insert into public.admins (uid, email)
+     values ('<paste-uid-here>', '<email>');
+     ```
+3. **(Optional) Migrate existing Firestore data.** From your local checkout
+   (with `FIREBASE_SERVICE_ACCOUNT`, `FIREBASE_DATABASE_URL`, `SUPABASE_URL`,
+   `SUPABASE_SERVICE_ROLE_KEY` all set):
+   ```bash
+   tsx scripts/migrate-firestore-to-supabase.ts
+   ```
+   The script is idempotent — safe to re-run.
 
 ## Important notes about Vercel limits
 
 - **Puppeteer / Chromium does NOT work** on Vercel serverless (size/runtime limits).
-  The site is configured for `HHR_USE_MOCK=1` by default, so the schedule API
-  returns realistic mock data without invoking the scraper. Do not set
-  `HHR_USE_MOCK=0` on Vercel — it will crash the function.
+  The site is configured for `HHR_USE_MOCK=1` by default.
 
-- **Stateless functions**: `express-session` uses `MemoryStore`. Each cold
-  start = new memory. Sessions won't persist across function instances. The
-  current app only uses sessions for the dashboard auth, which already runs
-  through Firebase Auth, so this is fine.
+- **Stateless functions**: `express-session` uses `MemoryStore`. Each cold start
+  = new memory. Sessions won't persist across function instances. The dashboard
+  uses sessions for admin auth — for production we recommend swapping in a
+  Postgres-backed session store (e.g. `connect-pg-simple` against Supabase).
 
-- **No HTTP server / no `prewarmHhr`**: the serverless wrapper doesn't call
-  `httpServer.listen` or `prewarmHhr` (puppeteer-based). Both are skipped.
+- **SSE / Realtime**: the `/api/fb/stream/*` routes hold open EventSource
+  connections subscribed to Supabase Realtime. Vercel's serverless functions
+  have a hard timeout (10–60s on Hobby, longer on Pro). The client lib already
+  has a polling fallback (`pollVisitorOnce` every 2.5s), so updates still flow
+  even when SSE is cut by a function timeout.
 
 ## Deploy
 
 ```bash
-# one-time
 npm i -g vercel
-vercel link            # link to your Vercel project
-
-# deploy
-vercel                 # preview
-vercel --prod          # production
+vercel link
+vercel --prod
 ```
 
 Or push to a Git repo connected to Vercel and it auto-deploys.
-
-## Local sanity check
-
-Vercel emulation:
-```bash
-vercel dev
-```
-This serves on `http://localhost:3000` and routes `/api/*` to the function.
-
-## After deploy
-
-1. Open `https://<your-project>.vercel.app/` — should show the bio-links page.
-2. Open `https://<your-project>.vercel.app/privacy` — privacy page.
-3. From a desktop, opening `https://<your-project>.vercel.app/book` should
-   show the "الخدمة غير متاحة" 403 page (firewall working).
-4. To unlock the dashboard from your machine:
-   `https://<your-project>.vercel.app/admin-unlock?token=<ADMIN_BYPASS_TOKEN>`
