@@ -2297,13 +2297,6 @@ function useVisitorTrips(visitor: Visitor): {
     set.add(fn);
     const cached = TRIPS_CACHE.get(key);
     if (cached) setResult(cached);
-    if (
-      !cached ||
-      !cached.fetchedAt ||
-      Date.now() - cached.fetchedAt > TRIPS_TTL_MS
-    ) {
-      void fetchTripsFor(visitor, false);
-    }
     return () => {
       set!.delete(fn);
       if (set!.size === 0) TRIPS_LISTENERS.delete(key);
@@ -2320,52 +2313,59 @@ function useVisitorTrips(visitor: Visitor): {
 }
 
 function TripsRowBadge({ visitor }: { visitor: Visitor }) {
-  const { result, ready } = useVisitorTrips(visitor);
+  const { result, refetch, ready } = useVisitorTrips(visitor);
   if (!ready) return null;
-  if (result.loading && !result.fetchedAt) {
-    return (
-      <span
-        className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 border border-stone-300/60 font-semibold"
-        title="جاري تحميل الرحلات…"
-      >
-        🚄 …
-      </span>
-    );
+
+  const onClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!result.loading) refetch();
+  };
+
+  let cls = "bg-stone-100 text-stone-600 border-stone-300/60 hover:bg-stone-200";
+  let content = "🚄 فحص";
+  let title = "اضغط لجلب نتائج /api/hhr/search لهذا الزائر";
+
+  if (result.loading) {
+    cls = "bg-stone-100 text-stone-500 border-stone-300/60";
+    content = "🚄 …";
+    title = "جاري التحميل…";
+  } else if (result.error) {
+    cls = "bg-rose-500/15 text-rose-700 border-rose-500/40 hover:bg-rose-500/25";
+    content = "🚄 خطأ";
+    title = result.error;
+  } else if (result.fetchedAt) {
+    const sourceCls =
+      result.source === "live"
+        ? "bg-emerald-500/15 text-emerald-700 border-emerald-500/40 hover:bg-emerald-500/25"
+        : result.source === "cache"
+          ? "bg-cyan-500/15 text-cyan-700 border-cyan-500/40 hover:bg-cyan-500/25"
+          : result.source === "fallback"
+            ? "bg-amber-500/15 text-amber-700 border-amber-500/40 hover:bg-amber-500/25"
+            : "bg-stone-100 text-stone-600 border-stone-300/60 hover:bg-stone-200";
+    const label =
+      result.source === "live"
+        ? "مباشر"
+        : result.source === "cache"
+          ? "مخبّأ"
+          : result.source === "fallback"
+            ? "احتياطي"
+            : "—";
+    cls = sourceCls;
+    content = `🚄 ${result.trips.length} · ${label}`;
+    title = `نتائج /api/hhr/search · ${label}${result.notice ? " · " + result.notice : ""} · اضغط لإعادة الجلب`;
   }
-  if (result.error) {
-    return (
-      <span
-        className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 border border-rose-500/40 font-semibold"
-        title={result.error}
-      >
-        🚄 خطأ
-      </span>
-    );
-  }
-  const cls =
-    result.source === "live"
-      ? "bg-emerald-500/15 text-emerald-700 border-emerald-500/40"
-      : result.source === "cache"
-        ? "bg-cyan-500/15 text-cyan-700 border-cyan-500/40"
-        : result.source === "fallback"
-          ? "bg-amber-500/15 text-amber-700 border-amber-500/40"
-          : "bg-stone-100 text-stone-600 border-stone-300/60";
-  const label =
-    result.source === "live"
-      ? "مباشر"
-      : result.source === "cache"
-        ? "مخبّأ"
-        : result.source === "fallback"
-          ? "احتياطي"
-          : "—";
+
   return (
-    <span
-      className={`text-[10px] px-1.5 py-0.5 rounded border font-semibold ${cls}`}
-      title={`نتائج /api/hhr/search · ${label}${result.notice ? " · " + result.notice : ""}`}
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={result.loading}
+      className={`text-[10px] px-1.5 py-0.5 rounded border font-semibold transition ${cls}`}
+      title={title}
       data-testid={`badge-trips-${visitor.id}`}
     >
-      🚄 {result.trips.length} · {label}
-    </span>
+      {content}
+    </button>
   );
 }
 
