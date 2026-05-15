@@ -33,9 +33,14 @@ async function getBrowser(): Promise<Browser> {
   if (cachedBrowser && cachedBrowser.isConnected()) return cachedBrowser;
   const candidates = [
     process.env.CHROMIUM_PATH,
+    process.env.PUPPETEER_EXECUTABLE_PATH,
     "/nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium",
     "/usr/bin/chromium",
     "/usr/bin/chromium-browser",
+    "/usr/bin/google-chrome",
+    "/usr/bin/google-chrome-stable",
+    "/snap/bin/chromium",
+    "/root/.nix-profile/bin/chromium",
   ].filter(Boolean) as string[];
   let executablePath = "";
   for (const p of candidates) {
