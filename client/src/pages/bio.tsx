@@ -33,7 +33,7 @@ const LINKS: LinkItem[] = [
     testid: "link-schedule",
   },
   {
-    label: "إدارة الحجز",
+    label: "إدارة الرحلات",
     sub: "تعديل أو إلغاء حجزك",
     href: "/book?tab=manage",
     icon: <Ticket className="w-6 h-6" />,

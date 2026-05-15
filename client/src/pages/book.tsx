@@ -364,7 +364,7 @@ function BookingCard(props: {
           testid="tab-schedule"
         />
         <TabButton
-          label="إدارة الحجز"
+          label="إدارة الرحلات"
           active={tab === "manage"}
           onClick={() => setTab("manage")}
           icon="ticket"
@@ -477,7 +477,7 @@ function BookingCard(props: {
 
       {tab === "manage" && (
         <div className="px-5 py-8 text-center text-sm text-[#0b1c2c]/60">
-          <p className="mb-2 font-bold text-[#0b1c2c]">إدارة الحجز</p>
+          <p className="mb-2 font-bold text-[#0b1c2c]">إدارة الرحلات</p>
           <p>قريباً — تابع رحلتك وتفاصيل تذكرتك من هنا.</p>
         </div>
       )}
