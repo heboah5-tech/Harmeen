@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
+import { prewarmHhr } from "./hhr-scraper";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -121,6 +122,8 @@ app.use((req, res, next) => {
     },
     () => {
       log(`serving on port ${port}`);
+      // Pre-warm browser + reCAPTCHA token so first scrape is fast.
+      prewarmHhr();
     },
   );
 })();

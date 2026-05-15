@@ -71,18 +71,14 @@ function serializeScrape<T>(fn: () => Promise<T>): Promise<T> {
   return next;
 }
 
-async function solveRecaptcha(sitekey: string, pageUrl: string): Promise<string> {
+async function solveRecaptchaFresh(sitekey: string, pageUrl: string): Promise<string> {
   if (!CAPSOLVER_KEY) throw new Error("CAPSOLVER_API_KEY not set");
   const createResp = await fetch(`${CAPSOLVER_API}/createTask`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       clientKey: CAPSOLVER_KEY,
-      task: {
-        type: "ReCaptchaV2TaskProxyLess",
-        websiteURL: pageUrl,
-        websiteKey: sitekey,
-      },
+      task: { type: "ReCaptchaV2TaskProxyLess", websiteURL: pageUrl, websiteKey: sitekey },
     }),
   });
   const created = (await createResp.json()) as {
@@ -93,8 +89,8 @@ async function solveRecaptcha(sitekey: string, pageUrl: string): Promise<string>
   }
   const taskId = created.taskId;
   const deadline = Date.now() + 120_000;
+  await new Promise((r) => setTimeout(r, 4000));
   while (Date.now() < deadline) {
-    await new Promise((r) => setTimeout(r, 3000));
     const resR = await fetch(`${CAPSOLVER_API}/getTaskResult`, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -108,8 +104,133 @@ async function solveRecaptcha(sitekey: string, pageUrl: string): Promise<string>
     if (r.status === "ready" && r.solution?.gRecaptchaResponse) {
       return r.solution.gRecaptchaResponse;
     }
+    await new Promise((r) => setTimeout(r, 1500));
   }
   throw new Error("CapSolver timed out");
+}
+
+// reCAPTCHA v2 tokens are valid ~120s. Cache + pre-warm so most scrapes
+// skip the 10-30s CapSolver wait entirely.
+const TOKEN_TTL_MS = 100_000;
+let cachedToken: { token: string; expires: number } | null = null;
+let inflightToken: Promise<string> | null = null;
+
+function startTokenSolve(): Promise<string> {
+  if (inflightToken) return inflightToken;
+  inflightToken = solveRecaptchaFresh(RECAPTCHA_SITEKEY, HHR_HOME)
+    .then((tok) => {
+      cachedToken = { token: tok, expires: Date.now() + TOKEN_TTL_MS };
+      return tok;
+    })
+    .finally(() => { inflightToken = null; });
+  inflightToken.catch((e) =>
+    console.log("HHR token solve failed:", e instanceof Error ? e.message : e),
+  );
+  return inflightToken;
+}
+
+function getRecaptchaToken(): Promise<string> {
+  if (cachedToken && cachedToken.expires > Date.now() + 5_000) {
+    const t = cachedToken.token;
+    cachedToken = null; // single-use
+    if (!inflightToken) startTokenSolve(); // refill in background
+    return Promise.resolve(t);
+  }
+  return startTokenSolve();
+}
+
+// Warm page pool: keep one Page sitting on HHR home with the form rendered
+// so scrapes don't pay the ~14s page-init cost.
+interface WarmPage {
+  ctx: import("playwright-core").BrowserContext;
+  page: Page;
+  createdAt: number;
+}
+const WARM_PAGE_MAX_AGE_MS = 4 * 60 * 1000; // refresh every 4 min
+let warmPage: WarmPage | null = null;
+let warmPageInflight: Promise<WarmPage> | null = null;
+
+async function buildWarmPage(): Promise<WarmPage> {
+  const browser = await getBrowser();
+  const ctx = await browser.newContext({
+    locale: "ar-SA",
+    viewport: { width: 1366, height: 800 },
+    ignoreHTTPSErrors: true,
+    userAgent:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+  });
+  try {
+    await ctx.route("**/*", (route) => {
+      const t = route.request().resourceType();
+      if (t === "image" || t === "font" || t === "media") return route.abort();
+      const u = route.request().url();
+      if (/google-analytics|googletagmanager|doubleclick|hotjar|facebook|gstatic\.com\/ea\//.test(u)) {
+        return route.abort();
+      }
+      return route.continue();
+    });
+    await ctx.addInitScript(() => {
+      if (typeof (globalThis as any).__name !== "function") {
+        (globalThis as any).__name = (fn: any) => fn;
+      }
+    });
+    const page = await ctx.newPage();
+    page.setDefaultTimeout(45_000);
+    await page.goto(HHR_HOME, { waitUntil: "commit", timeout: 60_000 });
+    await page.waitForSelector(`select[id="${FORM_PREFIX}comboStationFrom"]`, { timeout: 45_000 });
+    await page.waitForFunction(
+      (s) => {
+        const el = document.querySelector(s) as HTMLSelectElement | null;
+        return !!el && !el.disabled && el.options.length > 1;
+      },
+      `select[id="${FORM_PREFIX}comboStationFrom"]`,
+      { timeout: 30_000 },
+    );
+    return { ctx, page, createdAt: Date.now() };
+  } catch (e) {
+    await ctx.close().catch(() => {});
+    throw e;
+  }
+}
+
+function startWarmPageBuild(): Promise<WarmPage> {
+  if (warmPageInflight) return warmPageInflight;
+  warmPageInflight = buildWarmPage()
+    .then((wp) => {
+      warmPage = wp;
+      return wp;
+    })
+    .catch((e) => {
+      console.log("HHR warm-page build failed:", e instanceof Error ? e.message : e);
+      throw e;
+    })
+    .finally(() => { warmPageInflight = null; });
+  warmPageInflight.catch(() => {});
+  return warmPageInflight;
+}
+
+async function consumeWarmPage(): Promise<WarmPage> {
+  if (warmPage && Date.now() - warmPage.createdAt < WARM_PAGE_MAX_AGE_MS) {
+    const wp = warmPage;
+    warmPage = null;
+    return wp;
+  }
+  // Stale warm page — close it
+  if (warmPage) {
+    const stale = warmPage;
+    warmPage = null;
+    stale.ctx.close().catch(() => {});
+  }
+  // Build (or join in-flight build), then take ownership: clear the global
+  // pool slot so a subsequent consumer doesn't try to use the same page.
+  const wp = await startWarmPageBuild();
+  if (warmPage === wp) warmPage = null;
+  return wp;
+}
+
+export function prewarmHhr(): void {
+  if (!cachedToken && !inflightToken) startTokenSolve();
+  if (!warmPage && !warmPageInflight) startWarmPageBuild();
 }
 
 function isoToHhrDate(iso: string): string {
@@ -138,8 +259,8 @@ async function selectNative(page: Page, fieldId: string, value: string): Promise
     { timeout: 20000 },
   );
   await page.selectOption(sel, value);
-  // Mojarra.ab fires automatically via inline onchange; wait a beat for AJAX to settle
-  await page.waitForTimeout(900);
+  // Mojarra.ab fires automatically via inline onchange; brief wait for AJAX
+  await page.waitForTimeout(350);
 }
 
 async function extractTrips(page: Page): Promise<HhrTrip[]> {
@@ -211,45 +332,29 @@ export function scrapeHhr(input: HhrSearchInput): Promise<HhrTrip[]> {
 }
 
 async function scrapeHhrInner(input: HhrSearchInput): Promise<HhrTrip[]> {
-  const browser = await getBrowser();
-  const ctx = await browser.newContext({
-    locale: "ar-SA",
-    viewport: { width: 1366, height: 800 },
-    ignoreHTTPSErrors: true,
-    userAgent:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
-  });
-  // Block non-essential heavy resources to speed page load
-  await ctx.route("**/*", (route) => {
-    const t = route.request().resourceType();
-    if (t === "image" || t === "font" || t === "media") return route.abort();
-    const u = route.request().url();
-    if (/google-analytics|googletagmanager|doubleclick|hotjar|facebook|gstatic\.com\/ea\//.test(u)) {
-      return route.abort();
-    }
-    return route.continue();
-  });
-  // tsx/esbuild injects __name(fn, "name") helpers into our source for
-  // `keepNames`. When `page.evaluate(fn)` serializes those functions, the
-  // browser page has no `__name`, throwing "ReferenceError: __name is not
-  // defined". Polyfill it as a no-op identity in the page context.
-  await ctx.addInitScript(() => {
-    if (typeof (globalThis as any).__name !== "function") {
-      (globalThis as any).__name = (fn: any) => fn;
-    }
-  });
-  const page = await ctx.newPage();
-  page.setDefaultTimeout(45_000);
-  // Start CapSolver in parallel as soon as we begin loading the page.
-  const solveTokenP = solveRecaptcha(RECAPTCHA_SITEKEY, HHR_HOME);
-  // Swallow rejection so it never becomes unhandled if scraping aborts early.
+  const t0 = Date.now();
+  const lap = (label: string) => console.log(`HHR ${label} +${Date.now() - t0}ms`);
+  // Use cached/in-flight token if available; otherwise start a fresh solve.
+  const solveTokenP = getRecaptchaToken();
   solveTokenP.catch(() => {});
+  // Grab a pre-warmed page (form already rendered) — saves ~14s. If the warm
+  // build fails, fall back to a cold build so this request still succeeds.
+  let wp: WarmPage;
   try {
-    await page.goto(HHR_HOME, { waitUntil: "commit", timeout: 60_000 });
-    await page.waitForSelector(`select[id="${FORM_PREFIX}comboStationFrom"]`, { timeout: 30_000 });
-
+    wp = await consumeWarmPage();
+    lap("warm-page");
+  } catch (e) {
+    console.log("HHR warm-page unavailable, cold build:", e instanceof Error ? e.message : e);
+    wp = await buildWarmPage();
+    lap("cold-page");
+  }
+  const { ctx, page } = wp;
+  // Kick off the next warm page in background so the next scrape is fast.
+  startWarmPageBuild();
+  try {
     await selectNative(page, "comboStationFrom", input.fromId);
     await selectNative(page, "comboStationTo", input.toId);
+    lap("from+to");
 
     const dateStr = isoToHhrDate(input.date);
     await page.evaluate(
@@ -265,7 +370,7 @@ async function scrapeHhrInner(input: HhrSearchInput): Promise<HhrTrip[]> {
       },
       { id: `${FORM_PREFIX}calendar`, d: dateStr },
     );
-    await page.waitForTimeout(700);
+    await page.waitForTimeout(250);
 
     if (input.adults && input.adults !== 1) {
       await selectNative(page, "adults", String(Math.max(1, Math.min(input.adults, 9))));
@@ -277,8 +382,10 @@ async function scrapeHhrInner(input: HhrSearchInput): Promise<HhrTrip[]> {
       await selectNative(page, "infants", String(Math.min(input.infants, 9)));
     }
 
+    lap("form-filled");
     // Wait for CapSolver token, inject into g-recaptcha-response, then submit.
     const token = await solveTokenP;
+    lap("token");
     await page.evaluate((tok) => {
       document.querySelectorAll('textarea[id^="g-recaptcha-response"]').forEach((el) => {
         const t = el as HTMLTextAreaElement;
@@ -311,6 +418,7 @@ async function scrapeHhrInner(input: HhrSearchInput): Promise<HhrTrip[]> {
     }, token);
 
     await page.click(`button[id="${FORM_PREFIX}search"]`);
+    lap("submit");
 
     // Wait for results (rows in datatable) or a "no results" message.
     await page.waitForFunction(
@@ -321,7 +429,9 @@ async function scrapeHhrInner(input: HhrSearchInput): Promise<HhrTrip[]> {
       { timeout: 60_000 },
     );
 
+    lap("results-ready");
     const trips = await extractTrips(page);
+    lap("done");
     if (process.env.HHR_DEBUG_DUMP === "1") {
       try {
         const dumpDir = "/tmp/hhr-debug";
