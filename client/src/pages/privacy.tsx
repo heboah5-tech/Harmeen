@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Link } from "wouter";
 import { ChevronRight, Shield } from "lucide-react";
 import hhrLogo from "@assets/hhr_logo.png";
 
@@ -12,15 +11,14 @@ export default function PrivacyPage() {
     <div dir="rtl" className="min-h-screen bg-white text-[#0b1c2c]">
       <header className="bg-[#0b1c2c] text-white">
         <div className="max-w-2xl mx-auto px-5 h-14 flex items-center justify-between">
-          <Link href="/">
-            <a
-              className="inline-flex items-center gap-1 text-sm font-semibold hover:text-[#b08a3e]"
-              data-testid="link-back"
-            >
-              <ChevronRight className="w-4 h-4" />
-              الرئيسية
-            </a>
-          </Link>
+          <a
+            href="/"
+            className="inline-flex items-center gap-1 text-sm font-semibold hover:text-[#b08a3e]"
+            data-testid="link-back"
+          >
+            <ChevronRight className="w-4 h-4" />
+            الرئيسية
+          </a>
           <img src={hhrLogo} alt="HHR" className="h-7 w-auto opacity-90" />
         </div>
       </header>

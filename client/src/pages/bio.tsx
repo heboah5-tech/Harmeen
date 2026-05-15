@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Link } from "wouter";
 import {
   Train,
   Calendar as CalendarIcon,
@@ -117,7 +116,7 @@ export default function BioPage() {
               <ChevronLeft className="w-5 h-5 text-[#0b1c2c]/40 shrink-0" />
             </div>
           );
-          return l.external ? (
+          return (
             <a
               key={l.testid}
               href={l.href}
@@ -126,10 +125,6 @@ export default function BioPage() {
             >
               {inner}
             </a>
-          ) : (
-            <Link key={l.testid} href={l.href}>
-              {inner}
-            </Link>
           );
         })}
 
