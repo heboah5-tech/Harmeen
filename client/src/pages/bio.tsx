@@ -47,28 +47,12 @@ const LINKS: LinkItem[] = [
     testid: "link-stations",
   },
   {
-    label: "خدمة العملاء",
-    sub: "920004433",
-    href: "tel:920004433",
-    external: true,
-    icon: <Phone className="w-6 h-6" />,
-    testid: "link-call",
-  },
-  {
     label: "البريد الإلكتروني",
     sub: "info@hhr.sa",
     href: "mailto:info@hhr.sa",
     external: true,
     icon: <Mail className="w-6 h-6" />,
     testid: "link-email",
-  },
-  {
-    label: "الموقع الرسمي",
-    sub: "hhr.sa",
-    href: "https://www.hhr.sa",
-    external: true,
-    icon: <Globe className="w-6 h-6" />,
-    testid: "link-website",
   },
   {
     label: "سياسة الخصوصية",
