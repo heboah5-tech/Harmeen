@@ -4,7 +4,6 @@ import createMemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
 import { prewarmHhr } from "./hhr-scraper";
 import { serveStatic } from "./static";
-import { buildFirewall } from "./firewall";
 import { createServer } from "http";
 
 const app = express();
@@ -46,13 +45,6 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
-
-app.use(
-  buildFirewall({
-    enabled: process.env.NODE_ENV === "production" && process.env.FIREWALL_DISABLED !== "1",
-    bypassToken: process.env.ADMIN_BYPASS_TOKEN || "",
-  }),
-);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {

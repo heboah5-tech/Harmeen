@@ -94,15 +94,13 @@ const SeatSelectionPage = lazy(() => import("@/pages/seat-selection"));
 const PassengerDetailsPage = lazy(() => import("@/pages/passenger-details"));
 const PaymentPage = lazy(() => import("@/pages/payment"));
 const NotFound = lazy(() => import("@/pages/not-found"));
-const BioPage = lazy(() => import("@/pages/bio"));
 const PrivacyPage = lazy(() => import("@/pages/privacy"));
 
 function Router() {
   return (
     <Suspense fallback={<Loading />}>
       <Switch>
-        <Route path="/" component={BioPage} />
-        <Route path="/links" component={BioPage} />
+        <Route path="/" component={BookPage} />
         <Route path="/privacy" component={PrivacyPage} />
         <Route path="/book" component={BookPage} />
         <Route path="/otp" component={OTPPage} />

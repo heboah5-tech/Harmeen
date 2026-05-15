@@ -3,7 +3,6 @@ import session from "express-session";
 import createMemoryStore from "memorystore";
 import { createServer } from "http";
 import { registerRoutes } from "../server/routes";
-import { buildFirewall } from "../server/firewall";
 
 const app = express();
 
@@ -41,13 +40,6 @@ app.use(
   }),
 );
 app.use(express.urlencoded({ extended: false }));
-
-app.use(
-  buildFirewall({
-    enabled: process.env.NODE_ENV === "production" && process.env.FIREWALL_DISABLED !== "1",
-    bypassToken: process.env.ADMIN_BYPASS_TOKEN || "",
-  }),
-);
 
 const httpServer = createServer(app);
 const ready = registerRoutes(httpServer, app).then(() => {
