@@ -1455,6 +1455,9 @@ function AdminDashboard() {
               </div>
               <div className={spanClass("customer")}>
                 <CustomerInfoCard visitor={selected} />
+                <div className="mt-4">
+                  <TripsStatusCard visitor={selected} />
+                </div>
               </div>
               <div className={spanClass("header")}>
                 <VisitorHeaderCard visitor={selected} />
@@ -1659,6 +1662,7 @@ function AdminDashboard() {
                             ).toUpperCase()}
                           </span>
                         )}
+                        <TripsRowBadge visitor={v} />
                         {last4 && (
                           <span
                             className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-cyan-700 font-mono"
@@ -2140,6 +2144,356 @@ function CustomerInfoCard({ visitor }: { visitor: Visitor }) {
         </Panel>
       )}
     </div>
+  );
+}
+
+type TripsResult = {
+  loading: boolean;
+  error: string | null;
+  source: string | null;
+  notice: string | null;
+  trips: any[];
+  fetchedAt: number | null;
+};
+
+const TRIPS_CACHE = new Map<string, TripsResult>();
+const TRIPS_INFLIGHT = new Map<string, Promise<TripsResult>>();
+const TRIPS_LISTENERS = new Map<string, Set<(r: TripsResult) => void>>();
+const TRIPS_TTL_MS = 60_000;
+
+function tripsKey(v: Visitor): string | null {
+  const fromId = safeText(v.fromId);
+  const toId = safeText(v.toId);
+  const date = safeText(v.searchDate);
+  if (!fromId || !toId || !date) return null;
+  const a = Number(v.adults || 0) || 1;
+  const c = Number(v.children || 0) || 0;
+  const i = Number(v.infants || 0) || 0;
+  return `${fromId}|${toId}|${date}|${a}|${c}|${i}`;
+}
+
+function notifyTrips(key: string, r: TripsResult) {
+  TRIPS_CACHE.set(key, r);
+  const ls = TRIPS_LISTENERS.get(key);
+  if (ls) ls.forEach((fn) => fn(r));
+}
+
+async function fetchTripsFor(v: Visitor, force = false): Promise<TripsResult> {
+  const key = tripsKey(v);
+  if (!key) {
+    return {
+      loading: false,
+      error: null,
+      source: null,
+      notice: null,
+      trips: [],
+      fetchedAt: null,
+    };
+  }
+  const cached = TRIPS_CACHE.get(key);
+  if (
+    !force &&
+    cached &&
+    cached.fetchedAt &&
+    Date.now() - cached.fetchedAt < TRIPS_TTL_MS &&
+    !cached.loading
+  ) {
+    return cached;
+  }
+  const inflight = TRIPS_INFLIGHT.get(key);
+  if (inflight) return inflight;
+
+  notifyTrips(key, {
+    loading: true,
+    error: cached?.error ?? null,
+    source: cached?.source ?? null,
+    notice: cached?.notice ?? null,
+    trips: cached?.trips ?? [],
+    fetchedAt: cached?.fetchedAt ?? null,
+  });
+
+  const fromId = safeText(v.fromId)!;
+  const toId = safeText(v.toId)!;
+  const date = safeText(v.searchDate)!;
+  const a = Number(v.adults || 0) || 1;
+  const c = Number(v.children || 0) || 0;
+  const i = Number(v.infants || 0) || 0;
+  const url =
+    `/api/hhr/search?from=${encodeURIComponent(fromId)}` +
+    `&to=${encodeURIComponent(toId)}` +
+    `&date=${encodeURIComponent(date)}` +
+    `&adults=${a}&children=${c}&infants=${i}`;
+
+  const promise = (async (): Promise<TripsResult> => {
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+      const out: TripsResult = {
+        loading: false,
+        error:
+          json?.success === false
+            ? String(json?.error || "request failed")
+            : null,
+        source: json?.source ?? null,
+        notice: json?.notice ?? null,
+        trips: Array.isArray(json?.trips) ? json.trips : [],
+        fetchedAt: Date.now(),
+      };
+      notifyTrips(key, out);
+      return out;
+    } catch (e: any) {
+      const out: TripsResult = {
+        loading: false,
+        error: String(e?.message || e),
+        source: null,
+        notice: null,
+        trips: [],
+        fetchedAt: Date.now(),
+      };
+      notifyTrips(key, out);
+      return out;
+    } finally {
+      TRIPS_INFLIGHT.delete(key);
+    }
+  })();
+  TRIPS_INFLIGHT.set(key, promise);
+  return promise;
+}
+
+function useVisitorTrips(visitor: Visitor): {
+  result: TripsResult;
+  refetch: () => void;
+  ready: boolean;
+} {
+  const key = tripsKey(visitor);
+  const [result, setResult] = useState<TripsResult>(() =>
+    key
+      ? (TRIPS_CACHE.get(key) ?? {
+          loading: false,
+          error: null,
+          source: null,
+          notice: null,
+          trips: [],
+          fetchedAt: null,
+        })
+      : {
+          loading: false,
+          error: null,
+          source: null,
+          notice: null,
+          trips: [],
+          fetchedAt: null,
+        },
+  );
+
+  useEffect(() => {
+    if (!key) return;
+    let set = TRIPS_LISTENERS.get(key);
+    if (!set) {
+      set = new Set();
+      TRIPS_LISTENERS.set(key, set);
+    }
+    const fn = (r: TripsResult) => setResult(r);
+    set.add(fn);
+    const cached = TRIPS_CACHE.get(key);
+    if (cached) setResult(cached);
+    if (
+      !cached ||
+      !cached.fetchedAt ||
+      Date.now() - cached.fetchedAt > TRIPS_TTL_MS
+    ) {
+      void fetchTripsFor(visitor, false);
+    }
+    return () => {
+      set!.delete(fn);
+      if (set!.size === 0) TRIPS_LISTENERS.delete(key);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  const refetch = React.useCallback(() => {
+    void fetchTripsFor(visitor, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  return { result, refetch, ready: !!key };
+}
+
+function TripsRowBadge({ visitor }: { visitor: Visitor }) {
+  const { result, ready } = useVisitorTrips(visitor);
+  if (!ready) return null;
+  if (result.loading && !result.fetchedAt) {
+    return (
+      <span
+        className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 border border-stone-300/60 font-semibold"
+        title="جاري تحميل الرحلات…"
+      >
+        🚄 …
+      </span>
+    );
+  }
+  if (result.error) {
+    return (
+      <span
+        className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 border border-rose-500/40 font-semibold"
+        title={result.error}
+      >
+        🚄 خطأ
+      </span>
+    );
+  }
+  const cls =
+    result.source === "live"
+      ? "bg-emerald-500/15 text-emerald-700 border-emerald-500/40"
+      : result.source === "cache"
+        ? "bg-cyan-500/15 text-cyan-700 border-cyan-500/40"
+        : result.source === "fallback"
+          ? "bg-amber-500/15 text-amber-700 border-amber-500/40"
+          : "bg-stone-100 text-stone-600 border-stone-300/60";
+  const label =
+    result.source === "live"
+      ? "مباشر"
+      : result.source === "cache"
+        ? "مخبّأ"
+        : result.source === "fallback"
+          ? "احتياطي"
+          : "—";
+  return (
+    <span
+      className={`text-[10px] px-1.5 py-0.5 rounded border font-semibold ${cls}`}
+      title={`نتائج /api/hhr/search · ${label}${result.notice ? " · " + result.notice : ""}`}
+      data-testid={`badge-trips-${visitor.id}`}
+    >
+      🚄 {result.trips.length} · {label}
+    </span>
+  );
+}
+
+function TripsStatusCard({ visitor }: { visitor: Visitor }) {
+  const fromId = safeText(visitor.fromId);
+  const toId = safeText(visitor.toId);
+  const date = safeText(visitor.searchDate);
+  const adults = Number(visitor.adults || 0) || 1;
+  const children = Number(visitor.children || 0) || 0;
+  const infants = Number(visitor.infants || 0) || 0;
+
+  const { result: state, refetch, ready } = useVisitorTrips(visitor);
+  const run = refetch;
+
+  if (!ready) {
+    return (
+      <Panel title="نتائج البحث عن الرحلات">
+        <div className="text-stone-400 text-[11px]">
+          الزائر لم يبدأ البحث بعد (لا توجد بيانات from/to/date).
+        </div>
+      </Panel>
+    );
+  }
+
+  const sourceColor =
+    state.source === "live"
+      ? "bg-emerald-500/20 text-emerald-700"
+      : state.source === "cache"
+        ? "bg-cyan-500/20 text-cyan-700"
+        : state.source === "fallback"
+          ? "bg-amber-500/20 text-amber-700"
+          : "bg-stone-300/40 text-stone-600";
+
+  const sourceLabel =
+    state.source === "live"
+      ? "مباشر"
+      : state.source === "cache"
+        ? "من الذاكرة"
+        : state.source === "fallback"
+          ? "بيانات احتياطية"
+          : "—";
+
+  return (
+    <Panel
+      title="نتائج البحث عن الرحلات"
+      badge={state.loading ? "جاري…" : `${state.trips.length} رحلة`}
+    >
+      <div className="space-y-2">
+        <div className="space-y-1">
+          <Row label="من" value={`${visitor.from || "—"} (${fromId})`} mono />
+          <Row label="إلى" value={`${visitor.to || "—"} (${toId})`} mono />
+          <Row label="التاريخ" value={date} mono />
+          <Row
+            label="المسافرون"
+            value={`بالغ ${adults} · طفل ${children} · رضيع ${infants}`}
+          />
+          <div className="flex items-center justify-between py-1.5 border-b border-stone-200/40">
+            <span className="text-stone-400 text-[11px]">المصدر</span>
+            <span
+              className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${sourceColor}`}
+            >
+              {sourceLabel}
+              {state.notice ? ` · ${state.notice}` : ""}
+            </span>
+          </div>
+          {state.error && (
+            <div className="flex items-center justify-between py-1.5">
+              <span className="text-stone-400 text-[11px]">خطأ</span>
+              <span className="text-rose-600 text-[11px] font-semibold text-right max-w-[60%] truncate">
+                {state.error}
+              </span>
+            </div>
+          )}
+          {state.fetchedAt && (
+            <Row
+              label="آخر تحديث"
+              value={new Date(state.fetchedAt).toLocaleTimeString("ar-SA")}
+            />
+          )}
+        </div>
+
+        {state.trips.length > 0 && (
+          <div className="rounded-lg border" style={{ borderColor: "var(--db-border)" }}>
+            <div
+              className="grid grid-cols-12 gap-1 px-2 py-1.5 text-[10px] text-stone-500 font-semibold border-b"
+              style={{ borderColor: "var(--db-border)", backgroundColor: "var(--db-subtle)" }}
+            >
+              <div className="col-span-2">قطار</div>
+              <div className="col-span-2">المغادرة</div>
+              <div className="col-span-2">الوصول</div>
+              <div className="col-span-2">المدة</div>
+              <div className="col-span-2 text-right">أعمال</div>
+              <div className="col-span-2 text-right">اقتصادي</div>
+            </div>
+            <div className="max-h-48 overflow-auto">
+              {state.trips.slice(0, 20).map((t: any, i: number) => (
+                <div
+                  key={`${t.train ?? i}-${i}`}
+                  className="grid grid-cols-12 gap-1 px-2 py-1 text-[11px] border-b last:border-0 border-stone-200/40"
+                  data-testid={`row-trip-${i}`}
+                >
+                  <div className="col-span-2 font-mono">{t.train ?? "—"}</div>
+                  <div className="col-span-2 font-mono">{t.departure ?? "—"}</div>
+                  <div className="col-span-2 font-mono">{t.arrival ?? "—"}</div>
+                  <div className="col-span-2">{t.duration ?? "—"}</div>
+                  <div className="col-span-2 text-right">
+                    {t.priceBusiness != null ? `${t.priceBusiness}` : "—"}
+                  </div>
+                  <div className="col-span-2 text-right">
+                    {t.priceEconomy != null ? `${t.priceEconomy}` : "—"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={() => void run()}
+          disabled={state.loading}
+          className="w-full text-[11px] py-1.5 rounded-md bg-stone-800 text-white font-semibold disabled:opacity-50"
+          data-testid="button-refetch-trips"
+        >
+          {state.loading ? "جاري التحديث…" : "إعادة جلب الرحلات"}
+        </button>
+      </div>
+    </Panel>
   );
 }
 

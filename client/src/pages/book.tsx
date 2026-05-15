@@ -85,6 +85,12 @@ export default function Book() {
     void addData({
       from: from.name,
       to: to.name,
+      fromId: from.id,
+      toId: to.id,
+      searchDate: departDate,
+      adults,
+      children,
+      infants,
       tripType,
       bookingDate: fmtDate(departDate),
       returnDate: tripType === "roundTrip" ? fmtDate(returnDate) : "",
