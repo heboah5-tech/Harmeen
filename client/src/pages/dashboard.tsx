@@ -1662,7 +1662,6 @@ function AdminDashboard() {
                             ).toUpperCase()}
                           </span>
                         )}
-                        <TripsRowBadge visitor={v} />
                         {last4 && (
                           <span
                             className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-cyan-700 font-mono"
