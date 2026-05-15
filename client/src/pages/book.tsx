@@ -50,7 +50,7 @@ const tomorrowIso = () => {
 
 export default function Book() {
   const [location, setLocation] = useLocation();
-  const [tripType, setTripType] = useState<"oneWay" | "roundTrip">("roundTrip");
+  const [tripType, setTripType] = useState<"oneWay" | "roundTrip">("oneWay");
   const [from, setFrom] = useState<Station | null>(STATIONS[4]);
   const [to, setTo] = useState<Station | null>(STATIONS[1]);
   const [picker, setPicker] = useState<null | "from" | "to">(null);
