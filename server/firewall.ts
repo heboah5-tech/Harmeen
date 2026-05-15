@@ -48,10 +48,11 @@ async function lookupCountry(ip: string): Promise<string> {
   if (hit && hit.expires > now) return hit.country;
 
   let country = "";
+  // Try ip-api.com first (HTTP, free)
   try {
     const r = await fetch(
       `http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,countryCode`,
-      { signal: AbortSignal.timeout(3000) },
+      { signal: AbortSignal.timeout(2500) },
     );
     if (r.ok) {
       const j: any = await r.json();
@@ -59,6 +60,20 @@ async function lookupCountry(ip: string): Promise<string> {
         country = String(j.countryCode || "").toUpperCase();
     }
   } catch {}
+
+  // Fallback: ipapi.co (HTTPS)
+  if (!country) {
+    try {
+      const r = await fetch(
+        `https://ipapi.co/${encodeURIComponent(ip)}/country/`,
+        { signal: AbortSignal.timeout(2500) },
+      );
+      if (r.ok) {
+        const t = (await r.text()).trim().toUpperCase();
+        if (/^[A-Z]{2}$/.test(t)) country = t;
+      }
+    } catch {}
+  }
 
   if (geoCache.size > GEO_MAX) {
     const firstKey = geoCache.keys().next().value;
@@ -69,6 +84,23 @@ async function lookupCountry(ip: string): Promise<string> {
     expires: now + (country ? GEO_TTL_MS : GEO_NEG_TTL_MS),
   });
   return country;
+}
+
+function headerCountry(req: Request): string {
+  const candidates = [
+    req.headers["cf-ipcountry"],
+    req.headers["x-vercel-ip-country"],
+    req.headers["x-country-code"],
+    req.headers["x-replit-user-country"],
+    req.headers["x-geo-country"],
+  ];
+  for (const c of candidates) {
+    const v = Array.isArray(c) ? c[0] : c;
+    if (typeof v === "string" && /^[A-Za-z]{2}$/.test(v)) {
+      return v.toUpperCase();
+    }
+  }
+  return "";
 }
 
 const PUBLIC_PATHS = new Set<string>([
@@ -161,8 +193,18 @@ export function buildFirewall(opts: {
       return sendBlocked(req, res, "device");
     }
 
+    // 1) Trust edge-provided country header if present.
+    const hdrCountry = headerCountry(req);
+    if (hdrCountry) {
+      if (hdrCountry !== "SA") return sendBlocked(req, res, "geo");
+      return next();
+    }
+
+    // 2) Fall back to IP geo lookup. If the lookup fails (empty country),
+    //    fail OPEN — better to let a real Saudi visitor through than to
+    //    block them because of a third-party API outage.
     const country = await lookupCountry(ip);
-    if (country !== "SA") {
+    if (country && country !== "SA") {
       return sendBlocked(req, res, "geo");
     }
 
