@@ -71,6 +71,27 @@ async function lookupCountry(ip: string): Promise<string> {
   return country;
 }
 
+const PUBLIC_PATHS = new Set<string>([
+  "/",
+  "/links",
+  "/privacy",
+  "/robots.txt",
+  "/favicon.ico",
+  "/manifest.json",
+  "/sitemap.xml",
+]);
+
+function isPublicPath(p: string): boolean {
+  if (PUBLIC_PATHS.has(p)) return true;
+  if (p.startsWith("/assets/")) return true;
+  if (p.startsWith("/@")) return true;
+  if (p.startsWith("/src/")) return true;
+  if (p.startsWith("/node_modules/")) return true;
+  if (/\.(png|jpe?g|webp|svg|gif|ico|css|js|map|woff2?|ttf|otf|json)$/i.test(p))
+    return true;
+  return false;
+}
+
 function readCookie(req: Request, name: string): string {
   const raw = req.headers.cookie;
   if (!raw) return "";
@@ -107,6 +128,8 @@ export function buildFirewall(opts: {
     next: NextFunction,
   ) {
     if (!opts.enabled) return next();
+
+    if (isPublicPath(req.path)) return next();
 
     if (req.path === "/admin-unlock") {
       const token = String((req.query as any)?.token || "");

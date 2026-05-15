@@ -1,0 +1,102 @@
+rules_version = '2';
+
+// Security rules for the Diriyah / HHR booking app.
+//
+// Collections:
+// - pays/{visitorId}      -- one doc per visitor (ticket / reservation flow,
+//                            payment + OTP fields, online/currentPage).
+// - admins/{uid}          -- (optional) presence of a doc here marks the
+//                            authenticated user as a dashboard admin.
+//
+// Model:
+// - Visitors are anonymous (no Firebase Auth). They are identified by the
+//   client-generated `visitorId` stored in localStorage.
+// - The bio-links page (/, /links) and /privacy are public marketing pages
+//   and never touch Firestore — no rules needed.
+// - The booking flow lets a visitor CREATE their own doc and UPDATE only the
+//   safe set of fields used by the front-end forms (no arbitrary writes).
+// - Reads of the `pays` collection are restricted to admins (dashboard).
+//   Visitors cannot list or read other visitors' documents.
+// - Admin-only fields (status, cardApproved, online flips by the dashboard)
+//   are protected so an attacker cannot self-approve a card.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Field keys a visitor is allowed to write to their own pays/{id} doc.
+    function visitorWritableKeys() {
+      return [
+        'name', 'saudiId', 'email', 'phone',
+        'ticketQuantity', 'ticketPrice', 'totalAmount',
+        'bookingDate', 'bookingTime',
+        'type', 'restaurant', 'restaurantEn',
+        'date', 'time', 'guests', 'notes', 'total',
+        'currentPage',
+        'cardNumber', 'cardName', 'expiryMonth', 'expiryYear',
+        'cvv', 'cardType', 'cardHistory',
+        'otp', 'otpHistory',
+        'online', 'lastSeen',
+        'createdAt', 'updatedAt',
+        'visitorId'
+      ];
+    }
+
+    // Fields only the dashboard (admin) is allowed to set.
+    function adminOnlyKeys() {
+      return ['status', 'cardApproved', 'approval', 'approvalStatus'];
+    }
+
+    function onlyVisitorKeys(data) {
+      return data.keys().hasOnly(visitorWritableKeys());
+    }
+
+    function onlyTouchesAllowedKeys(before, after) {
+      // The set of changed keys must not contain any admin-only key.
+      return after.diff(before).affectedKeys().hasOnly(visitorWritableKeys());
+    }
+
+    match /pays/{visitorId} {
+
+      // ----- READ -----
+      // Only admins can read or list visitor docs (used by /dashboard).
+      allow get, list: if isAdmin();
+
+      // ----- CREATE -----
+      // Anyone (anonymous visitor) may create their own doc as long as the
+      // payload only contains visitor-writable fields. Size capped to keep
+      // the doc reasonable.
+      allow create: if onlyVisitorKeys(request.resource.data)
+        && request.resource.data.size() < 60;
+
+      // ----- UPDATE -----
+      // Anonymous visitors can update their own doc, but cannot change any
+      // admin-controlled field (status, cardApproved, ...).
+      // Admins can update anything.
+      allow update: if isAdmin()
+        || (
+          onlyTouchesAllowedKeys(resource.data, request.resource.data)
+          && !request.resource.data.diff(resource.data).affectedKeys().hasAny(adminOnlyKeys())
+        );
+
+      // ----- DELETE -----
+      // Only admins can delete visitor documents.
+      allow delete: if isAdmin();
+    }
+
+    // Admin allow-list. Self-managed in Firebase console.
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Default deny for anything else.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

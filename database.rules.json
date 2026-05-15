@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "status": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth == null || auth.uid == $uid",
+        ".validate": "newData.hasChildren(['state']) && newData.child('state').isString()"
+      }
+    },
+    ".read": false,
+    ".write": false
+  }
+}

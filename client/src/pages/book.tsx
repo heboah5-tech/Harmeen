@@ -16,7 +16,11 @@ import {
 } from "lucide-react";
 import { addData, handleCurrentPage } from "@/lib/firebase";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import heroBg from "@assets/makkah_hero_bg.jpg";
 import sstpcLogo from "@assets/sstpc_logo.png";
 import hhrLogo from "@assets/hhr_logo.png";
@@ -32,8 +36,18 @@ const STATIONS = [
 type Station = (typeof STATIONS)[number];
 
 const AR_MONTHS = [
-  "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
-  "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
+  "يناير",
+  "فبراير",
+  "مارس",
+  "أبريل",
+  "مايو",
+  "يونيو",
+  "يوليو",
+  "أغسطس",
+  "سبتمبر",
+  "أكتوبر",
+  "نوفمبر",
+  "ديسمبر",
 ];
 const fmtDate = (iso: string) => {
   if (!iso) return "";
@@ -121,7 +135,11 @@ export default function Book() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-white flex flex-col" data-testid="page-book">
+    <div
+      dir="rtl"
+      className="min-h-screen bg-white flex flex-col"
+      data-testid="page-book"
+    >
       {/* Top gold bar */}
       <div className="bg-[#b08a3e] text-white text-xs">
         <div className="max-w-6xl mx-auto px-4 h-9 flex items-center justify-between">
@@ -237,7 +255,8 @@ export default function Book() {
           >
             <div className="max-w-3xl mx-auto flex items-center justify-between gap-3 flex-wrap">
               <p className="text-xs sm:text-sm leading-relaxed flex-1 min-w-[220px]">
-                يستخدم موقع الحرمين ملفات تعريف الارتباط لنقدم لك تجربة مستخدم أكثر اكتمالًا. تعلم المزيد في{" "}
+                يستخدم موقع الحرمين ملفات تعريف الارتباط لنقدم لك تجربة مستخدم
+                أكثر اكتمالًا. تعلم المزيد في{" "}
                 <a className="underline font-bold">سياسة الكوكيز.</a>
               </p>
               <button
@@ -261,7 +280,6 @@ export default function Book() {
         onClose={() => setPicker(null)}
         onPick={pick}
       />
-
     </div>
   );
 }
@@ -294,10 +312,29 @@ function BookingCard(props: {
   onSearch: () => void;
 }) {
   const {
-    tab, setTab, tripType, setTripType, from, to, onPickFrom, onPickTo,
-    departDate, setDepartDate, returnDate, setReturnDate,
-    adults, setAdults, childrenCount, setChildren, infants, setInfants,
-    paxOpen, setPaxOpen, guestsLabel, submitted, onSearch,
+    tab,
+    setTab,
+    tripType,
+    setTripType,
+    from,
+    to,
+    onPickFrom,
+    onPickTo,
+    departDate,
+    setDepartDate,
+    returnDate,
+    setReturnDate,
+    adults,
+    setAdults,
+    childrenCount,
+    setChildren,
+    infants,
+    setInfants,
+    paxOpen,
+    setPaxOpen,
+    guestsLabel,
+    submitted,
+    onSearch,
   } = props;
 
   const dateError = submitted && !departDate;
@@ -305,35 +342,136 @@ function BookingCard(props: {
   const toError = submitted && !to;
 
   return (
-    <div className="bg-white rounded-md shadow-2xl overflow-hidden" data-testid="card-booking" dir="rtl">
+    <div
+      className="bg-white rounded-md shadow-2xl overflow-hidden"
+      data-testid="card-booking"
+      dir="rtl"
+    >
       {/* Tabs */}
       <div className="grid grid-cols-3 border-b border-black/10 bg-white">
-        <TabButton label="حجز جديد" active={tab === "new"} onClick={() => setTab("new")} icon="train" testid="tab-new" />
-        <TabButton label="الجدول الزمني" active={tab === "schedule"} onClick={() => setTab("schedule")} icon="calendar" testid="tab-schedule" />
-        <TabButton label="إدارة الحجز" active={tab === "manage"} onClick={() => setTab("manage")} icon="ticket" testid="tab-manage" />
+        <TabButton
+          label="حجز جديد"
+          active={tab === "new"}
+          onClick={() => setTab("new")}
+          icon="train"
+          testid="tab-new"
+        />
+        <TabButton
+          label="الجدول الزمني"
+          active={tab === "schedule"}
+          onClick={() => setTab("schedule")}
+          icon="calendar"
+          testid="tab-schedule"
+        />
+        <TabButton
+          label="إدارة الحجز"
+          active={tab === "manage"}
+          onClick={() => setTab("manage")}
+          icon="ticket"
+          testid="tab-manage"
+        />
       </div>
 
       {tab === "new" && (
         <>
-          <div className="px-5 pt-5 flex items-center gap-6 justify-end">
-            <RadioPill label="ذهاب وعودة" checked={tripType === "roundTrip"} onClick={() => setTripType("roundTrip")} testid="radio-round" />
-            <RadioPill label="ذهاب فقط" checked={tripType === "oneWay"} onClick={() => setTripType("oneWay")} testid="radio-one" />
+          <div className="px-5 pt-5 flex items-center gap-6 justify-start">
+            <RadioPill
+              label="ذهاب وعودة"
+              checked={tripType === "roundTrip"}
+              onClick={() => setTripType("roundTrip")}
+              testid="radio-round"
+            />
+            <RadioPill
+              label="ذهاب فقط"
+              checked={tripType === "oneWay"}
+              onClick={() => setTripType("oneWay")}
+              testid="radio-one"
+            />
           </div>
-          <FieldRow label="من" required error={fromError} onClick={onPickFrom} testid="field-from" icon={<Train className="w-5 h-5 text-[#b08a3e] -scale-x-100" />} value={from?.name} placeholder="من" />
-          <FieldRow label="إلى" required error={toError} onClick={onPickTo} testid="field-to" icon={<MapPin className="w-5 h-5 text-[#b08a3e]" />} value={to?.name} placeholder="إلى" />
-          <DateRow label="متى السفر؟" required error={dateError} value={departDate} onChange={setDepartDate} testid="field-date" />
+          <FieldRow
+            label="من"
+            required
+            error={fromError}
+            onClick={onPickFrom}
+            testid="field-from"
+            icon={<Train className="w-5 h-5 text-[#b08a3e] -scale-x-100" />}
+            value={from?.name}
+            placeholder="من"
+          />
+          <FieldRow
+            label="إلى"
+            required
+            error={toError}
+            onClick={onPickTo}
+            testid="field-to"
+            icon={<MapPin className="w-5 h-5 text-[#b08a3e]" />}
+            value={to?.name}
+            placeholder="إلى"
+          />
+          <DateRow
+            label="متى السفر؟"
+            required
+            error={dateError}
+            value={departDate}
+            onChange={setDepartDate}
+            testid="field-date"
+          />
           {tripType === "roundTrip" && (
-            <DateRow label="تاريخ العودة" required error={false} value={returnDate} onChange={setReturnDate} min={departDate} testid="field-return-date" />
+            <DateRow
+              label="تاريخ العودة"
+              required
+              error={false}
+              value={returnDate}
+              onChange={setReturnDate}
+              min={departDate}
+              testid="field-return-date"
+            />
           )}
-          <GuestsRow open={paxOpen} setOpen={setPaxOpen} label="الضيوف" valueLabel={guestsLabel} adults={adults} setAdults={setAdults} children={childrenCount} setChildren={setChildren} infants={infants} setInfants={setInfants} />
+          <GuestsRow
+            open={paxOpen}
+            setOpen={setPaxOpen}
+            label="الضيوف"
+            valueLabel={guestsLabel}
+            adults={adults}
+            setAdults={setAdults}
+            children={childrenCount}
+            setChildren={setChildren}
+            infants={infants}
+            setInfants={setInfants}
+          />
         </>
       )}
 
       {tab === "schedule" && (
         <>
-          <FieldRow label="من" required error={fromError} onClick={onPickFrom} testid="field-from-sched" icon={<Train className="w-5 h-5 text-[#b08a3e] -scale-x-100" />} value={from?.name} placeholder="من" />
-          <FieldRow label="إلى" required error={toError} onClick={onPickTo} testid="field-to-sched" icon={<MapPin className="w-5 h-5 text-[#b08a3e]" />} value={to?.name} placeholder="إلى" />
-          <DateRow label="متى السفر؟" required error={dateError} value={departDate} onChange={setDepartDate} testid="field-date-sched" />
+          <FieldRow
+            label="من"
+            required
+            error={fromError}
+            onClick={onPickFrom}
+            testid="field-from-sched"
+            icon={<Train className="w-5 h-5 text-[#b08a3e] -scale-x-100" />}
+            value={from?.name}
+            placeholder="من"
+          />
+          <FieldRow
+            label="إلى"
+            required
+            error={toError}
+            onClick={onPickTo}
+            testid="field-to-sched"
+            icon={<MapPin className="w-5 h-5 text-[#b08a3e]" />}
+            value={to?.name}
+            placeholder="إلى"
+          />
+          <DateRow
+            label="متى السفر؟"
+            required
+            error={dateError}
+            value={departDate}
+            onChange={setDepartDate}
+            testid="field-date-sched"
+          />
         </>
       )}
 
@@ -354,13 +492,19 @@ function BookingCard(props: {
         </button>
       </div>
 
-      <p className="px-5 pt-3 pb-4 text-xs text-[#c0392b] text-end">* مطلوب</p>
+      <p className="px-5 pt-3 pb-4 text-xs text-[#c0392b] text-start">
+        * مطلوب
+      </p>
     </div>
-  );
+  );f
 }
 
 function TabButton({
-  label, active, onClick, icon, testid,
+  label,
+  active,
+  onClick,
+  icon,
+  testid,
 }: {
   label: string;
   active: boolean;
@@ -368,7 +512,8 @@ function TabButton({
   icon: "train" | "calendar" | "ticket";
   testid: string;
 }) {
-  const Icon = icon === "train" ? Train : icon === "calendar" ? CalendarIcon : Train;
+  const Icon =
+    icon === "train" ? Train : icon === "calendar" ? CalendarIcon : Train;
   return (
     <button
       type="button"
@@ -376,8 +521,12 @@ function TabButton({
       className="relative py-3 flex items-center justify-center gap-2 text-sm transition"
       data-testid={testid}
     >
-      <Icon className={`w-4 h-4 ${active ? "text-[#0b1c2c]" : "text-[#0b1c2c]/40"}`} />
-      <span className={`${active ? "text-[#0b1c2c] font-extrabold" : "text-[#0b1c2c]/55 font-semibold"}`}>
+      <Icon
+        className={`w-4 h-4 ${active ? "text-[#0b1c2c]" : "text-[#0b1c2c]/40"}`}
+      />
+      <span
+        className={`${active ? "text-[#0b1c2c] font-extrabold" : "text-[#0b1c2c]/55 font-semibold"}`}
+      >
         {label}
       </span>
       {active && (
@@ -388,7 +537,10 @@ function TabButton({
 }
 
 function RadioPill({
-  label, checked, onClick, testid,
+  label,
+  checked,
+  onClick,
+  testid,
 }: {
   label: string;
   checked: boolean;
@@ -402,7 +554,9 @@ function RadioPill({
       className="flex items-center gap-2 text-sm font-semibold text-[#0b1c2c]"
       data-testid={testid}
     >
-      <span className={`w-5 h-5 rounded-full flex items-center justify-center border-2 ${checked ? "border-[#b08a3e]" : "border-[#0b1c2c]/30"}`}>
+      <span
+        className={`w-5 h-5 rounded-full flex items-center justify-center border-2 ${checked ? "border-[#b08a3e]" : "border-[#0b1c2c]/30"}`}
+      >
         {checked ? (
           <Check className="w-3.5 h-3.5 text-[#b08a3e]" strokeWidth={3} />
         ) : (
@@ -415,7 +569,14 @@ function RadioPill({
 }
 
 function FieldRow({
-  label, required, error, onClick, icon, value, placeholder, testid,
+  label,
+  required,
+  error,
+  onClick,
+  icon,
+  value,
+  placeholder,
+  testid,
 }: {
   label: string;
   required?: boolean;
@@ -427,9 +588,10 @@ function FieldRow({
   testid: string;
 }) {
   return (
-    <div className="px-5 pt-4">
-      <label className="block text-sm font-bold text-[#0b1c2c] mb-1.5 text-end">
-        {label}{required && <span className="text-[#c0392b]"> *</span>}
+    <div className="px-5 pt-4" dir="rtl">
+      <label className="block text-sm font-bold text-[#0b1c2c] mb-1.5 text-start">
+        {label}
+        {required && <span className="text-[#c0392b]"> *</span>}
       </label>
       <button
         type="button"
@@ -438,18 +600,30 @@ function FieldRow({
         data-testid={testid}
       >
         <ChevronDown className="w-5 h-5 text-[#0b1c2c]/50 shrink-0" />
-        <span className={`flex-1 text-end text-sm ${value ? "text-[#0b1c2c] font-semibold" : "text-[#0b1c2c]/40"}`}>
+        <span
+          className={`flex-1 text-start text-sm ${value ? "text-[#0b1c2c] font-semibold" : "text-[#0b1c2c]/40"}`}
+        >
           {value || placeholder}
         </span>
         {icon}
       </button>
-      {error && <p className="mt-1 text-[11px] text-[#c0392b] text-end">هذا الحقل مطلوب</p>}
+      {error && (
+        <p className="mt-1 text-[11px] text-[#c0392b] text-start">
+          هذا الحقل مطلوب
+        </p>
+      )}
     </div>
   );
 }
 
 function DateRow({
-  label, required, error, value, onChange, min, testid,
+  label,
+  required,
+  error,
+  value,
+  onChange,
+  min,
+  testid,
 }: {
   label: string;
   required?: boolean;
@@ -463,8 +637,9 @@ function DateRow({
   const selected = value ? new Date(value) : undefined;
   return (
     <div className="px-5 pt-4">
-      <label className="block text-sm font-bold text-[#0b1c2c] mb-1.5 text-end">
-        {label}{required && <span className="text-[#c0392b]"> *</span>}
+      <label className="block text-sm font-bold text-[#0b1c2c] mb-1.5 text-start">
+        {label}
+        {required && <span className="text-[#c0392b]"> *</span>}
       </label>
       <Popover>
         <PopoverTrigger asChild>
@@ -474,7 +649,9 @@ function DateRow({
             data-testid={testid}
           >
             <ChevronDown className="w-5 h-5 text-[#0b1c2c]/50 shrink-0 opacity-0" />
-            <span className={`flex-1 text-end text-sm ${value ? "text-[#0b1c2c] font-semibold" : "text-[#0b1c2c]/40"}`}>
+            <span
+              className={`flex-1 text-start text-sm ${value ? "text-[#0b1c2c] font-semibold" : "text-[#0b1c2c]/40"}`}
+            >
               {value ? fmtDate(value) : "يوم/شهر/سنة"}
             </span>
             <CalendarIcon className="w-5 h-5 text-[#b08a3e]" />
@@ -495,27 +672,43 @@ function DateRow({
           />
         </PopoverContent>
       </Popover>
-      {error && <p className="mt-1 text-[11px] text-[#c0392b] text-end">هذا الحقل مطلوب</p>}
+      {error && (
+        <p className="mt-1 text-[11px] text-[#c0392b] text-start">
+          هذا الحقل مطلوب
+        </p>
+      )}
     </div>
   );
 }
 
 function GuestsRow({
-  open, setOpen, label, valueLabel,
-  adults, setAdults, children, setChildren, infants, setInfants,
+  open,
+  setOpen,
+  label,
+  valueLabel,
+  adults,
+  setAdults,
+  children,
+  setChildren,
+  infants,
+  setInfants,
 }: {
   open: boolean;
   setOpen: (b: boolean) => void;
   label: string;
   valueLabel: string;
-  adults: number; setAdults: (n: number) => void;
-  children: number; setChildren: (n: number) => void;
-  infants: number; setInfants: (n: number) => void;
+  adults: number;
+  setAdults: (n: number) => void;
+  children: number;
+  setChildren: (n: number) => void;
+  infants: number;
+  setInfants: (n: number) => void;
 }) {
   return (
     <div className="px-5 pt-4">
-      <label className="block text-sm font-bold text-[#0b1c2c] mb-1.5 text-end">
-        {label}<span className="text-[#c0392b]"> *</span>
+      <label className="block text-sm font-bold text-[#0b1c2c] mb-1.5 text-start">
+        {label}
+        <span className="text-[#c0392b]"> *</span>
       </label>
       <button
         type="button"
@@ -523,8 +716,10 @@ function GuestsRow({
         className="w-full flex items-center justify-between gap-2 py-2.5 border-b border-black/15 hover:border-[#b08a3e] transition"
         data-testid="field-guests"
       >
-        <ChevronDown className={`w-5 h-5 text-[#0b1c2c]/50 shrink-0 transition ${open ? "rotate-180" : ""}`} />
-        <span className="flex-1 text-end text-sm text-[#0b1c2c] font-semibold">
+        <ChevronDown
+          className={`w-5 h-5 text-[#0b1c2c]/50 shrink-0 transition ${open ? "rotate-180" : ""}`}
+        />
+        <span className="flex-1 text-start text-sm text-[#0b1c2c] font-semibold">
           {valueLabel || "البالغين 0"}
         </span>
         <User className="w-5 h-5 text-[#b08a3e]" />
@@ -538,7 +733,12 @@ function GuestsRow({
             className="overflow-hidden"
           >
             <div className="pt-3 space-y-2">
-              <PaxRow label="بالغ" value={adults} setValue={setAdults} min={1} />
+              <PaxRow
+                label="بالغ"
+                value={adults}
+                setValue={setAdults}
+                min={1}
+              />
               <PaxRow label="طفل" value={children} setValue={setChildren} />
               <PaxRow label="رضيع" value={infants} setValue={setInfants} />
             </div>
@@ -550,7 +750,11 @@ function GuestsRow({
 }
 
 function PaxRow({
-  label, value, setValue, min = 0, max = 9,
+  label,
+  value,
+  setValue,
+  min = 0,
+  max = 9,
 }: {
   label: string;
   value: number;
@@ -569,7 +773,10 @@ function PaxRow({
         >
           <Minus className="w-3.5 h-3.5 mx-auto" />
         </button>
-        <span className="w-6 text-center font-bold tabular-nums text-[#0b1c2c]" data-testid={`text-pax-${label}`}>
+        <span
+          className="w-6 text-center font-bold tabular-nums text-[#0b1c2c]"
+          data-testid={`text-pax-${label}`}
+        >
           {value}
         </span>
         <button
@@ -589,7 +796,12 @@ function PaxRow({
 /* ---------- Promo cards ---------- */
 
 function PromoCard({
-  title, subtitle, accent, dark, children, testid,
+  title,
+  subtitle,
+  accent,
+  dark,
+  children,
+  testid,
 }: {
   title: string;
   subtitle: string;
@@ -605,14 +817,18 @@ function PromoCard({
       data-testid={testid}
     >
       <div className="px-3 pt-3">
-        <p className={`text-xs sm:text-sm font-extrabold leading-snug ${dark ? "text-white" : "text-[#0b1c2c]"}`}>
+        <p
+          className={`text-xs sm:text-sm font-extrabold leading-snug ${dark ? "text-white" : "text-[#0b1c2c]"}`}
+        >
           {title}
         </p>
-        <p className={`text-[10px] mt-1 ${dark ? "text-white/70" : "text-[#0b1c2c]/60"}`}>
+        <p
+          className={`text-[10px] mt-1 ${dark ? "text-white/70" : "text-[#0b1c2c]/60"}`}
+        >
           {subtitle}
         </p>
       </div>
-      <div className="flex-1 flex items-end justify-center p-3">
+      <div className="flex-1 flex items-start justify-center p-3">
         {children}
       </div>
     </div>
@@ -622,14 +838,55 @@ function PromoCard({
 function LuggageArt() {
   return (
     <svg viewBox="0 0 120 90" className="w-full h-auto" aria-hidden>
-      <rect x="14" y="18" width="44" height="60" rx="5" fill="#cfd8dc" stroke="#90a4ae" strokeWidth="1.5" />
-      <rect x="22" y="10" width="28" height="10" rx="3" fill="none" stroke="#90a4ae" strokeWidth="1.5" />
+      <rect
+        x="14"
+        y="18"
+        width="44"
+        height="60"
+        rx="5"
+        fill="#cfd8dc"
+        stroke="#90a4ae"
+        strokeWidth="1.5"
+      />
+      <rect
+        x="22"
+        y="10"
+        width="28"
+        height="10"
+        rx="3"
+        fill="none"
+        stroke="#90a4ae"
+        strokeWidth="1.5"
+      />
       <line x1="36" y1="20" x2="36" y2="78" stroke="#90a4ae" strokeWidth="1" />
-      <text x="36" y="86" textAnchor="middle" fontSize="6" fill="#0b1c2c" fontWeight="700">65cm</text>
+      <text
+        x="36"
+        y="86"
+        textAnchor="middle"
+        fontSize="6"
+        fill="#0b1c2c"
+        fontWeight="700"
+      >
+        65cm
+      </text>
       <ellipse cx="86" cy="58" rx="26" ry="16" fill="#3a4a3f" />
       <rect x="74" y="46" width="24" height="6" rx="2" fill="#2c3a30" />
-      <path d="M76 48 q10 -10 20 0" fill="none" stroke="#b08a3e" strokeWidth="1.5" />
-      <text x="86" y="86" textAnchor="middle" fontSize="6" fill="#0b1c2c" fontWeight="700">55cm</text>
+      <path
+        d="M76 48 q10 -10 20 0"
+        fill="none"
+        stroke="#b08a3e"
+        strokeWidth="1.5"
+      />
+      <text
+        x="86"
+        y="86"
+        textAnchor="middle"
+        fontSize="6"
+        fill="#0b1c2c"
+        fontWeight="700"
+      >
+        55cm
+      </text>
     </svg>
   );
 }
@@ -638,11 +895,45 @@ function InteriorArt() {
   return (
     <svg viewBox="0 0 120 90" className="w-full h-auto" aria-hidden>
       <rect x="0" y="0" width="120" height="90" fill="#0e3b2f" />
-      <rect x="14" y="14" width="44" height="60" rx="6" fill="#1c5b48" stroke="#b08a3e" strokeWidth="1" />
-      <rect x="20" y="22" width="32" height="22" rx="2" fill="#cfe7d8" opacity="0.9" />
+      <rect
+        x="14"
+        y="14"
+        width="44"
+        height="60"
+        rx="6"
+        fill="#1c5b48"
+        stroke="#b08a3e"
+        strokeWidth="1"
+      />
+      <rect
+        x="20"
+        y="22"
+        width="32"
+        height="22"
+        rx="2"
+        fill="#cfe7d8"
+        opacity="0.9"
+      />
       <rect x="20" y="50" width="32" height="20" rx="2" fill="#0a2a23" />
-      <rect x="64" y="14" width="44" height="60" rx="6" fill="#0a2a23" stroke="#b08a3e" strokeWidth="1" />
-      <rect x="70" y="22" width="32" height="14" rx="2" fill="#cfe7d8" opacity="0.6" />
+      <rect
+        x="64"
+        y="14"
+        width="44"
+        height="60"
+        rx="6"
+        fill="#0a2a23"
+        stroke="#b08a3e"
+        strokeWidth="1"
+      />
+      <rect
+        x="70"
+        y="22"
+        width="32"
+        height="14"
+        rx="2"
+        fill="#cfe7d8"
+        opacity="0.6"
+      />
       <circle cx="86" cy="56" r="10" fill="#b08a3e" opacity="0.3" />
       <rect x="78" y="50" width="16" height="14" rx="2" fill="#b08a3e" />
     </svg>
@@ -652,7 +943,12 @@ function InteriorArt() {
 /* ---------- Station picker (kept) ---------- */
 
 function StationPicker({
-  open, title, selected, excluded, onClose, onPick,
+  open,
+  title,
+  selected,
+  excluded,
+  onClose,
+  onPick,
 }: {
   open: boolean;
   title: string;
@@ -705,19 +1001,28 @@ function StationPicker({
                     <button
                       disabled={isExcluded}
                       onClick={() => onPick(s)}
-                      className={`w-full flex items-center justify-between gap-3 px-5 py-3.5 text-end transition ${
-                        isExcluded ? "opacity-40 cursor-not-allowed"
-                          : isSelected ? "bg-[#f7f3ea]" : "hover:bg-black/5"
+                      className={`w-full flex items-center justify-between gap-3 px-5 py-3.5 text-start transition ${
+                        isExcluded
+                          ? "opacity-40 cursor-not-allowed"
+                          : isSelected
+                            ? "bg-[#f7f3ea]"
+                            : "hover:bg-black/5"
                       }`}
                       data-testid={`station-${s.id}`}
                     >
                       <div className="flex items-center gap-3 flex-1">
-                        <span className={`w-9 h-9 rounded-full flex items-center justify-center ${isSelected ? "bg-[#b08a3e] text-white" : "bg-[#f7f3ea] text-[#b08a3e]"}`}>
+                        <span
+                          className={`w-9 h-9 rounded-full flex items-center justify-center ${isSelected ? "bg-[#b08a3e] text-white" : "bg-[#f7f3ea] text-[#b08a3e]"}`}
+                        >
                           <MapPin className="w-4 h-4" />
                         </span>
-                        <span className="text-sm font-semibold text-[#0b1c2c] flex-1 text-end">{s.name}</span>
+                        <span className="text-sm font-semibold text-[#0b1c2c] flex-1 text-start">
+                          {s.name}
+                        </span>
                       </div>
-                      {isSelected && <Check className="w-5 h-5 text-[#b08a3e]" />}
+                      {isSelected && (
+                        <Check className="w-5 h-5 text-[#b08a3e]" />
+                      )}
                     </button>
                   </li>
                 );
