@@ -1,0 +1,286 @@
+index-MVhTuzfQ.js:18  POST https://qtaewer-jkd167m3g-tmzx.vercel.app/api/fb/visitor/data 500 (Internal Server Error)
+We @ index-MVhTuzfQ.js:18
+Ch @ index-MVhTuzfQ.js:18
+q0 @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+pi @ index-MVhTuzfQ.js:9
+hr @ index-MVhTuzfQ.js:9
+Tf @ index-MVhTuzfQ.js:9
+an @ index-MVhTuzfQ.js:7
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+kt @ index-MVhTuzfQ.js:9
+ki @ index-MVhTuzfQ.js:9
+_i.render.Jl.render @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18
+book?tab=schedule:155  GET https://qtaewer-jkd167m3g-tmzx.vercel.app/api/fb/stream/visitor/visitor_1778826214962_yfel2sey 500 (Internal Server Error)
+index-MVhTuzfQ.js:18  GET https://qtaewer-jkd167m3g-tmzx.vercel.app/api/fb/visitor/visitor_1778826214962_yfel2sey 500 (Internal Server Error)
+Ad @ index-MVhTuzfQ.js:18
+$0 @ index-MVhTuzfQ.js:18
+xo @ index-MVhTuzfQ.js:18
+Y0 @ index-MVhTuzfQ.js:18
+p @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+pi @ index-MVhTuzfQ.js:9
+hr @ index-MVhTuzfQ.js:9
+Tf @ index-MVhTuzfQ.js:9
+an @ index-MVhTuzfQ.js:7
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+kt @ index-MVhTuzfQ.js:9
+ki @ index-MVhTuzfQ.js:9
+_i.render.Jl.render @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18
+index-MVhTuzfQ.js:9  POST https://qtaewer-jkd167m3g-tmzx.vercel.app/api/fb/visitor/online 500 (Internal Server Error)
+da @ index-MVhTuzfQ.js:9
+lw @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18
+pi @ index-MVhTuzfQ.js:9
+hr @ index-MVhTuzfQ.js:9
+Tf @ index-MVhTuzfQ.js:9
+an @ index-MVhTuzfQ.js:7
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+kt @ index-MVhTuzfQ.js:9
+ki @ index-MVhTuzfQ.js:9
+_i.render.Jl.render @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18
+index-MVhTuzfQ.js:18  GET https://qtaewer-jkd167m3g-tmzx.vercel.app/api/visitor-ip 500 (Internal Server Error)
+tx @ index-MVhTuzfQ.js:18
+bd @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+pi @ index-MVhTuzfQ.js:9
+hr @ index-MVhTuzfQ.js:9
+Tf @ index-MVhTuzfQ.js:9
+an @ index-MVhTuzfQ.js:7
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+kt @ index-MVhTuzfQ.js:9
+ki @ index-MVhTuzfQ.js:9
+_i.render.Jl.render @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18
+index-MVhTuzfQ.js:18  POST https://qtaewer-jkd167m3g-tmzx.vercel.app/api/fb/visitor/data 500 (Internal Server Error)
+We @ index-MVhTuzfQ.js:18
+Ch @ index-MVhTuzfQ.js:18
+q0 @ index-MVhTuzfQ.js:18
+(anonymous) @ book-Bix2hcVu.js:41
+pi @ index-MVhTuzfQ.js:9
+hr @ index-MVhTuzfQ.js:9
+Tf @ index-MVhTuzfQ.js:9
+an @ index-MVhTuzfQ.js:7
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+Lf @ index-MVhTuzfQ.js:9
+cy @ index-MVhTuzfQ.js:9
+Promise.then
+(anonymous) @ index-MVhTuzfQ.js:9
+xf @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+Ct @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+Ct @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+Ct @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+Ct @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+Ct @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+Ct @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+Ct @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+Ct @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+Ct @ index-MVhTuzfQ.js:9
+Sf @ index-MVhTuzfQ.js:9
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+kt @ index-MVhTuzfQ.js:9
+ki @ index-MVhTuzfQ.js:9
+_i.render.Jl.render @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18
+index-MVhTuzfQ.js:18  GET https://qtaewer-jkd167m3g-tmzx.vercel.app/api/visitor-ip 500 (Internal Server Error)
+tx @ index-MVhTuzfQ.js:18
+bd @ index-MVhTuzfQ.js:18
+v @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+pi @ index-MVhTuzfQ.js:9
+hr @ index-MVhTuzfQ.js:9
+Tf @ index-MVhTuzfQ.js:9
+an @ index-MVhTuzfQ.js:7
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+kt @ index-MVhTuzfQ.js:9
+ki @ index-MVhTuzfQ.js:9
+_i.render.Jl.render @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18
+index-MVhTuzfQ.js:18  GET https://qtaewer-jkd167m3g-tmzx.vercel.app/api/fb/visitor/visitor_1778826214962_yfel2sey 500 (Internal Server Error)
+Ad @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+setInterval
+$0 @ index-MVhTuzfQ.js:18
+xo @ index-MVhTuzfQ.js:18
+Y0 @ index-MVhTuzfQ.js:18
+p @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+pi @ index-MVhTuzfQ.js:9
+hr @ index-MVhTuzfQ.js:9
+Tf @ index-MVhTuzfQ.js:9
+an @ index-MVhTuzfQ.js:7
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+kt @ index-MVhTuzfQ.js:9
+ki @ index-MVhTuzfQ.js:9
+_i.render.Jl.render @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18
+index-MVhTuzfQ.js:18  GET https://qtaewer-jkd167m3g-tmzx.vercel.app/api/fb/visitor/visitor_1778826214962_yfel2sey 500 (Internal Server Error)
+Ad @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+setInterval
+$0 @ index-MVhTuzfQ.js:18
+xo @ index-MVhTuzfQ.js:18
+Y0 @ index-MVhTuzfQ.js:18
+p @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+pi @ index-MVhTuzfQ.js:9
+hr @ index-MVhTuzfQ.js:9
+Tf @ index-MVhTuzfQ.js:9
+an @ index-MVhTuzfQ.js:7
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+kt @ index-MVhTuzfQ.js:9
+ki @ index-MVhTuzfQ.js:9
+_i.render.Jl.render @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18
+index-MVhTuzfQ.js:18  GET https://qtaewer-jkd167m3g-tmzx.vercel.app/api/fb/visitor/visitor_1778826214962_yfel2sey 500 (Internal Server Error)
+Ad @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+setInterval
+$0 @ index-MVhTuzfQ.js:18
+xo @ index-MVhTuzfQ.js:18
+Y0 @ index-MVhTuzfQ.js:18
+p @ index-MVhTuzfQ.js:18
+(anonymous) @ index-MVhTuzfQ.js:18
+pi @ index-MVhTuzfQ.js:9
+hr @ index-MVhTuzfQ.js:9
+Tf @ index-MVhTuzfQ.js:9
+an @ index-MVhTuzfQ.js:7
+ly @ index-MVhTuzfQ.js:9
+Dn @ index-MVhTuzfQ.js:9
+_f @ index-MVhTuzfQ.js:9
+H @ index-MVhTuzfQ.js:2
+ee @ index-MVhTuzfQ.js:2
+postMessage
+fe @ index-MVhTuzfQ.js:2
+oe @ index-MVhTuzfQ.js:2
+n.unstable_scheduleCallback @ index-MVhTuzfQ.js:2
+Df @ index-MVhTuzfQ.js:9
+nt @ index-MVhTuzfQ.js:9
+kt @ index-MVhTuzfQ.js:9
+ki @ index-MVhTuzfQ.js:9
+_i.render.Jl.render @ index-MVhTuzfQ.js:9
+(anonymous) @ index-MVhTuzfQ.js:18

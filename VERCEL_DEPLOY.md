@@ -1,12 +1,15 @@
 # Vercel Deployment Guide
 
 ## Files added
-- `api/index.ts` — serverless entrypoint that wraps the Express app
-- `vercel.json` — routing, function runtime, headers, cache rules
+- `api/[...path].ts` — catch-all serverless function that wraps the Express app
+  (Vercel routes any `/api/*` path here automatically, and the original URL
+  is preserved on `req.url` so Express's router still matches.)
+- `vercel.json` — static output dir, function runtime, headers, SPA fallback
 - `.vercelignore` — excludes Replit/Railway-only files from upload
 
 ## How requests are routed
-- `/api/*` and `/admin-unlock` → `api/index.ts` serverless function (Express app)
+- `/api/*`  → `api/[...path].ts` serverless function (Express app)
+- `/admin-unlock` → same function (rewritten to `/api/admin-unlock`)
 - `/assets/*`, `favicon.ico`, `robots.txt`, `sitemap.xml` → static
 - Anything else → `index.html` (SPA, wouter takes over client-side)
 
@@ -20,14 +23,24 @@ The `api/index.ts` function is bundled separately by Vercel from source, importi
 
 ## Required environment variables (Vercel → Project → Settings → Environment Variables)
 
-| Var                     | Why                                               |
-| ----------------------- | ------------------------------------------------- |
-| `NODE_ENV=production`   | Vercel sets this automatically                    |
-| `SESSION_SECRET`        | Express session cookie signing                    |
-| `ADMIN_BYPASS_TOKEN`    | `/admin-unlock?token=...` to bypass firewall      |
-| `CAPSOLVER_API_KEY`     | Only needed if you flip `HHR_USE_MOCK=0`          |
-| `HHR_USE_MOCK=1`        | Default — returns mock schedule. Set `0` for live |
-| `FIREWALL_DISABLED=1`   | (optional) disables SA-mobile-only firewall       |
+| Var                          | Why                                                                                                |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `NODE_ENV=production`        | Vercel sets this automatically                                                                     |
+| `SESSION_SECRET`             | Express session cookie signing                                                                     |
+| `ADMIN_BYPASS_TOKEN`         | `/admin-unlock?token=...` to bypass firewall                                                       |
+| `FIREBASE_SERVICE_ACCOUNT`   | **Required.** Full service-account JSON, single line. Without this the dashboard + visitor writes return 503/500. |
+| `FIREBASE_DATABASE_URL`      | Realtime DB URL, e.g. `https://dryah-875c0-default-rtdb.firebaseio.com`. Optional — falls back to `<project>-default-rtdb.firebaseio.com`. |
+| `FIREBASE_WEB_API_KEY`       | Web API key — needed for dashboard email/password sign-in                                          |
+| `HHR_USE_MOCK=1`             | Default — returns mock schedule. Set `0` for live (only works on a host with Chromium)             |
+| `CAPSOLVER_API_KEY`          | Only needed if you flip `HHR_USE_MOCK=0`                                                           |
+| `FIREWALL_DISABLED=1`        | (optional) disables SA-mobile-only firewall                                                        |
+
+### How to set `FIREBASE_SERVICE_ACCOUNT`
+1. Firebase Console → ⚙ Project settings → Service accounts → "Generate new private key" → download JSON.
+2. Vercel → Project → Settings → Environment Variables → New.
+3. Name: `FIREBASE_SERVICE_ACCOUNT`. Value: paste the **entire JSON** as one line
+   (Vercel preserves newlines fine; both forms work because the loader replaces `\n` in `private_key`).
+4. Apply to **Production** + **Preview** + **Development**.
 
 ## Important notes about Vercel limits
 

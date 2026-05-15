@@ -6,15 +6,14 @@
   "installCommand": "npm install",
   "framework": null,
   "functions": {
-    "api/index.ts": {
+    "api/[...path].ts": {
       "runtime": "@vercel/node@5.1.13",
       "maxDuration": 30
     }
   },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" },
-    { "source": "/admin-unlock", "destination": "/api/index" },
-    { "source": "/((?!assets/|favicon\\.ico|robots\\.txt|sitemap\\.xml).*)", "destination": "/index.html" }
+    { "source": "/admin-unlock", "destination": "/api/admin-unlock" },
+    { "source": "/((?!api/|assets/|favicon\\.ico|robots\\.txt|sitemap\\.xml).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
