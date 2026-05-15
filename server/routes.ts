@@ -412,6 +412,16 @@ export async function registerRoutes(
       return res.status(400).json({ success: false, error: "Invalid date" });
     }
 
+    // Mock mode: skip the scraper entirely and return realistic mock
+    // schedule data. Toggle with HHR_USE_MOCK=0 to re-enable live scraping.
+    if (process.env.HHR_USE_MOCK !== "0") {
+      return res.json({
+        success: true,
+        source: "mock",
+        trips: buildHhrFallback(fromId, toId),
+      });
+    }
+
     const cacheKey = `${fromId}|${toId}|${date}|${adults}|${children}|${infants}`;
     const cached = hhrCache.get(cacheKey);
     if (cached && cached.expiresAt > Date.now()) {
