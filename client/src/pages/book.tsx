@@ -17,6 +17,7 @@ import {
 import { addData, handleCurrentPage } from "@/lib/firebase";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import heroBg from "@assets/makkah_hero_bg.jpg";
 
 const STATIONS = [
   { id: "1", name: "مكة المكرمة" },
@@ -161,8 +162,16 @@ export default function Book() {
       </header>
 
       {/* Hero with booking card */}
-      <section className="relative flex-1 hero-bg overflow-hidden pb-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0b1c2c]/40 via-[#0b1c2c]/55 to-[#0b1c2c]/85" />
+      <section
+        className="relative flex-1 overflow-hidden pb-16 bg-[#060f1a]"
+        style={{
+          backgroundImage: `url(${heroBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0b1c2c]/55 via-[#0b1c2c]/45 to-[#060f1a]/85" />
         <div className="relative max-w-md mx-auto px-4 pt-8 pb-10 sm:pb-16">
           <BookingCard
             tab={tab}
@@ -250,22 +259,6 @@ export default function Book() {
         onPick={pick}
       />
 
-      <style>{`
-        .hero-bg {
-          background:
-            radial-gradient(ellipse at 30% 80%, rgba(176,138,62,0.18) 0%, transparent 55%),
-            radial-gradient(ellipse at 70% 20%, rgba(11,28,44,0.6) 0%, transparent 60%),
-            linear-gradient(180deg, #122436 0%, #0b1c2c 60%, #060f1a 100%);
-        }
-        .hero-bg::after {
-          content: "";
-          position: absolute; inset: 0;
-          background-image:
-            linear-gradient(transparent 70%, rgba(176,138,62,0.08) 70%, rgba(176,138,62,0.08) 71%, transparent 71%),
-            repeating-linear-gradient(90deg, transparent 0 60px, rgba(255,255,255,0.025) 60px 61px);
-          pointer-events: none;
-        }
-      `}</style>
     </div>
   );
 }

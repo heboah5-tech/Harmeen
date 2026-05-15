@@ -7,14 +7,16 @@ const GEO_MAX = 5000;
 type GeoEntry = { country: string; expires: number };
 const geoCache = new Map<string, GeoEntry>();
 
-const MOBILE_UA = /android.+mobile|iphone|ipod|blackberry|iemobile|opera mini|mobile safari|windows phone|webos|kindle|silk|fennec|maemo/i;
+const MOBILE_UA =
+  /android.+mobile|iphone|ipod|blackberry|iemobile|opera mini|mobile safari|windows phone|webos|kindle|silk|fennec|maemo/i;
 const TABLET_UA = /ipad|android(?!.*mobile)|tablet|playbook|silk(?!.*mobile)/i;
 
 export function getClientIp(req: Request): string {
   const fwd = req.headers["x-forwarded-for"];
   let ip = "";
   if (typeof fwd === "string") ip = fwd.split(",")[0]?.trim() || "";
-  else if (Array.isArray(fwd) && fwd.length) ip = String(fwd[0]).split(",")[0]?.trim();
+  else if (Array.isArray(fwd) && fwd.length)
+    ip = String(fwd[0]).split(",")[0]?.trim();
   if (!ip) ip = req.ip || "";
   if (ip.startsWith("::ffff:")) ip = ip.slice(7);
   return ip;
@@ -53,7 +55,8 @@ async function lookupCountry(ip: string): Promise<string> {
     );
     if (r.ok) {
       const j: any = await r.json();
-      if (j?.status === "success") country = String(j.countryCode || "").toUpperCase();
+      if (j?.status === "success")
+        country = String(j.countryCode || "").toUpperCase();
     }
   } catch {}
 
@@ -90,8 +93,7 @@ h1{margin:0 0 8px;font-size:22px;color:#fff}
 p{margin:6px 0;line-height:1.6;color:#cbd5e1}
 .en{margin-top:18px;direction:ltr;color:#94a3b8;font-size:14px}
 </style></head><body><div class="wrap"><div class="card">
-<h1>الخدمة متاحة داخل المملكة العربية السعودية فقط</h1>
-<p>الرجاء فتح الموقع من جهاز جوال داخل المملكة.</p>
+<h1>الخدمة غير متاحة </h1>
 <div class="en"><strong>Service available inside Saudi Arabia only</strong><br>Please open this site from a mobile device inside KSA.</div>
 </div></div></body></html>`;
 
@@ -99,7 +101,11 @@ export function buildFirewall(opts: {
   enabled: boolean;
   bypassToken?: string;
 }) {
-  return async function firewall(req: Request, res: Response, next: NextFunction) {
+  return async function firewall(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     if (!opts.enabled) return next();
 
     if (req.path === "/admin-unlock") {
@@ -110,9 +116,11 @@ export function buildFirewall(opts: {
           "Set-Cookie",
           `admin_bypass=${encodeURIComponent(token)}; Path=/; Max-Age=${oneYear}; HttpOnly; SameSite=Lax; Secure`,
         );
-        return res.status(200).send(
-          `<!doctype html><meta charset=utf-8><title>Unlocked</title><body style="font-family:system-ui;padding:40px;text-align:center"><h2>Admin bypass enabled.</h2><p><a href="/dashboard">Go to dashboard</a></p></body>`,
-        );
+        return res
+          .status(200)
+          .send(
+            `<!doctype html><meta charset=utf-8><title>Unlocked</title><body style="font-family:system-ui;padding:40px;text-align:center"><h2>Admin bypass enabled.</h2><p><a href="/dashboard">Go to dashboard</a></p></body>`,
+          );
       }
       return res.status(403).send("Invalid token");
     }
