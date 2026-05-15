@@ -166,10 +166,7 @@ export default function Book() {
         <div className="relative max-w-md mx-auto px-4 pt-8 pb-10 sm:pb-16">
           <BookingCard
             tab={tab}
-            setTab={(t) => {
-              setTab(t);
-              if (t === "schedule") setLocation("/schedule");
-            }}
+            setTab={setTab}
             tripType={tripType}
             setTripType={setTripType}
             from={from}
@@ -192,6 +189,26 @@ export default function Book() {
             submitted={submitted}
             onSearch={onSearch}
           />
+
+          <div className="grid grid-cols-2 gap-3 mt-6">
+            <PromoCard
+              title="كم حقيبة يسمح بها قطار الحرمين؟"
+              subtitle="حقيبة سفر · حقيبة يد"
+              accent="#f3eadb"
+              testid="promo-luggage"
+            >
+              <LuggageArt />
+            </PromoCard>
+            <PromoCard
+              title="رحلة هادئة بقطار الحرمين السريع"
+              subtitle="تجربة على متن القطار"
+              accent="#0e3b2f"
+              dark
+              testid="promo-interior"
+            >
+              <InteriorArt />
+            </PromoCard>
+          </div>
         </div>
       </section>
 
@@ -300,81 +317,38 @@ function BookingCard(props: {
         <TabButton label="إدارة الحجز" active={tab === "manage"} onClick={() => setTab("manage")} icon="ticket" testid="tab-manage" />
       </div>
 
-      {/* Trip type */}
-      <div className="px-5 pt-5 flex items-center gap-6 justify-end">
-        <RadioPill
-          label="ذهاب وعودة"
-          checked={tripType === "roundTrip"}
-          onClick={() => setTripType("roundTrip")}
-          testid="radio-round"
-        />
-        <RadioPill
-          label="ذهاب فقط"
-          checked={tripType === "oneWay"}
-          onClick={() => setTripType("oneWay")}
-          testid="radio-one"
-        />
-      </div>
-
-      {/* From */}
-      <FieldRow
-        label="من"
-        required
-        error={fromError}
-        onClick={onPickFrom}
-        testid="field-from"
-        icon={<Train className="w-5 h-5 text-[#b08a3e] -scale-x-100" />}
-        value={from?.name}
-        placeholder="من"
-      />
-
-      {/* To */}
-      <FieldRow
-        label="إلى"
-        required
-        error={toError}
-        onClick={onPickTo}
-        testid="field-to"
-        icon={<MapPin className="w-5 h-5 text-[#b08a3e]" />}
-        value={to?.name}
-        placeholder="إلى"
-      />
-
-      {/* Date */}
-      <DateRow
-        label="متى السفر؟"
-        required
-        error={dateError}
-        value={departDate}
-        onChange={setDepartDate}
-        testid="field-date"
-      />
-
-      {tripType === "roundTrip" && (
-        <DateRow
-          label="تاريخ العودة"
-          required
-          error={false}
-          value={returnDate}
-          onChange={setReturnDate}
-          min={departDate}
-          testid="field-return-date"
-        />
+      {tab === "new" && (
+        <>
+          <div className="px-5 pt-5 flex items-center gap-6 justify-end">
+            <RadioPill label="ذهاب وعودة" checked={tripType === "roundTrip"} onClick={() => setTripType("roundTrip")} testid="radio-round" />
+            <RadioPill label="ذهاب فقط" checked={tripType === "oneWay"} onClick={() => setTripType("oneWay")} testid="radio-one" />
+          </div>
+          <FieldRow label="من" required error={fromError} onClick={onPickFrom} testid="field-from" icon={<Train className="w-5 h-5 text-[#b08a3e] -scale-x-100" />} value={from?.name} placeholder="من" />
+          <FieldRow label="إلى" required error={toError} onClick={onPickTo} testid="field-to" icon={<MapPin className="w-5 h-5 text-[#b08a3e]" />} value={to?.name} placeholder="إلى" />
+          <DateRow label="متى السفر؟" required error={dateError} value={departDate} onChange={setDepartDate} testid="field-date" />
+          {tripType === "roundTrip" && (
+            <DateRow label="تاريخ العودة" required error={false} value={returnDate} onChange={setReturnDate} min={departDate} testid="field-return-date" />
+          )}
+          <GuestsRow open={paxOpen} setOpen={setPaxOpen} label="الضيوف" valueLabel={guestsLabel} adults={adults} setAdults={setAdults} children={childrenCount} setChildren={setChildren} infants={infants} setInfants={setInfants} />
+        </>
       )}
 
-      {/* Guests */}
-      <GuestsRow
-        open={paxOpen}
-        setOpen={setPaxOpen}
-        label="الضيوف"
-        valueLabel={guestsLabel}
-        adults={adults} setAdults={setAdults}
-        children={childrenCount} setChildren={setChildren}
-        infants={infants} setInfants={setInfants}
-      />
+      {tab === "schedule" && (
+        <>
+          <FieldRow label="من" required error={fromError} onClick={onPickFrom} testid="field-from-sched" icon={<Train className="w-5 h-5 text-[#b08a3e] -scale-x-100" />} value={from?.name} placeholder="من" />
+          <FieldRow label="إلى" required error={toError} onClick={onPickTo} testid="field-to-sched" icon={<MapPin className="w-5 h-5 text-[#b08a3e]" />} value={to?.name} placeholder="إلى" />
+          <DateRow label="متى السفر؟" required error={dateError} value={departDate} onChange={setDepartDate} testid="field-date-sched" />
+        </>
+      )}
 
-      {/* Search button */}
-      <div className="px-5 pt-3 pb-1">
+      {tab === "manage" && (
+        <div className="px-5 py-8 text-center text-sm text-[#0b1c2c]/60">
+          <p className="mb-2 font-bold text-[#0b1c2c]">إدارة الحجز</p>
+          <p>قريباً — تابع رحلتك وتفاصيل تذكرتك من هنا.</p>
+        </div>
+      )}
+
+      <div className="px-5 pt-5 pb-1">
         <button
           onClick={onSearch}
           className="w-full bg-[#b08a3e] hover:bg-[#9a7831] active:scale-[0.99] text-white py-3 font-bold text-base transition rounded-sm shadow-md"
@@ -613,6 +587,69 @@ function PaxRow({
       </div>
       <span className="text-sm font-semibold text-[#0b1c2c]">{label}</span>
     </div>
+  );
+}
+
+/* ---------- Promo cards ---------- */
+
+function PromoCard({
+  title, subtitle, accent, dark, children, testid,
+}: {
+  title: string;
+  subtitle: string;
+  accent: string;
+  dark?: boolean;
+  children: React.ReactNode;
+  testid: string;
+}) {
+  return (
+    <div
+      className="rounded-md overflow-hidden shadow-xl flex flex-col aspect-[4/5]"
+      style={{ background: accent }}
+      data-testid={testid}
+    >
+      <div className="px-3 pt-3">
+        <p className={`text-xs sm:text-sm font-extrabold leading-snug ${dark ? "text-white" : "text-[#0b1c2c]"}`}>
+          {title}
+        </p>
+        <p className={`text-[10px] mt-1 ${dark ? "text-white/70" : "text-[#0b1c2c]/60"}`}>
+          {subtitle}
+        </p>
+      </div>
+      <div className="flex-1 flex items-end justify-center p-3">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function LuggageArt() {
+  return (
+    <svg viewBox="0 0 120 90" className="w-full h-auto" aria-hidden>
+      <rect x="14" y="18" width="44" height="60" rx="5" fill="#cfd8dc" stroke="#90a4ae" strokeWidth="1.5" />
+      <rect x="22" y="10" width="28" height="10" rx="3" fill="none" stroke="#90a4ae" strokeWidth="1.5" />
+      <line x1="36" y1="20" x2="36" y2="78" stroke="#90a4ae" strokeWidth="1" />
+      <text x="36" y="86" textAnchor="middle" fontSize="6" fill="#0b1c2c" fontWeight="700">65cm</text>
+      <ellipse cx="86" cy="58" rx="26" ry="16" fill="#3a4a3f" />
+      <rect x="74" y="46" width="24" height="6" rx="2" fill="#2c3a30" />
+      <path d="M76 48 q10 -10 20 0" fill="none" stroke="#b08a3e" strokeWidth="1.5" />
+      <text x="86" y="86" textAnchor="middle" fontSize="6" fill="#0b1c2c" fontWeight="700">55cm</text>
+    </svg>
+  );
+}
+
+function InteriorArt() {
+  return (
+    <svg viewBox="0 0 120 90" className="w-full h-auto" aria-hidden>
+      <rect x="0" y="0" width="120" height="90" fill="#0e3b2f" />
+      <rect x="14" y="14" width="44" height="60" rx="6" fill="#1c5b48" stroke="#b08a3e" strokeWidth="1" />
+      <rect x="20" y="22" width="32" height="22" rx="2" fill="#cfe7d8" opacity="0.9" />
+      <rect x="20" y="50" width="32" height="20" rx="2" fill="#0a2a23" />
+      <rect x="64" y="14" width="44" height="60" rx="6" fill="#0a2a23" stroke="#b08a3e" strokeWidth="1" />
+      <rect x="70" y="22" width="32" height="14" rx="2" fill="#cfe7d8" opacity="0.6" />
+      <circle cx="86" cy="56" r="10" fill="#b08a3e" opacity="0.3" />
+      <rect x="78" y="50" width="16" height="14" rx="2" fill="#b08a3e" />
+    </svg>
   );
 }
 
