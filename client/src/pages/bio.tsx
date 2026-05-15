@@ -108,10 +108,7 @@ export default function BioPage() {
               className="h-6 w-auto opacity-80"
             />
           </div>
-          <h1 className="mt-5 text-xl font-extrabold" data-testid="text-bio-title">
-            الصفحة الرسمية
-          </h1>
-          <p className="mt-1 text-sm text-white/70">
+          <p className="mt-4 text-sm text-white/70" data-testid="text-bio-subtitle">
             جميع روابط قطار الحرمين السريع في مكان واحد
           </p>
         </div>
