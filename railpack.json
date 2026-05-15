@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "buildAptPackages": [
+    "chromium",
+    "libnss3",
+    "libfreetype6",
+    "libharfbuzz0b",
+    "ca-certificates",
+    "fontconfig"
+  ],
+  "deploy": {
+    "aptPackages": [
+      "chromium",
+      "libnss3",
+      "libfreetype6",
+      "libharfbuzz0b",
+      "ca-certificates",
+      "fontconfig"
+    ]
+  }
+}
