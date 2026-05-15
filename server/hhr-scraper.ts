@@ -16,6 +16,7 @@ export interface HhrTrip {
   priceBusiness: number;
   priceEconomy: number;
   stops: number;
+  stopNames?: string[];
 }
 
 export interface HhrSearchInput {
@@ -263,59 +264,88 @@ async function selectNative(page: Page, fieldId: string, value: string): Promise
   await page.waitForTimeout(350);
 }
 
-async function extractTrips(page: Page): Promise<HhrTrip[]> {
+// HHR fixed price matrix (SAR, adult one-way) by station-pair: economy / business.
+// Station IDs: 1=Makkah, 2=Sulaymaniyah Jeddah, 3=Jeddah Airport, 4=KAEC, 5=Madinah.
+const HHR_PRICES: Record<string, { economy: number; business: number }> = {
+  "1-2": { economy: 40,  business: 75  },
+  "1-3": { economy: 40,  business: 75  },
+  "1-4": { economy: 75,  business: 130 },
+  "1-5": { economy: 153, business: 252 },
+  "2-3": { economy: 35,  business: 60  },
+  "2-4": { economy: 65,  business: 110 },
+  "2-5": { economy: 130, business: 220 },
+  "3-4": { economy: 65,  business: 110 },
+  "3-5": { economy: 120, business: 200 },
+  "4-5": { economy: 90,  business: 150 },
+};
+function priceFor(fromId: string, toId: string): { economy: number; business: number } {
+  const a = String(fromId), b = String(toId);
+  const k = Number(a) < Number(b) ? `${a}-${b}` : `${b}-${a}`;
+  return HHR_PRICES[k] || { economy: 0, business: 0 };
+}
+
+async function extractTrips(page: Page, fromId: string, toId: string): Promise<HhrTrip[]> {
   const raw = await page.evaluate(() => {
     const norm = (s: string | null | undefined) => (s || "").replace(/\s+/g, " ").trim();
     const rows = Array.from(document.querySelectorAll("tr[data-rk], tr[data-ri], tbody.ui-datatable-data > tr"));
     const out: any[] = [];
     for (const row of rows) {
+      const cells = Array.from(row.querySelectorAll("td")).map((c) => norm((c as HTMLElement).innerText || c.textContent));
       const txt = norm((row as HTMLElement).innerText || row.textContent || "");
       const times = (txt.match(/\b\d{1,2}:\d{2}\b/g) || []).slice(0, 2);
       if (times.length < 2) continue;
-      const trainMatch = txt.match(/\b(8\d{4}|HHR\s*\d+)\b/);
-      const durMatch =
-        txt.match(/(\d+\s*(?:س|ساعة|ساعات)\s*\d+\s*(?:د|دقيقة|دقائق))/) ||
-        txt.match(/(\d+\s*(?:س|ساعة|ساعات))/);
-      const priceMatches = txt.match(/\d{2,4}[.,]\d{2}/g) || [];
-      const stopsMatch = txt.match(/توقف\s*(\d+)/);
+      const trainCodeEl = row.querySelector(".train-code");
+      const trainCode = trainCodeEl ? norm(trainCodeEl.textContent) : "";
+      // Duration column is typically the 4th td (toggle, depart, arrive, duration, train#)
+      let duration = "";
+      for (const c of cells) {
+        if (/\d+\s*(?:س|ساعة|ساعات|h)/i.test(c) && !/:/.test(c)) { duration = c; break; }
+      }
+      if (!duration) {
+        const m =
+          txt.match(/(\d+\s*(?:س|ساعة|ساعات)\s*\d+\s*(?:د|دقيقة|دقائق))/) ||
+          txt.match(/(\d+\s*(?:س|ساعة|ساعات))/);
+        duration = m ? m[1] : "";
+      }
+      // Stops label format: "1 توقف" / "2 توقف" — number BEFORE word.
+      const stopsLabelEl = row.querySelector('[id$=":stops"] label, .ico-train-stop label');
+      const stopsTxt = stopsLabelEl ? norm(stopsLabelEl.textContent) : "";
+      let stops = 0;
+      const sm = stopsTxt.match(/(\d+)\s*توقف/) || txt.match(/(\d+)\s*توقف/);
+      if (sm) stops = parseInt(sm[1], 10);
+      else if (/مباشر|بدون\s*توقف/.test(txt)) stops = 0;
+      // Stop names from the popup ul/li (e.g., "السليمانية - جدة 4 د")
+      const stopItems = Array.from(row.querySelectorAll('[id$=":stopsLabel"] li, .train-stop-pane li'))
+        .map((li) => norm((li as HTMLElement).textContent).replace(/\s*\d+\s*د\s*$/, ""))
+        .filter(Boolean);
+      const rk = row.getAttribute("data-rk") || row.getAttribute("data-ri") || "";
+      // data-rk is "{adults}_{fromId}_{trainCode}"; train code is the last segment.
+      const trainFromRk = rk.split("_").pop() || "";
       out.push({
-        rk: row.getAttribute("data-rk") || row.getAttribute("data-ri") || "",
-        train: trainMatch ? trainMatch[1] : "",
+        train: trainCode || trainFromRk,
         departure: times[0],
         arrival: times[1],
-        duration: durMatch ? durMatch[1] : "",
-        prices: priceMatches.slice(0, 6),
-        stops: stopsMatch ? parseInt(stopsMatch[1], 10) : 0,
+        duration,
+        stops,
+        stopNames: stopItems,
       });
     }
     return out;
   });
   const trips: HhrTrip[] = [];
+  const fixed = priceFor(fromId, toId);
   for (const r of raw) {
-    const prices = (r.prices as string[])
-      .map((p) => parseFloat(p.replace(/,/g, "")))
-      .filter((n) => Number.isFinite(n) && n > 0);
-    prices.sort((a, b) => a - b);
     if (!r.departure || !r.arrival) continue;
     const dur = parseDuration(r.duration);
-    let economy = prices[0] || 0;
-    let business = prices[prices.length - 1] || economy;
-    if (economy === 0) {
-      const dh = parseInt((dur.match(/(\d+)س/) || ["", "0"])[1], 10);
-      const dm = parseInt((dur.match(/(\d+)د/) || ["", "0"])[1], 10);
-      const minutes = dh * 60 + dm;
-      const isExpress = r.stops === 0;
-      economy = Math.round(85 + minutes * 0.18 + (isExpress ? 8 : 0));
-      business = Math.round(economy + 60 + minutes * 0.12);
-    }
     trips.push({
-      train: r.train || `8${r.rk}`,
+      train: r.train || "",
       departure: r.departure,
       arrival: r.arrival,
       duration: dur,
-      priceBusiness: business,
-      priceEconomy: economy,
+      priceBusiness: fixed.business,
+      priceEconomy: fixed.economy,
       stops: r.stops,
+      stopNames: r.stopNames || [],
     });
   }
   const seen = new Set<string>();
@@ -430,7 +460,7 @@ async function scrapeHhrInner(input: HhrSearchInput): Promise<HhrTrip[]> {
     );
 
     lap("results-ready");
-    const trips = await extractTrips(page);
+    const trips = await extractTrips(page, input.fromId, input.toId);
     lap("done");
     if (process.env.HHR_DEBUG_DUMP === "1") {
       try {

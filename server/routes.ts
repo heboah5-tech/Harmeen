@@ -8,7 +8,26 @@ const HHR_CACHE_TTL_MS = 1000 * 60 * 10; // 10 minutes
 const hhrCache = new Map<string, { expiresAt: number; trips: HhrTrip[] }>();
 const hhrInflight = new Map<string, Promise<HhrTrip[]>>();
 
-function buildHhrFallback(): HhrTrip[] {
+// Same matrix as server/hhr-scraper.ts so fallback prices match real HHR.
+const HHR_FB_PRICES: Record<string, { economy: number; business: number }> = {
+  "1-2": { economy: 40,  business: 75  },
+  "1-3": { economy: 40,  business: 75  },
+  "1-4": { economy: 75,  business: 130 },
+  "1-5": { economy: 153, business: 252 },
+  "2-3": { economy: 35,  business: 60  },
+  "2-4": { economy: 65,  business: 110 },
+  "2-5": { economy: 130, business: 220 },
+  "3-4": { economy: 65,  business: 110 },
+  "3-5": { economy: 120, business: 200 },
+  "4-5": { economy: 90,  business: 150 },
+};
+function fbPriceFor(fromId: string, toId: string): { economy: number; business: number } {
+  const a = String(fromId), b = String(toId);
+  const k = Number(a) < Number(b) ? `${a}-${b}` : `${b}-${a}`;
+  return HHR_FB_PRICES[k] || { economy: 100, business: 170 };
+}
+
+function buildHhrFallback(fromId?: string, toId?: string): HhrTrip[] {
   // Realistic-looking HHR schedule: spread across the day with varied
   // express (1h45m, 0 stops) and local (2h10m, 1 stop at KAIA-Jeddah) trips.
   type Tpl = {
@@ -54,26 +73,10 @@ function buildHhrFallback(): HhrTrip[] {
     const dm = t.durMin % 60;
     const duration = dm === 0 ? `${dh}س` : `${dh}س ${dm}د`;
 
-    // Realistic SAR pricing for HHR (within current capped bounds).
-    // Peak hours (morning rush, evening commute) skew higher; express trains
-    // priced slightly above local. Stops/longer rides priced slightly lower.
-    const peakBoost = t.peak ? 1 : 0;
-    const expressBoost = t.stops === 0 ? 1 : 0;
-
-    const businessBase = 155 + peakBoost * 25 + expressBoost * 10;
-    const economyBase = 95 + peakBoost * 18 + expressBoost * 7;
-
-    const businessJitter = Math.round(rand(i * 2) * 14) - 4; // -4..+10
-    const economyJitter = Math.round(rand(i * 2 + 1) * 12) - 4; // -4..+8
-
-    const priceBusiness = Math.max(
-      150,
-      Math.min(190, businessBase + businessJitter),
-    );
-    const priceEconomy = Math.max(
-      85,
-      Math.min(130, economyBase + economyJitter),
-    );
+    // Use HHR's real route-based pricing matrix when from/to are known.
+    const fixed = fbPriceFor(fromId || "1", toId || "5");
+    const priceEconomy = fixed.economy;
+    const priceBusiness = fixed.business;
 
     // Train numbers shaped like real HHR codes: 5-digit starting with 8.
     const train = `8${t.trainSuffix.padStart(4, "0")}`;
@@ -433,7 +436,7 @@ export async function registerRoutes(
     try {
       const trips = await inflight;
       if (trips.length === 0) {
-        return res.json({ success: true, source: "fallback", trips: buildHhrFallback(), notice: "no_results" });
+        return res.json({ success: true, source: "fallback", trips: buildHhrFallback(fromId, toId), notice: "no_results" });
       }
       return res.json({ success: true, source: "live", trips });
     } catch (err) {
@@ -441,7 +444,7 @@ export async function registerRoutes(
       return res.json({
         success: true,
         source: "fallback",
-        trips: buildHhrFallback(),
+        trips: buildHhrFallback(fromId, toId),
         notice: "scrape_failed",
       });
     }

@@ -1,0 +1,483 @@
+<partial-response id="_ossportlet_WAR_ossliferay_">
+    <changes>
+        <extension ln="primefaces" type="args">{"parameterPrefix":"_ossportlet_WAR_ossliferay_"}</extension>
+        <update id="_ossportlet_WAR_ossliferay_:formSearchTravel"><![CDATA[
+<form data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel" name="_ossportlet_WAR_ossliferay_:formSearchTravel" method="post" action="https://sar.hhr.sa/ar/web/booking/home?p_auth=4OlmOjHA&amp;p_p_id=ossportlet_WAR_ossliferay&amp;p_p_lifecycle=1&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_ossportlet_WAR_ossliferay__facesViewIdRender=%2FWEB-INF%2Fviews%2FsearchTravelResult.xhtml" enctype="application/x-www-form-urlencoded" onkeypress="return anular(event)">
+<input type="hidden" name="_ossportlet_WAR_ossliferay_:formSearchTravel" value="_ossportlet_WAR_ossliferay_:formSearchTravel" />
+<input type="hidden" name="javax.faces.encodedURL" value="https://sar.hhr.sa/ar/web/booking/home?p_p_id=ossportlet_WAR_ossliferay&amp;p_p_lifecycle=2&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_cacheability=cacheLevelPage&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_ossportlet_WAR_ossliferay__jsfBridgeAjax=true&amp;_ossportlet_WAR_ossliferay__facesViewIdResource=%2FWEB-INF%2Fviews%2FsearchTravelResult.xhtml" />
+<span id="_ossportlet_WAR_ossliferay_:formSearchTravel:buttonGoManages"><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt10" type="text/javascript">confirmFailureNotification = function() {PrimeFaces.ab({s:"_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt10",f:"_ossportlet_WAR_ossliferay_:formSearchTravel",p:"_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt10",onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();},pa:arguments[0]});}</script></span>
+					<br />
+					<br />
+
+	<div id="booking-steeps" class="steep-01">
+		<div class="booking-steeps-wrapper"><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt13" name="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt13" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only selected btn btn-lg btn-primary btn-default" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt13&quot;,onst:function(cfg){PF('statusDialog').show();}});return false;" type="submit"><span class="ui-button-text ui-c">البحث</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt13_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_j_idt13",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt13"});</script><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt14" name="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt14" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-disabled  btn btn-lg btn-primary btn-default" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt14&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();}});return false;" type="submit" disabled="disabled"><span class="ui-button-text ui-c">اختيار المقعد</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt14_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_j_idt14",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt14"});</script><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt15" name="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt15" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-disabled  btn btn-lg btn-primary btn-default" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt15&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();}});return false;" type="submit" disabled="disabled"><span class="ui-button-text ui-c">الضيوف</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt15_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_j_idt15",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt15"});</script><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt16" name="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt16" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-disabled  btn btn-lg btn-primary btn-default" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt16&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();}});return false;" type="submit" disabled="disabled"><span class="ui-button-text ui-c">الدفع</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt16_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_j_idt16",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt16"});</script>
+
+		</div>
+	</div><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch">
+						<div id="inherit-results" style="display: none;">
+							<header>
+
+								<h1>نتائج بحثك:</h1>
+
+								<h2>
+
+									<span class="inherit-result"> <span class="label-inherit"><label>من</label>:</span> <span class="label-inherit-result">مكة المكرمة</span>
+
+									</span> <span class="inherit-result"> <span class="label-inherit"><label>الى</label>:</span> <span class="label-inherit-result">المدينة المنورة</span>
+
+									</span> <span class="inherit-result"> <span class="label-inherit"><label>وقت المغادرة</label>:</span> <span class="label-inherit-result">16/05/2026</span>
+
+									</span>
+									
+									<span class="inherit-result"> <span class="label-inherit"><label>البالغين</label> <span class="age-range">(12+ العمر )*: </span>
+									</span> <span class="label-inherit-result">1
+									</span>
+									</span> <span class="inherit-result"> <span class="label-inherit"><label>الاطفال</label> <span class="age-range">العمر0-12) مع مقعد): </span>
+									</span> <span class="label-inherit-result">0
+									</span>
+									</span> <span class="inherit-result"> <span class="label-inherit"><label>الرضع</label> <span class="age-range">لا يشغل مقعداً ( 0-2 العمر): </span>
+									</span> <span class="label-inherit-result">0
+									</span>
+									</span>
+
+								</h2>
+
+							</header>
+
+							<p>
+								<a href="#" title="عرض نموذج الحجز والبحث مرة أخرى" class="submit-btn submit-btn-block">البحث مره اخرى</a>
+							</p>
+							<script type="text/javascript">
+									// OPEN AND CLOSE RESEARCH FORM
+									// $('#inherit-results > p a').on('click',function(){
+									// 	$('.booking-form-header').toggleClass('research-open');
+									// });
+									
+									jQuery(document).ready(function() {
+										jQuery('.submit-form-wrapper button').removeClass('ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only');
+									});
+								</script>
+
+						</div></span><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:messages" class="ui-messages ui-widget" aria-live="polite" data-global="false" data-summary="data-summary" data-severity="all,error" data-redisplay="true"></div><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:searchPanel" class="booking-form-header booking-form-open"><table class="way-selector  " cellpadding="5">
+<tbody>
+<tr>
+<td><table id="_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel" role="presentation" class="ui-selectoneradio ui-widget"><tr><td><div class="ui-radiobutton ui-widget"><div class="ui-helper-hidden-accessible"><input id="_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel:0" name="_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel" type="radio" value="true" onclick="mojarra.ab('_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel',event,'click','@this','_ossportlet_WAR_ossliferay_:formSearchTravel:tableResult',{'CLIENT_BEHAVIOR_RENDERING_MODE':'OBSTRUSIVE'})" checked="checked" data-p-con="javax.faces.Boolean" data-p-hl="oneradio" data-p-grouped="true" /></div><div class="ui-radiobutton-box ui-widget ui-corner-all ui-state-default ui-state-active"><span class="ui-radiobutton-icon ui-icon ui-icon-bullet ui-c"></span></div></div><label for="_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel:0">ذهاب فقط </label></td><td><div class="ui-radiobutton ui-widget"><div class="ui-helper-hidden-accessible"><input id="_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel:1" name="_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel" type="radio" value="false" onclick="mojarra.ab('_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel',event,'click','@this','_ossportlet_WAR_ossliferay_:formSearchTravel:tableResult',{'CLIENT_BEHAVIOR_RENDERING_MODE':'OBSTRUSIVE'})" data-p-con="javax.faces.Boolean" data-p-hl="oneradio" data-p-grouped="true" /></div><div class="ui-radiobutton-box ui-widget ui-corner-all ui-state-default"><span class="ui-radiobutton-icon ui-icon ui-icon-blank ui-c"></span></div></div><label for="_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel:1">ذهاب وعودة </label></td></tr></table><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel_s" type="text/javascript">PrimeFaces.cw("SelectOneRadio","widget__ossportlet_WAR_ossliferay__formSearchTravel_choiceTravel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:choiceTravel"});</script></td>
+</tr>
+</tbody>
+</table>
+
+
+						<div class="from-row booking-search-form-redesign">
+							
+							<div class="form-group from-selection"><label class="control-label">من
+									<span class="mandatory">*</span></label><select id="_ossportlet_WAR_ossliferay_:formSearchTravel:comboStationFrom" name="_ossportlet_WAR_ossliferay_:formSearchTravel:comboStationFrom" class=" " size="1" onchange="mojarra.ab(this,event,'valueChange','@this','_ossportlet_WAR_ossliferay_:formSearchTravel:comboStationTo _ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:tableResult _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch')">	<option value="1" selected="selected">مكة المكرمة</option>
+	<option value="2">السليمانية - جدة</option>
+	<option value="3">المطار- جدة</option>
+	<option value="4">مدينة الملك عبدالله الاقتصادية</option>
+	<option value="5">المدينة المنورة</option>
+</select>
+							</div>		
+							
+							<div class="form-group to-selection"><label class="control-label">الى
+									<span class="mandatory">*</span></label><select id="_ossportlet_WAR_ossliferay_:formSearchTravel:comboStationTo" name="_ossportlet_WAR_ossliferay_:formSearchTravel:comboStationTo" class="" size="1" onchange="mojarra.ab(this,event,'valueChange','@this','_ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:tableResult _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch')">	<option value="2">السليمانية - جدة</option>
+	<option value="3">المطار- جدة</option>
+	<option value="4">مدينة الملك عبدالله الاقتصادية</option>
+	<option value="5" selected="selected">المدينة المنورة</option>
+</select>
+							</div>
+							
+							
+							<div class="form-group departure-selection"><label class="control-label">متى
+									<span class="mandatory">*</span></label><input id="_ossportlet_WAR_ossliferay_:formSearchTravel:selectCalendar" type="text" name="_ossportlet_WAR_ossliferay_:formSearchTravel:selectCalendar" value="gregorian" class="selectCalendar" style="display:none;" onclick="mojarra.ab(this,event,'click','@this','_ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:selectCalendar _ossportlet_WAR_ossliferay_:formSearchTravel:details _ossportlet_WAR_ossliferay_:formSearchTravel:tableResult')" /><input id="_ossportlet_WAR_ossliferay_:formSearchTravel:calendar" type="text" name="_ossportlet_WAR_ossliferay_:formSearchTravel:calendar" autocomplete="off" value="16/05/2026" class="departureDate " onclick="mojarra.ab(this,event,'click','@this','_ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:details _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch _ossportlet_WAR_ossliferay_:formSearchTravel:tableResult')" readonly="true" placeholder="يوم/شهر/سنة" />
+							</div>
+						</div>
+						
+						<div class="from-row booking-search-form-redesign">
+							
+							<div class="form-group adults-selection"><label class="control-label">البالغين
+									<span class="mandatory">*</span>
+									<span class="age-range">(12+ العمر ): </span></label><select id="_ossportlet_WAR_ossliferay_:formSearchTravel:adults" name="_ossportlet_WAR_ossliferay_:formSearchTravel:adults" size="1" onchange="mojarra.ab(this,event,'valueChange','@this','_ossportlet_WAR_ossliferay_:formSearchTravel:infants _ossportlet_WAR_ossliferay_:formSearchTravel:children _ossportlet_WAR_ossliferay_:formSearchTravel:details _ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch _ossportlet_WAR_ossliferay_:formSearchTravel:tableResult _ossportlet_WAR_ossliferay_:formSearchTravel:messages')">	<option value="1" selected="selected">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+</select>
+							</div>
+							
+							<div class="form-group children-selection"><label class="control-label">الاطفال
+									<span class="age-range">العمر0-12) مع مقعد): </span></label><select id="_ossportlet_WAR_ossliferay_:formSearchTravel:children" name="_ossportlet_WAR_ossliferay_:formSearchTravel:children" size="1" onchange="mojarra.ab(this,event,'valueChange','@this','_ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:details _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch _ossportlet_WAR_ossliferay_:formSearchTravel:tableResult _ossportlet_WAR_ossliferay_:formSearchTravel:messages')">	<option value="0" selected="selected">0</option>
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+</select>
+							</div>
+							
+							<div class="form-group infants-selection"><label class="control-label">الرضع
+									<span class="age-range">لا يشغل مقعداً ( 0-2 العمر): </span></label><select id="_ossportlet_WAR_ossliferay_:formSearchTravel:infants" name="_ossportlet_WAR_ossliferay_:formSearchTravel:infants" size="1" onchange="mojarra.ab(this,event,'valueChange','@this','_ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:details _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch _ossportlet_WAR_ossliferay_:formSearchTravel:tableResult _ossportlet_WAR_ossliferay_:formSearchTravel:messages')">	<option value="0" selected="selected">0</option>
+	<option value="1">1</option>
+</select>
+							</div>
+							
+							<div class="form-group rmp-wrapper prm-row prm-selection"><label class="control-label checkbox-container radio-label type-check">مساحة كرسي متحرك لذوي الإعاقة<input id="_ossportlet_WAR_ossliferay_:formSearchTravel:pmrCheckbox" type="checkbox" name="_ossportlet_WAR_ossliferay_:formSearchTravel:pmrCheckbox" onclick="mojarra.ab(this,event,'valueChange',0,'_ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:adults _ossportlet_WAR_ossliferay_:formSearchTravel:children _ossportlet_WAR_ossliferay_:formSearchTravel:details _ossportlet_WAR_ossliferay_:formSearchTravel:panelPopupPRM _ossportlet_WAR_ossliferay_:formSearchTravel:adult-prm _ossportlet_WAR_ossliferay_:formSearchTravel:children-prm _ossportlet_WAR_ossliferay_:formSearchTravel:infants _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch _ossportlet_WAR_ossliferay_:formSearchTravel:selectedPRM _ossportlet_WAR_ossliferay_:formSearchTravel:tableResult _ossportlet_WAR_ossliferay_:formSearchTravel:messages')" /><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:panelPopupPRM" class="selectedPRM"></span>	
+									<span id="checkmarkPRM" class="checkmark"></span>
+									<a href="#" title="Open handicapped help" class="handicapped-help-overlay">
+										<span class="sr-only">Open handicapped help</span>
+									</a></label>
+							
+								<span class="handicapped-help"></span>
+							
+							</div>
+						
+						</div><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:selectedPRM" class="selectedPRM">
+
+						
+
+
+						
+						<div class="col-md-12 submit-form-wrapper">
+							<div class="form-group ta-center"><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch"><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:search" name="_ossportlet_WAR_ossliferay_:formSearchTravel:search" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only submit-btn" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:search&quot;,u:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel _ossportlet_WAR_ossliferay_:dialogPromotionalCode&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();},onco:function(xhr,status,args){javascript:calendarAttach(), tooltip(), roundTripSelectorIcon(true);;}});return false;" type="submit"><span class="ui-button-text ui-c">البحث مره اخرى</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:search_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_search",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:search"});</script><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButtonCloseSale" name="_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButtonCloseSale" class=" hiddenButtonCloseSale submit-btn" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButtonCloseSale&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();}});return false;" style="display:none" type="submit"><span class="ui-button-text ui-c">ui-button</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButtonCloseSale_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_hiddenButtonCloseSale",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButtonCloseSale"});</script></span>
+							</div>
+						</div></span></span>
+
+					<div class="row results-after-search"><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:tableResult">
+						<div class="col-xs-12 col-sm-12 col-md-9 tables-time-wrapper"><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:result" class="result">
+
+								<div class="row">
+									<div class="col-xs-12 col-sm-12"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult" class="ui-datatable ui-widget table table-hover"><div class="ui-datatable-tablewrapper"><table role="grid"><thead id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult_head"><tr role="row"><th id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:rowToggle" class="ui-state-default" role="columnheader" scope="col"><span class="ui-column-title"></span></th><th id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:j_idt159" class="ui-state-default" role="columnheader" aria-label="وقت المغادرة" scope="col"><span class="ui-column-title">وقت المغادرة</span></th><th id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:j_idt161" class="ui-state-default" role="columnheader" aria-label="وقت الوصول" scope="col"><span class="ui-column-title">وقت الوصول</span></th><th id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:j_idt167" class="ui-state-default" role="columnheader" aria-label="المدة" scope="col"><span class="ui-column-title">المدة</span></th><th id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:j_idt169" class="ui-state-default" role="columnheader" aria-label="رقم القطار" scope="col"><span class="ui-column-title">رقم القطار</span></th></tr></thead><tbody id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult_data" class="ui-datatable-data ui-widget-content" tabindex="0"><tr data-ri="0" data-rk="1_5_01000" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">00:00</td><td role="gridcell">02:20
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01000</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:0:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:0:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:0:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:0:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:0:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:0:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_0_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:0:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:0:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="1" data-rk="1_5_01010" class="ui-widget-content ui-datatable-odd ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">01:00</td><td role="gridcell">03:20
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01010</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:1:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:1:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:1:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:1:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:1:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:1:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_1_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:1:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:1:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="2" data-rk="1_5_01012" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">01:20</td><td role="gridcell">03:40
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01012</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:2:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:2:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:2:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:2:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:2:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:2:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_2_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:2:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:2:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="3" data-rk="1_5_00110" class="ui-widget-content ui-datatable-odd ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">11:00</td><td role="gridcell">13:25
+												
+												<em>
+												</em></td><td role="gridcell">2 س 25 د</td><td role="gridcell">
+														<span class="train-code">00110</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:3:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:3:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:3:j_idt177" class="ui-outputlabel ui-widget">2 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:3:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:3:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li><li>مدينة الملك عبدالله الاقتصادية 3 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:3:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_3_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:3:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:3:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="4" data-rk="1_5_01120" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">12:00</td><td role="gridcell">14:20
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01120</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:4:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:4:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:4:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:4:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:4:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:4:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_4_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:4:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:4:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="5" data-rk="1_5_89120" class="ui-widget-content ui-datatable-odd ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">12:35</td><td role="gridcell">15:38
+												
+												<em>
+												</em></td><td role="gridcell">3 س 3 د</td><td role="gridcell">
+														<span class="train-code">89120</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:5:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:5:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:5:j_idt177" class="ui-outputlabel ui-widget">2 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:5:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:5:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li><li>المطار- جدة 21 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:5:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_5_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:5:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:5:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="6" data-rk="1_5_01130" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">13:00</td><td role="gridcell">15:20
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01130</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:6:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:6:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:6:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:6:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:6:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:6:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_6_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:6:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:6:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="7" data-rk="1_5_01140" class="ui-widget-content ui-datatable-odd ui-datatable-selectable ui-state-highlight" role="row" aria-selected="true"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">14:00</td><td role="gridcell">16:20
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01140</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:7:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:7:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:7:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:7:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:7:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:7:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_7_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:7:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:7:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="8" data-rk="1_5_01150" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">15:00</td><td role="gridcell">17:20
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01150</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:8:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:8:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:8:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:8:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:8:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:8:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_8_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:8:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:8:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="9" data-rk="1_5_01152" class="ui-widget-content ui-datatable-odd ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">15:20</td><td role="gridcell">17:40
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01152</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:9:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:9:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:9:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:9:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:9:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:9:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_9_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:9:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:9:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="10" data-rk="1_5_00160" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">16:00</td><td role="gridcell">18:25
+												
+												<em>
+												</em></td><td role="gridcell">2 س 25 د</td><td role="gridcell">
+														<span class="train-code">00160</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:10:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:10:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:10:j_idt177" class="ui-outputlabel ui-widget">2 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:10:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:10:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li><li>مدينة الملك عبدالله الاقتصادية 3 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:10:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_10_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:10:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:10:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="11" data-rk="1_5_89160" class="ui-widget-content ui-datatable-odd ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">16:35</td><td role="gridcell">19:38
+												
+												<em>
+												</em></td><td role="gridcell">3 س 3 د</td><td role="gridcell">
+														<span class="train-code">89160</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:11:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:11:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:11:j_idt177" class="ui-outputlabel ui-widget">2 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:11:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:11:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li><li>المطار- جدة 21 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:11:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_11_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:11:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:11:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="12" data-rk="1_5_01172" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">17:20</td><td role="gridcell">19:40
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01172</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:12:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:12:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:12:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:12:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:12:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:12:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_12_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:12:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:12:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="13" data-rk="1_5_01178" class="ui-widget-content ui-datatable-odd ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">17:40</td><td role="gridcell">20:00
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01178</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:13:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:13:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:13:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:13:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:13:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:13:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_13_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:13:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:13:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="14" data-rk="1_5_01180" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">18:00</td><td role="gridcell">20:20
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01180</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:14:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:14:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:14:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:14:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:14:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:14:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_14_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:14:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:14:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="15" data-rk="1_5_01190" class="ui-widget-content ui-datatable-odd ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">19:00</td><td role="gridcell">21:20
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01190</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:15:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:15:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:15:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:15:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:15:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:15:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_15_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:15:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:15:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="16" data-rk="1_5_00200" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">20:00</td><td role="gridcell">22:25
+												
+												<em>
+												</em></td><td role="gridcell">2 س 25 د</td><td role="gridcell">
+														<span class="train-code">00200</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:16:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:16:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:16:j_idt177" class="ui-outputlabel ui-widget">2 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:16:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:16:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li><li>مدينة الملك عبدالله الاقتصادية 3 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:16:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_16_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:16:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:16:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="17" data-rk="1_5_01210" class="ui-widget-content ui-datatable-odd ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">21:00</td><td role="gridcell">23:20
+												
+												<em>
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01210</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:17:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:17:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:17:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:17:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:17:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:17:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_17_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:17:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:17:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="18" data-rk="1_5_89210" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">21:35</td><td role="gridcell">00:38
+												
+												<em> (+1 يوم)
+												</em></td><td role="gridcell">3 س 3 د</td><td role="gridcell">
+														<span class="train-code">89210</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:18:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:18:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:18:j_idt177" class="ui-outputlabel ui-widget">2 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:18:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:18:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li><li>المطار- جدة 21 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:18:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_18_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:18:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:18:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="19" data-rk="1_5_01220" class="ui-widget-content ui-datatable-odd ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">22:00</td><td role="gridcell">00:20
+												
+												<em> (+1 يوم)
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01220</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:19:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:19:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:19:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:19:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:19:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:19:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_19_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:19:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:19:stops",hideEffect:"fade"});</script>
+														</span></td></tr><tr data-ri="20" data-rk="1_5_01230" class="ui-widget-content ui-datatable-even ui-datatable-selectable" role="row" aria-selected="false"><td role="gridcell"><div class="ui-row-toggler ui-icon ui-icon-circle-triangle-e" tabindex="0" role="button" aria-expanded="false" aria-label="Toggle Row"></div></td><td role="gridcell">23:00</td><td role="gridcell">01:20
+												
+												<em> (+1 يوم)
+												</em></td><td role="gridcell">2 س 20 د</td><td role="gridcell">
+														<span class="train-code">01230</span>
+														<span></span>    																												
+														<span class="ico-train-stop"><a data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:20:stops" href="#" class="ui-commandlink ui-widget ui-icon-info" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:20:stops&quot;});return false;"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:20:j_idt177" class="ui-outputlabel ui-widget">1 توقف</label></a>
+														</span>
+														<span class="train-stop-pane"><div id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:20:stopsPanel" class="ui-overlaypanel ui-widget ui-widget-content ui-overlay-hidden ui-corner-all ui-shadow"><div class="ui-overlaypanel-content"><label id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:20:stopsLabel" class="ui-outputlabel ui-widget"><ul><li>السليمانية - جدة 4 د</li></ul></label></div></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:20:stopsPanel_s" type="text/javascript">PrimeFaces.cw("OverlayPanel","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult_20_stopsPanel",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:20:stopsPanel",target:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult:20:stops",hideEffect:"fade"});</script>
+														</span></td></tr></tbody></table></div><input type="hidden" id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult_selection" name="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult_selection" autocomplete="off" value="1_5_01140" /></div><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult_s" type="text/javascript">PrimeFaces.cw("DataTable","widget__ossportlet_WAR_ossliferay__formSearchTravel_dtSearchResult",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult",selectionMode:"single",expansion:true,rowExpandMode:"multiple",groupColumnIndexes:[],behaviors:{rowSelect:function(ext,event) {PrimeFaces.ab({s:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult",e:"rowSelect",p:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult"},ext);},rowToggle:function(ext,event) {PrimeFaces.ab({s:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult",e:"rowToggle",p:"_ossportlet_WAR_ossliferay_:formSearchTravel:dtSearchResult",onco:function(xhr,status,args){assigClassToSelectedRow();;}},ext);}}});</script>
+									</div>
+								</div></span>
+							
+							
+							<div class="ta-center botones-navegacion"><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:botonera"><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn1" name="_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn1" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only submit-btn next-btn " onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn1&quot;,u:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:messages _ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();}});return false;" style="" type="submit"><span class="ui-button-text ui-c">استمر</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn1_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_buttonReturn1",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn1"});</script><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt292" name="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt292" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only hiddenButtonPrmEconomy submit-btn" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt292&quot;,u:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:messages _ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();}});return false;" style="display:none" type="submit"><span class="ui-button-text ui-c">hiddenButtonPrmEconomy</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt292_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_j_idt292",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt292"});</script><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButton" name="_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButton" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only hiddenButton submit-btn" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButton&quot;,u:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:messages _ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();}});return false;" style="display:none" type="submit"><span class="ui-button-text ui-c">hidden Button</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButton_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_hiddenButton",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:hiddenButton"});</script><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn2" name="_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn2" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only buttonReturn2 submit-btn" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn2&quot;,u:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:messages _ossportlet_WAR_ossliferay_:formSearchTravel:yourSearch _ossportlet_WAR_ossliferay_:formSearchTravel:botoneraSearch&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();}});return false;" style="display:none" type="submit"><span class="ui-button-text ui-c">hidden Button</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn2_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_buttonReturn2",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:buttonReturn2"});</script><button id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt293" name="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt293" class=" hdnPCBtn" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt293&quot;,p:&quot;_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt293&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide();}});return false;" style="display:none" type="submit"><span class="ui-button-text ui-c">ui-button</span></button><script id="_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt293_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formSearchTravel_j_idt293",{id:"_ossportlet_WAR_ossliferay_:formSearchTravel:j_idt293"});</script></span>
+							</div>
+
+							
+						</div><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:panelHidden"><input id="_ossportlet_WAR_ossliferay_:formSearchTravel:selectedTariff" type="text" name="_ossportlet_WAR_ossliferay_:formSearchTravel:selectedTariff" class="selectedTariff" style="display: none;" /><input id="_ossportlet_WAR_ossliferay_:formSearchTravel:selectedTariffReturn" type="text" name="_ossportlet_WAR_ossliferay_:formSearchTravel:selectedTariffReturn" class="selectedTariffReturn" style="display: none;" /></span>
+
+						<div class="alert-summary animated bounce" style="display:none;">
+							<a href="#" title="Close this"><span>Close this dialog</span></a>
+							<p>من هنا يمكنك دائمًا الاطلاع <strong>على ملخص الحجز</strong></p>
+						</div>
+						<div class="col-xs-12 col-sm-12 col-md-3 purchase-data animated fadeInUp" style="display:none;">
+							<script>
+				            try{ controlResumeSumary()}catch(e){console.log("error summary");}
+							</script><span id="_ossportlet_WAR_ossliferay_:formSearchTravel:details">
+
+								<h4><label>ملخص الحجز </label>
+								</h4>
+
+								
+								<div class="viajes">
+									<div class="viaje-ida">
+										
+										<h3><label>المغادرة:</label></h3>
+										<div class="row purchase-row from-to-row">
+											<div class="from-col col-xs-6 col-sm-6 col-md-6">
+												<p>مكة المكرمة</p>
+											</div>
+											<div class="to-col col-xs-6 col-sm-6 col-md-6">
+												<p>المدينة المنورة</p>
+											</div>
+										</div>
+										
+										<p class="dp-date day-and-date">
+											<span class="date-label">تاريخ المغادرة: </span>
+											<span class="travel-value arabic-number">16 مايو</span>
+											<span class="dp-hour travel-value">  </span>
+										</p>
+										
+										<p class="dp-train str train-number">
+											<span class="date-label"> <span class="date-label">القطار: </span> <span class="travel-value"></span>
+											</span> <span class="train-class"> <span class="date-label">الدرجة: </span> <span class="dp-class travel-value"></span>
+											</span>
+										</p>
+										
+										
+										<p class="dp-price">
+											<span class="date-label">السعر لكل شخص: </span> <span class="prices-wrap">
+										
+										
+													<span class="travel-value adults-value"> <span class="num-traveler demo">1
+													</span> <img src="/o/oss.liferay/images/adult-ico.png" /> <span class="mini-price"></span>
+													</span>
+											</span>
+										</p>
+									</div>
+									</div>
+								<div class="total-purchase">
+									<h3><label>السعر الإجمالي:</label>
+									</h3>
+									<p><span class="currency-symbol">&#xea;</span>&nbsp;0.00
+										<a href="#" title="Open price link" class="open-price-link">فتح السعر</a>
+									</p>
+								</div><span class="desglose-popup desglose-popup-total">
+									<div class="desglose-popup-inner">	
+										<div class="desglose-value">
+											<p class="desglose-title">السعر: 
+											</p>
+											<p class="desglose-data"><span class="currency-symbol">&#xea;</span>&nbsp;0.00
+											</p>
+										</div>
+											
+										<div class="desglose-value">
+											<p class="desglose-title">ضريبة القيمة المضافة (15.0%): 
+											</p>
+											<p class="desglose-data"><span class="currency-symbol">&#xea;</span>&nbsp;0.00												
+											</p>
+										</div>	
+										<div class="desglose-value">
+											<p class="desglose-title">شامل الرسوم الإدارية: 
+											</p>
+											<p class="desglose-data"><span class="currency-symbol">&#xea;</span>&nbsp;0.00												
+											</p>
+										</div>																								
+									</div></span>
+								<script type="text/javascript">
+									jQuery(document).ready(function () {
+										jQuery('.desglose-popup').appendTo('.total-purchase p');
+										jQuery('.open-price-link').on('click', function (e) {
+											e.stopImmediatePropagation();
+											jQuery('body, .open-price-link, .desglose-popup').toggleClass('desglose-popup-show');
+											e.preventDefault();
+										});
+									});
+								</script></span>
+						</div></span>
+						
+					</div>
+					
+					<script type="text/javascript">
+					function isEmpty( el ){
+						return !jQuery.trim(el.html())
+					}
+					if (isEmpty(jQuery('h4.departure-results-title'))) {
+						jQuery('h4.departure-results-title').css('padding','0');
+					}
+				</script>
+<input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="5743327847672536965:-2411284750593069656" autocomplete="off" /></form>]]></update>
+        <update id="_ossportlet_WAR_ossliferay_:dialogPromotionalCode"><![CDATA[<div id="_ossportlet_WAR_ossliferay_:dialogPromotionalCode" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-shadow ui-hidden-container disable-scroll min-width"><div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-corner-top"><span id="_ossportlet_WAR_ossliferay_:dialogPromotionalCode_title" class="ui-dialog-title">فضلاً ادخل رمز الترويجي</span><a href="#" class="ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all" aria-label="Close"><span class="ui-icon ui-icon-closethick"></span></a></div><div class="ui-dialog-content ui-widget-content">
+<form data-senna-off="true" id="_ossportlet_WAR_ossliferay_:formPromotionalCode" name="_ossportlet_WAR_ossliferay_:formPromotionalCode" method="post" action="https://sar.hhr.sa/ar/web/booking/home?p_auth=4OlmOjHA&amp;p_p_id=ossportlet_WAR_ossliferay&amp;p_p_lifecycle=1&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_ossportlet_WAR_ossliferay__facesViewIdRender=%2FWEB-INF%2Fviews%2FsearchTravelResult.xhtml" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="_ossportlet_WAR_ossliferay_:formPromotionalCode" value="_ossportlet_WAR_ossliferay_:formPromotionalCode" />
+<input type="hidden" name="javax.faces.encodedURL" value="https://sar.hhr.sa/ar/web/booking/home?p_p_id=ossportlet_WAR_ossliferay&amp;p_p_lifecycle=2&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_cacheability=cacheLevelPage&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_ossportlet_WAR_ossliferay__jsfBridgeAjax=true&amp;_ossportlet_WAR_ossliferay__facesViewIdResource=%2FWEB-INF%2Fviews%2FsearchTravelResult.xhtml" />
+<div id="_ossportlet_WAR_ossliferay_:formPromotionalCode:messagesPopup" class="ui-messages ui-widget" aria-live="polite" data-global="false" data-summary="data-summary" data-severity="all,error" data-redisplay="true"></div>
+
+		<div class="row">
+				
+					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<div class="form-group input-text-wrapper"><label class="control-label">الرمز الترويجي 1
+								<span class="mandatory">*</span></label><input type="text" name="_ossportlet_WAR_ossliferay_:formPromotionalCode:j_idt458" />
+						</div>
+					</div>
+		</div>
+
+
+	
+	<div class="submit-form-wrapper">
+		<div class="form-group ta-center"><button id="_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton1" name="_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton1" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only submit-btn" onclick="PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton1&quot;,u:&quot;_ossportlet_WAR_ossliferay_:formPromotionalCode:messagesPopup&quot;,onst:function(cfg){PF('statusDialog').show();},onsu:function(data,status,xhr){PF('statusDialog').hide(); PF('promotionalCode').hide();}});return false;" type="submit"><span class="ui-button-text ui-c">فحص</span></button><script id="_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton1_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formPromotionalCode_commandbutton1",{id:"_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton1"});</script><button id="_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton2" name="_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton2" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only submit-btn" onclick="PrimeFaces.bcn(this,event,[function(event){PF('promotionalCode').hide()},function(event){PrimeFaces.ab({s:&quot;_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton2&quot;});return false;}]);" type="submit"><span class="ui-button-text ui-c">يمكنك فقط إلغاء الخدمات المدفوعة.</span></button><script id="_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton2_s" type="text/javascript">PrimeFaces.cw("CommandButton","widget__ossportlet_WAR_ossliferay__formPromotionalCode_commandbutton2",{id:"_ossportlet_WAR_ossliferay_:formPromotionalCode:commandbutton2"});</script>
+		</div>
+	</div>
+<input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="5743327847672536965:-2411284750593069656" autocomplete="off" /></form></div></div><script id="_ossportlet_WAR_ossliferay_:dialogPromotionalCode_s" type="text/javascript">PrimeFaces.cw("Dialog","promotionalCode",{id:"_ossportlet_WAR_ossliferay_:dialogPromotionalCode",modal:true});</script>]]></update>
+        <update id="_ossportlet_WAR_ossliferay_:javax.faces.ViewState:0"><![CDATA[5743327847672536965:-2411284750593069656]]></update>
+    </changes>
+</partial-response>

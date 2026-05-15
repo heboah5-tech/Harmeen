@@ -113,6 +113,7 @@ type Slot = {
   priceBusiness: number;
   priceEconomy: number;
   stops?: number;
+  stopNames?: string[];
 };
 
 type HhrSearchResponse = {
@@ -338,8 +339,9 @@ export default function Schedule() {
                     <span
                       className="text-xs text-[hsl(var(--gold-700))] underline font-bold"
                       data-testid={`text-stops-${slot.train}`}
+                      title={(slot.stopNames || []).join("، ")}
                     >
-                      توقف 1
+                      {slot.stops && slot.stops > 0 ? `${slot.stops} توقف` : "مباشر"}
                     </span>
                     <div className="text-xs text-muted-foreground tabular-nums">
                       {slot.duration}&nbsp;&nbsp;قطار: {slot.train}
